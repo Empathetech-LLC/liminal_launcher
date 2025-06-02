@@ -1,0 +1,38 @@
+name: empathetech_launcher
+description: "An Empathetech Android launcher."
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Flutter (Google)
+  go_router: ^14.8.1
+  intl: ^0.20.2
+  shared_preferences: ^2.5.3
+  url_launcher: ^6.3.1
+
+  # Community
+  empathetech_flutter_ui:
+    path: ../empathetech_flutter_ui
+  feedback: ^3.1.0
+  flutter_localized_locales: ^2.0.5
+  flutter_platform_widgets: ^9.0.0
+
+dev_dependencies:
+  dependency_validator: ^5.0.2
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  generate: true
+  uses-material-design: true
