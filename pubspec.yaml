@@ -24,6 +24,7 @@ dependencies:
   feedback: ^3.1.0
   flutter_localized_locales: ^2.0.5
   flutter_platform_widgets: ^9.0.0
+  installed_apps: ^1.6.0
 
 dev_dependencies:
   dependency_validator: ^5.0.2
