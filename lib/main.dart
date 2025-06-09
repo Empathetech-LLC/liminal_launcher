@@ -48,7 +48,7 @@ void main() async {
     theme: FeedbackThemeData(
       background: Colors.grey,
       feedbackSheetColor: Colors.white,
-      // activeFeedbackModeColor: lightPrimaryColor,
+      activeFeedbackModeColor: empathPurple,
       bottomSheetDescriptionStyle: lightFeedbackText,
       bottomSheetTextInputStyle: lightFeedbackText,
       sheetIsDraggable: true,
@@ -57,7 +57,7 @@ void main() async {
     darkTheme: FeedbackThemeData(
       background: Colors.grey,
       feedbackSheetColor: Colors.black,
-      // activeFeedbackModeColor: darkPrimaryColor,
+      activeFeedbackModeColor: empathEucalyptus,
       bottomSheetDescriptionStyle: darkFeedbackText,
       bottomSheetTextInputStyle: darkFeedbackText,
       sheetIsDraggable: true,
