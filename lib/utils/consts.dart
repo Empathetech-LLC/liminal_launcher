@@ -3,5 +3,5 @@
  * See LICENSE for distribution and usage details.
  */
 
-/// Empathetech Launcher
-const String appTitle = 'Empathetech Launcher';
+/// Needs name
+const String appTitle = 'Needs name';

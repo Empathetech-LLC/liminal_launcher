@@ -14,10 +14,8 @@ class ColorSettingsScreen extends StatelessWidget {
   const ColorSettingsScreen({super.key, this.target});
 
   @override
-  Widget build(BuildContext context) => EmpathetechLauncherScaffold(
-        title: ezL10n(context).csPageTitle,
-        showSettings: false,
-        body: EzColorSettings(target: target),
+  Widget build(BuildContext context) => NeedsNameScaffold(
+        EzColorSettings(target: target),
         fab: EzBackFAB(context),
       );
 }

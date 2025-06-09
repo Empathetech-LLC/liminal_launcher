@@ -12,10 +12,8 @@ class LayoutSettingsScreen extends StatelessWidget {
   const LayoutSettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => EmpathetechLauncherScaffold(
-        title: ezL10n(context).lsPageTitle,
-        showSettings: false,
-        body: const EzLayoutSettings(),
+  Widget build(BuildContext context) => NeedsNameScaffold(
+        const EzLayoutSettings(),
         fab: EzBackFAB(context),
       );
 }

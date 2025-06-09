@@ -12,10 +12,8 @@ class ImageSettingsScreen extends StatelessWidget {
   const ImageSettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => EmpathetechLauncherScaffold(
-        title: ezL10n(context).isPageTitle,
-        showSettings: false,
-        body: const EzImageSettings(),
+  Widget build(BuildContext context) => NeedsNameScaffold(
+        const EzImageSettings(),
         fab: EzBackFAB(context),
       );
 }

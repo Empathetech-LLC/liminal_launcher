@@ -14,10 +14,8 @@ class TextSettingsScreen extends StatelessWidget {
   const TextSettingsScreen({super.key, this.target});
 
   @override
-  Widget build(BuildContext context) => EmpathetechLauncherScaffold(
-        title: ezL10n(context).tsPageTitle,
-        showSettings: false,
-        body: EzTextSettings(target: target),
+  Widget build(BuildContext context) => NeedsNameScaffold(
+        EzTextSettings(target: target),
         fab: EzBackFAB(context),
       );
 }

@@ -42,19 +42,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return EmpathetechLauncherScaffold(
-      title: appTitle,
-      body: EzScreen(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: Provider.of<AppInfoProvider>(context)
-                .apps
-                .map((AppInfo app) => Text(app.name))
-                .toList(),
-          ),
+    return NeedsNameScaffold(EzScreen(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: Provider.of<AppInfoProvider>(context)
+              .apps
+              .map((AppInfo app) => Text(app.name))
+              .toList(),
         ),
       ),
-    );
+    ));
   }
 }

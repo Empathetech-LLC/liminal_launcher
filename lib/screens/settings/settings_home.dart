@@ -13,15 +13,14 @@ class SettingsHomeScreen extends StatelessWidget {
   const SettingsHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => EmpathetechLauncherScaffold(
-        title: ezL10n(context).ssPageTitle,
-        showSettings: false,
-        body: const EzSettingsHome(
+  Widget build(BuildContext context) => NeedsNameScaffold(
+        const EzSettingsHome(
           textSettingsPath: textSettingsPath,
           layoutSettingsPath: layoutSettingsPath,
           colorSettingsPath: colorSettingsPath,
           imageSettingsPath: imageSettingsPath,
-          allowRandom: true,                                
+          allowRandom: true,
         ),
+        fab: EzBackFAB(context),
       );
 }
