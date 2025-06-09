@@ -61,7 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      fab: CountFAB(() => setState(() => count += 1)),
     );
   }
 }

@@ -4,7 +4,6 @@
  */
 
 import 'package:empathetech_launcher/main.dart';
-import 'package:empathetech_launcher/widgets/export.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -67,12 +66,6 @@ void main() async {
         ezLog('Loading Empathetech Launcher');
         await tester.pumpWidget(const EmpathetechLauncher());
         await tester.pumpAndSettle();
-
-        // ♫ It's as Ez as... ♫ //
-
-        await ezTouch(tester, find.byType(CountFAB)); // 1
-        await ezTouch(tester, find.byType(CountFAB)); // 2
-        await ezTouch(tester, find.byType(CountFAB)); // 3
       });
     },
   );
