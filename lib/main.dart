@@ -8,8 +8,10 @@ import './utils/export.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:feedback/feedback.dart';
 import 'package:go_router/go_router.dart';
+import 'package:installed_apps/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -66,7 +68,7 @@ void main() async {
     themeMode: EzConfig.getThemeMode(),
     localizationsDelegates: <LocalizationsDelegate<dynamic>>[EzFeedbackLD()],
     localeOverride: EzConfig.getLocale(),
-    child: const EmpathetechLauncher(),
+    child: EmpathetechLauncher(await InstalledApps.getInstalledApps()),
   ));
 }
 
@@ -143,29 +145,34 @@ final GoRouter router = GoRouter(
 );
 
 class EmpathetechLauncher extends StatelessWidget {
-  const EmpathetechLauncher({super.key});
+  final List<AppInfo> installedApps;
+
+  const EmpathetechLauncher(this.installedApps, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return EzAppProvider(
-      app: PlatformApp.router(
-        debugShowCheckedModeBanner: false,
+    return ChangeNotifierProvider<AppInfoProvider>(
+      create: (_) => AppInfoProvider(installedApps),
+      child: EzAppProvider(
+        app: PlatformApp.router(
+          debugShowCheckedModeBanner: false,
 
-        // Language handlers
-        localizationsDelegates: <LocalizationsDelegate<dynamic>>{
-          const LocaleNamesLocalizationsDelegate(),
-          ...EFUILang.localizationsDelegates,
-          ...Lang.localizationsDelegates,
-        },
+          // Language handlers
+          localizationsDelegates: <LocalizationsDelegate<dynamic>>{
+            const LocaleNamesLocalizationsDelegate(),
+            ...EFUILang.localizationsDelegates,
+            ...Lang.localizationsDelegates,
+          },
 
-        // Supported languages
-        supportedLocales: Lang.supportedLocales,
+          // Supported languages
+          supportedLocales: Lang.supportedLocales,
 
-        // Current language
-        locale: EzConfig.getLocale(),
+          // Current language
+          locale: EzConfig.getLocale(),
 
-        title: appTitle,
-        routerConfig: router,
+          title: appTitle,
+          routerConfig: router,
+        ),
       ),
     );
   }

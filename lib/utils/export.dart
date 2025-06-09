@@ -4,5 +4,6 @@
  */
 
 export 'consts.dart';
+export 'providers.dart';
 
 export '../l10n/lang.dart';

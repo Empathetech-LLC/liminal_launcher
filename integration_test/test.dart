@@ -6,6 +6,7 @@
 import 'package:empathetech_launcher/main.dart';
 
 import 'package:flutter/material.dart';
+import 'package:installed_apps/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,6 +30,8 @@ void main() async {
 
   // Run the tests //
 
+  final List<AppInfo> apps = await InstalledApps.getInstalledApps();
+
   group(
     'Generated tests',
     () {
@@ -41,7 +44,7 @@ void main() async {
         // Load the app //
 
         ezLog('Loading Empathetech Launcher');
-        await tester.pumpWidget(const EmpathetechLauncher());
+        await tester.pumpWidget(EmpathetechLauncher(apps));
         await tester.pumpAndSettle();
 
         // Randomize the settings //
@@ -64,7 +67,7 @@ void main() async {
         // Re-load the app //
 
         ezLog('Loading Empathetech Launcher');
-        await tester.pumpWidget(const EmpathetechLauncher());
+        await tester.pumpWidget(EmpathetechLauncher(apps));
         await tester.pumpAndSettle();
       });
     },

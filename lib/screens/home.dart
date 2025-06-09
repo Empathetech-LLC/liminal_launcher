@@ -7,6 +7,8 @@ import '../utils/export.dart';
 import '../widgets/export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:installed_apps/index.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -46,18 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                l10n.hsCounterLabel,
-                style: subTitle,
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                count.toString(),
-                style: textTheme.headlineLarge,
-                textAlign: TextAlign.center,
-              ),
-            ],
+            children: Provider.of<AppInfoProvider>(context)
+                .apps
+                .map((AppInfo app) => Text(app.name))
+                .toList(),
           ),
         ),
       ),
