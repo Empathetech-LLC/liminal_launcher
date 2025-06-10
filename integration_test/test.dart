@@ -4,9 +4,9 @@
  */
 
 import 'package:empathetech_launcher/main.dart';
+import 'package:empathetech_launcher/utils/export.dart';
 
 import 'package:flutter/material.dart';
-import 'package:installed_apps/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +30,7 @@ void main() async {
 
   // Run the tests //
 
-  final List<AppInfo> apps = await InstalledApps.getInstalledApps();
+  final List<AppInfo> apps = await getApps();
 
   group(
     'Generated tests',
