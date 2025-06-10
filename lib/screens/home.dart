@@ -8,7 +8,6 @@ import '../widgets/export.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:installed_apps/index.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -44,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return NeedsNameScaffold(EzScreen(
       child: Center(
-        child: Column(
+        child: EzScrollView(
           mainAxisAlignment: MainAxisAlignment.center,
           children: Provider.of<AppInfoProvider>(context)
               .apps
