@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:feedback/feedback.dart';
 import 'package:go_router/go_router.dart';
-import 'package:installed_apps/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -68,7 +67,7 @@ void main() async {
     themeMode: EzConfig.getThemeMode(),
     localizationsDelegates: <LocalizationsDelegate<dynamic>>[EzFeedbackLD()],
     localeOverride: EzConfig.getLocale(),
-    child: EmpathetechLauncher(await InstalledApps.getInstalledApps()),
+    child: EmpathetechLauncher(await getApps()),
   ));
 }
 
