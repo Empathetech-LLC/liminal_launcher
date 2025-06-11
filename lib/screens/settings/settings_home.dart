@@ -13,14 +13,13 @@ class SettingsHomeScreen extends StatelessWidget {
   const SettingsHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => NeedsNameScaffold(
-        const EzSettingsHome(
+  Widget build(BuildContext context) => const NeedsNameScaffold(
+        EzSettingsHome(
           textSettingsPath: textSettingsPath,
           layoutSettingsPath: layoutSettingsPath,
           colorSettingsPath: colorSettingsPath,
           imageSettingsPath: imageSettingsPath,
           allowRandom: true,
         ),
-        fab: EzBackFAB(context),
       );
 }

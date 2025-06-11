@@ -16,6 +16,5 @@ class ColorSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => NeedsNameScaffold(
         EzColorSettings(target: target),
-        fab: EzBackFAB(context),
       );
 }

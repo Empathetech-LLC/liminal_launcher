@@ -16,6 +16,5 @@ class TextSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => NeedsNameScaffold(
         EzTextSettings(target: target),
-        fab: EzBackFAB(context),
       );
 }
