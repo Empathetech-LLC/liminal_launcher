@@ -6,8 +6,8 @@
 import '../screens/export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/link.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
@@ -43,15 +43,18 @@ class EFUICredits extends StatelessWidget {
     final String tip = l10n.gOpenEmpathetech;
     final String settings = l10n.ssPageTitle;
 
-    return Tooltip(
-      message: tip,
-      excludeFromSemantics: true,
-      child: EzMenuButton(
-        onPressed: () => launchUrl(Uri.parse('https://www.empathetech.net/#/products/open-ui')),
-        icon: EzIcon(PlatformIcons(context).settings),
-        label: label,
-        semanticsLabel:
-            '${isLefty ? '$settings $label' : '$label $settings'}. $tip',
+    return Link(
+      uri: Uri.parse('https://www.empathetech.net/#/products/open-ui'),
+      builder: (_, FollowLink? followLink) => Tooltip(
+        message: tip,
+        excludeFromSemantics: true,
+        child: EzMenuButton(
+          onPressed: followLink,
+          icon: EzIcon(PlatformIcons(context).settings),
+          label: label,
+          semanticsLabel:
+              '${isLefty ? '$settings $label' : '$label $settings'}. $tip',
+        ),
       ),
     );
   }
