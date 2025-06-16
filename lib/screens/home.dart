@@ -47,9 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      EzScreen(
-        child: GestureDetector(
-          onLongPress: () => context.goNamed(settingsHomePath),
+      GestureDetector(
+        onLongPress: () => context.goNamed(settingsHomePath),
+        behavior: HitTestBehavior.opaque,
+        child: EzScreen(
           child: Center(
             child: EzScrollView(
               mainAxisAlignment: MainAxisAlignment.center,
