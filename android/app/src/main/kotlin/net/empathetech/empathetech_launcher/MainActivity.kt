@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 
 import androidx.annotation.NonNull
 
@@ -50,7 +51,7 @@ class MainActivity : FlutterActivity() {
 
       app["label"] = info.loadLabel(pm).toString()
       app["package"] = info.activityInfo.packageName
-      app["icon"] = drawableToByteArray(ri.loadIcon(pm))
+      app["icon"] = drawableToByteArray(info.loadIcon(pm))
 
       apps.add(app)
     }
