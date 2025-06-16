@@ -13,13 +13,11 @@ const MethodChannel platform = MethodChannel('net.empathetech.liminal/query');
 /// Get installed apps
 Future<List<AppInfo>> getApps() async {
   try {
-    final List<Map<String, dynamic>>? apps =
-        await platform.invokeMethod<List<Map<String, dynamic>>>('getApps');
+    final List<dynamic>? apps = await platform.invokeMethod('getApps');
 
     if (apps == null) return <AppInfo>[];
-
     return apps
-        .map((Map<String, dynamic> app) => AppInfo.fromMap(app))
+        .map((dynamic app) => AppInfo.fromMap(Map<String, dynamic>.from(app)))
         .toList();
   } catch (e) {
     ezLog('Failed to get apps: $e');
