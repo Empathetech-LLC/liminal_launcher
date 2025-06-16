@@ -108,6 +108,11 @@ final GoRouter router = GoRouter(
               ],
             ),
             GoRoute(
+              path: designSettingsPath,
+              name: designSettingsPath,
+              builder: (_, __) => const DesignSettingsScreen(),
+            ),
+            GoRoute(
               path: layoutSettingsPath,
               name: layoutSettingsPath,
               builder: (_, __) => const LayoutSettingsScreen(),

@@ -13,6 +13,7 @@ export 'settings/text_settings.dart';
 export 'settings/layout_settings.dart';
 export 'settings/color_settings.dart';
 export 'settings/image_settings.dart';
+export 'settings/design_settings.dart';
 
 // Route names //
 
@@ -30,3 +31,6 @@ const String colorSettingsPath = 'color-settings';
 
 /// 'image-settings'
 const String imageSettingsPath = 'image-settings';
+
+/// 'design-settings'
+const String designSettingsPath = 'design-settings';
