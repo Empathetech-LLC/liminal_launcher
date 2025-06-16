@@ -27,6 +27,19 @@ class MainActivity : FlutterActivity() {
           val apps = getInstalledApps()
           result.success(apps)
         }
+        "launchApp" -> {
+          try {
+            val packageName = call.argument<String>("packageName")
+            if (packageName != null) {
+              launchApp(packageName)
+              result.success(true)
+            } else {
+              result.error("INVALID_PACKAGE", "null package name", null)
+            }
+          } catch (e: Exception) {
+            result.error("LAUNCH_ERROR", "Could not launch app", e.message)
+          }
+        }
         else -> result.notImplemented() 
       }
     }
@@ -81,5 +94,10 @@ class MainActivity : FlutterActivity() {
     val stream = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
     return stream.toByteArray()
+  }
+
+  private fun launchApp(packageName: String) {
+    val launchIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
+    if (launchIntent != null) startActivity(launchIntent)
   }
 }

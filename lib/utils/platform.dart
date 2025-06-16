@@ -24,3 +24,13 @@ Future<List<AppInfo>> getApps() async {
     return <AppInfo>[];
   }
 }
+
+Future<void> launchApp(String package) async {
+  try {
+    await platform.invokeMethod('launchApp', <String, dynamic>{
+      'packageName': package,
+    });
+  } catch (e) {
+    ezLog('Failed to launch app: $e');
+  }
+}

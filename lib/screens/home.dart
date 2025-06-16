@@ -58,10 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   .expand((AppInfo app) => <Widget>[
                         EzElevatedButton(
                           text: app.label,
-                          onPressed: () => ezSnackBar(
-                            context: context,
-                            message: 'You pressed ${app.label}',
-                          ),
+                          onPressed: () => launchApp(app.package),
                         ),
                         spacer,
                       ])
