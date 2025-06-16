@@ -3,11 +3,14 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'package:empathetech_launcher/screens/export.dart';
+
 import '../utils/export.dart';
 import '../widgets/export.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -43,19 +46,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return NeedsNameScaffold(EzScreen(
-      child: Center(
-        child: EzScrollView(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: Provider.of<AppInfoProvider>(context)
-              .apps
-              .expand((AppInfo app) => <Widget>[
-                    EzElevatedButton(text: app.label),
-                    spacer,
-                  ])
-              .toList(),
+    return LiminalScaffold(
+      EzScreen(
+        child: GestureDetector(
+          onLongPress: () => context.goNamed(settingsHomePath),
+          child: Center(
+            child: EzScrollView(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: Provider.of<AppInfoProvider>(context)
+                  .apps
+                  .expand((AppInfo app) => <Widget>[
+                        EzElevatedButton(
+                          text: app.label,
+                          onPressed: () => ezSnackBar(
+                            context: context,
+                            message: 'You pressed ${app.label}',
+                          ),
+                        ),
+                        spacer,
+                      ])
+                  .toList(),
+            ),
+          ),
         ),
       ),
-    ));
+    );
   }
 }
