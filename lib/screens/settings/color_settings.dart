@@ -14,7 +14,7 @@ class ColorSettingsScreen extends StatelessWidget {
   const ColorSettingsScreen({super.key, this.target});
 
   @override
-  Widget build(BuildContext context) => NeedsNameScaffold(
-        EzColorSettings(target: target),
+  Widget build(BuildContext context) => LiminalScaffold(
+        SafeArea(child: EzColorSettings(target: target)),
       );
 }

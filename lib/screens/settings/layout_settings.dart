@@ -12,7 +12,7 @@ class LayoutSettingsScreen extends StatelessWidget {
   const LayoutSettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const NeedsNameScaffold(
-        EzLayoutSettings(),
+  Widget build(BuildContext context) => const LiminalScaffold(
+        SafeArea(child: EzLayoutSettings()),
       );
 }

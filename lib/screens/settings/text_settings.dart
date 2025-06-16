@@ -14,7 +14,7 @@ class TextSettingsScreen extends StatelessWidget {
   const TextSettingsScreen({super.key, this.target});
 
   @override
-  Widget build(BuildContext context) => NeedsNameScaffold(
-        EzTextSettings(target: target),
+  Widget build(BuildContext context) => LiminalScaffold(
+        SafeArea(child: EzTextSettings(target: target)),
       );
 }
