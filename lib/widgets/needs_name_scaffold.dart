@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
-class NeedsNameScaffold extends StatelessWidget {
+class LiminalScaffold extends StatelessWidget {
   /// [Scaffold.body] passthrough
   final Widget body;
 
@@ -14,7 +14,7 @@ class NeedsNameScaffold extends StatelessWidget {
   final Widget? fab;
 
   /// Standardized [Scaffold] for all of the EFUI example app's screens
-  const NeedsNameScaffold(
+  const LiminalScaffold(
     this.body, {
     super.key,
     this.fab,
