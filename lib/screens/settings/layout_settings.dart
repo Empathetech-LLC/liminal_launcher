@@ -12,7 +12,8 @@ class LayoutSettingsScreen extends StatelessWidget {
   const LayoutSettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const LiminalScaffold(
-        SafeArea(child: EzLayoutSettings()),
+  Widget build(BuildContext context) => LiminalScaffold(
+        const SafeArea(child: EzLayoutSettings()),
+        fab: EzBackFAB(context),
       );
 }

@@ -13,13 +13,16 @@ class SettingsHomeScreen extends StatelessWidget {
   const SettingsHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const LiminalScaffold(SafeArea(
-        child: EzSettingsHome(
-          textSettingsPath: textSettingsPath,
-          layoutSettingsPath: layoutSettingsPath,
-          colorSettingsPath: colorSettingsPath,
-          imageSettingsPath: imageSettingsPath,
-          allowRandom: true,
+  Widget build(BuildContext context) => LiminalScaffold(
+        const SafeArea(
+          child: EzSettingsHome(
+            textSettingsPath: textSettingsPath,
+            layoutSettingsPath: layoutSettingsPath,
+            colorSettingsPath: colorSettingsPath,
+            imageSettingsPath: imageSettingsPath,
+            allowRandom: true,
+          ),
         ),
-      ));
+        fab: EzBackFAB(context),
+      );
 }

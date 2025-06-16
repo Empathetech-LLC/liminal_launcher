@@ -12,7 +12,8 @@ class ImageSettingsScreen extends StatelessWidget {
   const ImageSettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const LiminalScaffold(
-        SafeArea(child: EzImageSettings()),
+  Widget build(BuildContext context) => LiminalScaffold(
+        const SafeArea(child: EzImageSettings()),
+        fab: EzBackFAB(context),
       );
 }

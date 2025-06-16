@@ -16,5 +16,6 @@ class TextSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LiminalScaffold(
         SafeArea(child: EzTextSettings(target: target)),
+        fab: EzBackFAB(context),
       );
 }
