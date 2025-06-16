@@ -6,15 +6,15 @@
 import 'package:flutter/services.dart';
 
 class AppInfo {
-  final String name;
   final String label;
+  final String package;
   final Uint8List? icon;
 
-  AppInfo({required this.name, required this.label, this.icon});
+  AppInfo({required this.label, required this.package, this.icon});
 
   factory AppInfo.fromMap(Map<String, dynamic> map) => AppInfo(
-        name: map['name'],
         label: map['label'],
+        package: map['package'],
         icon: map['icon'],
       );
 }
