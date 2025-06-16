@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: Provider.of<AppInfoProvider>(context)
               .apps
-              .map((AppInfo app) => Text(app.name))
+              .map((AppInfo app) => Text(app.label))
               .toList(),
         ),
       ),
