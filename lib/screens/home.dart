@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Define the build data //
 
   int count = 0;
+  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   // Set the page title //
 
@@ -48,14 +49,32 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return LiminalScaffold(
       GestureDetector(
-        onLongPress: () => context.goNamed(settingsHomePath),
         behavior: HitTestBehavior.opaque,
+        onLongPress: () => context.goNamed(settingsHomePath),
+        onVerticalDragEnd: (DragEndDetails details) {
+          if (details.primaryVelocity != null) {
+            if (details.primaryVelocity! < 0) {
+              // Swiped up
+              launchApp(provider.apps.first.package);
+            }
+          }
+        },
+        onHorizontalDragEnd: (DragEndDetails details) {
+          if (details.primaryVelocity != null) {
+            if (details.primaryVelocity! < 0) {
+              // Swiped left
+              launchApp(provider.apps.first.package);
+            } else if (details.primaryVelocity! > 0) {
+              // Swiped right
+              launchApp(provider.apps.first.package);
+            }
+          }
+        },
         child: EzScreen(
           child: Center(
             child: EzScrollView(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: Provider.of<AppInfoProvider>(context)
-                  .apps
+              children: provider.apps
                   .expand((AppInfo app) => <Widget>[
                         EzElevatedButton(
                           text: app.label,
