@@ -6,10 +6,13 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+
 import androidx.annotation.NonNull
+
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+
 import java.io.ByteArrayOutputStream
 
 class MainActivity : FlutterActivity() {
@@ -34,25 +37,28 @@ class MainActivity : FlutterActivity() {
     val intent = Intent(Intent.ACTION_MAIN, null)
     intent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-    val resolveInfoList = pm.queryIntentActivities(intent, 0)
-    val apps = mutableListOf<Map<String, Any?>>()
+    val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      pm.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0L))
+    } else {
+      @Suppress("DEPRECATION")
+      pm.queryIntentActivities(intent, 0)
+    }
 
-    for (resolveInfo in resolveInfoList) {
-      val appInfo = resolveInfo.activityInfo.applicationInfo
-      val app = mapOf(
-        "name" to appInfo.packageName,
-        "label" to appInfo.loadLabel(pm).toString(),
-        "icon" to drawableToByteArray(appInfo.loadIcon(pm))
-      )
+    val apps = mutableListOf<Map<String, Any?>>()
+    for (info in appInfo) {
+      val app = mutableMapOf<String, Any?>()
+
+      app["label"] = info.loadLabel(pm).toString()
+      app["package"] = info.activityInfo.packageName
+      app["icon"] = drawableToByteArray(ri.loadIcon(pm))
+
       apps.add(app)
     }
     return apps
   }
 
   private fun drawableToByteArray(drawable: Drawable?): ByteArray? {
-    if (drawable == null) {
-      return null
-    }
+    if (drawable == null) return null
     
     if (drawable is BitmapDrawable) {
       val bitmap = drawable.bitmap
@@ -61,7 +67,12 @@ class MainActivity : FlutterActivity() {
       return stream.toByteArray()
     }
 
-    val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val bitmap = Bitmap.createBitmap(
+      drawable.intrinsicWidth,
+      drawable.intrinsicHeight,
+      Bitmap.Config.ARGB_8888
+    )
+
     val canvas = Canvas(bitmap)
     drawable.setBounds(0, 0, canvas.width, canvas.height)
     drawable.draw(canvas)
