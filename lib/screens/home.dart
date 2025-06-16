@@ -20,6 +20,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // Gather the theme data //
 
+  static const EzSpacer spacer = EzSpacer();
+
   late final Lang l10n = Lang.of(context)!;
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
@@ -47,7 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: Provider.of<AppInfoProvider>(context)
               .apps
-              .map((AppInfo app) => Text(app.label))
+              .expand((AppInfo app) => <Widget>[
+                    EzElevatedButton(text: app.label),
+                    spacer,
+                  ])
               .toList(),
         ),
       ),
