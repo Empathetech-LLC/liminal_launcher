@@ -67,7 +67,7 @@ class _EzSettingsHomeScreenState extends State<EzSettingsHomeScreen> {
               ),
               spacer,
 
-              const EzElevatedButton(text: 'Design'),
+              const EzSwitchPair(text: 'Design', value: true),
               spacer,
 
               EzElevatedIconButton(
@@ -77,7 +77,7 @@ class _EzSettingsHomeScreenState extends State<EzSettingsHomeScreen> {
               ),
               spacer,
 
-              const EzElevatedButton(text: 'Wallpapers'),
+              const EzSwitchPair(text: 'Wallpapers', value: true),
               separator,
 
               const EzResetButton(),
