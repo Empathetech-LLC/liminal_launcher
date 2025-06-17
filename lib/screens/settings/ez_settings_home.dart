@@ -67,11 +67,17 @@ class _EzSettingsHomeScreenState extends State<EzSettingsHomeScreen> {
               ),
               spacer,
 
+              const EzElevatedButton(text: 'Design'),
+              spacer,
+
               EzElevatedIconButton(
                 onPressed: () => context.goNamed(colorSettingsPath),
                 icon: EzIcon(Icons.navigate_next),
                 label: el10n.csPageTitle,
               ),
+              spacer,
+
+              const EzElevatedButton(text: 'Wallpapers'),
               separator,
 
               const EzResetButton(),
