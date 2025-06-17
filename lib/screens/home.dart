@@ -25,27 +25,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const EzSpacer spacer = EzSpacer();
 
-  late final Lang l10n = Lang.of(context)!;
-
-  late final TextTheme textTheme = Theme.of(context).textTheme;
-  late final TextStyle? subTitle = ezSubTitleStyle(textTheme);
-
   // Define the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
+  late final List<String> homeList =
+      EzConfig.getStringList(homePackages) ?? <String>[];
   late final List<AppInfo> homeApps = provider.apps
-      .where((AppInfo app) => EzConfig.get(homePackages).any(
-          (List<String>? packages) => packages?.contains(app.package) ?? false))
+      .where((AppInfo app) => homeList.contains(app.package))
       .toList(); // TODO: faster
-
-  // Set the page title //
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    ezWindowNamer(context, appTitle);
-  }
 
   // Return the build //
 
@@ -59,26 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < 0) {
               // Swiped up
-              // TODO: not a sheet
-              await showModalBottomSheet(
-                context: context,
-                builder: (_) => StatefulBuilder(
-                  builder: (_, StateSetter setModalState) {
-                    return EzScrollView(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: provider.apps.expand((AppInfo app) {
-                        return <Widget>[
-                          EzTextButton(
-                            text: app.label,
-                            onPressed: () => launchApp(app.package),
-                          ),
-                          spacer,
-                        ];
-                      }).toList(),
-                    );
-                  },
-                ),
-              );
+              context.goNamed(appListPath);
             }
           }
         },
@@ -92,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
               package = EzConfig.get(rightPackage);
             } // No action for 0
 
-            if (package != null) {
+            if (package != null && package.isNotEmpty) {
               launchApp(provider.apps
                   .firstWhere((AppInfo app) => app.package == package)
                   .package);
