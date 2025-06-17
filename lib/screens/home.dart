@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   late final List<String> homeList =
-      EzConfig.getStringList(homePackagesKey) ?? <String>[];
+      EzConfig.get(homePackagesKey) ?? <String>[];
   late final List<AppInfo> homeApps = provider.apps
       .where((AppInfo app) => homeList.contains(app.package))
       .toList(); // TODO: faster
