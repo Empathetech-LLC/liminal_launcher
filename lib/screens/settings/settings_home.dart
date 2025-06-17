@@ -24,10 +24,30 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   static const EzSpacer spacer = EzSpacer();
   static const EzSeparator separator = EzSeparator();
 
-  // Define the build data //
-
   late final Lang l10n = Lang.of(context)!;
   late final EFUILang el10n = ezL10n(context);
+
+  // Define the build data //
+
+  // Top third
+  bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
+  bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
+  bool homeWeather =
+      EzConfig.get(homeWeatherKey) ?? defaultConfig[homeWeatherKey];
+  bool hideStatusBar =
+      EzConfig.get(hideStatusBarKey) ?? defaultConfig[hideStatusBarKey];
+
+  // Home list
+  final List<String> homePackages = EzConfig.getStringList(homePackagesKey) ??
+      defaultConfig[homePackagesKey] as List<String>;
+  final String? leftPackage = EzConfig.get(leftPackageKey);
+  final String? rightPackage = EzConfig.get(rightPackageKey);
+
+  // Full list
+  bool autoSearch = EzConfig.get(autoSearchKey) ?? defaultConfig[autoSearchKey];
+  List<String>? hiddenPackages = EzConfig.getStringList(hiddenPackagesKey);
+  List<String>? nonZenPackages = EzConfig.getStringList(nonZenPackagesKey);
+  bool zenStream = EzConfig.get(zenStreamKey) ?? defaultConfig[zenStreamKey];
 
   //* Return the build *//
   // TODO: Should some of these go into custom pre-existing screens?
@@ -53,7 +73,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               spacer,
               const EzSwitchPair(text: 'Home weather', value: true),
               spacer,
-              const EzSwitchPair(text: 'Weather position', value: true),
+              const EzSwitchPair(text: 'WeatherPos2Layout', value: false),
               spacer,
               const EzSwitchPair(text: 'Hide status bar', value: true),
               separator,
@@ -61,7 +81,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               // Home list //
               const EzSwitchPair(text: 'Home packages', value: true),
               spacer,
-              const EzSwitchPair(text: 'Home alignment', value: true),
+              const EzSwitchPair(text: 'HomeAlign2Layout', value: false),
               spacer,
               const EzSwitchPair(text: 'Left package', value: true),
               spacer,
@@ -69,9 +89,9 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               separator,
 
               // Full list //
-              const EzSwitchPair(text: 'Full list alignment', value: true),
+              const EzSwitchPair(text: 'FLAlign2Layout', value: false),
               spacer,
-              const EzSwitchPair(text: 'Extend tile', value: true),
+              const EzSwitchPair(text: 'ETile2Design', value: true),
               spacer,
               const EzSwitchPair(text: 'Auto search', value: true),
               spacer,
