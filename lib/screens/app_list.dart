@@ -49,7 +49,10 @@ class _AppListScreenState extends State<AppListScreen> {
                 return <Widget>[
                   EzTextButton(
                     text: app.label,
-                    onPressed: () => launchApp(app.package),
+                    onPressed: () {
+                      launchApp(app.package);
+                      Navigator.of(context).pop();
+                    },
                   ),
                   spacer,
                 ];
