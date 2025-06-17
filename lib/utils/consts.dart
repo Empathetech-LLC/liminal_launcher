@@ -21,10 +21,6 @@ const String homeAlignment = 'home_alignment';
 const String leftPackage = 'left_package';
 const String rightPackage = 'right_package';
 
-// Wallpaper(s)
-const String wallpapers = 'wallpapers';
-const String dailyWallpapers = 'daily_wallpapers';
-
 // Full list
 const String fullListAlignment = 'full_list_alignment';
 const String extendTile = 'extend_tile';
@@ -38,6 +34,10 @@ const String notificationIcon = 'notification_icon';
 const String buttonType = 'button_type';
 const String authToEdit = 'auth_to_edit';
 const String tapLock = 'tap_lock';
+
+// Wallpaper(s)
+const String wallpapers = 'wallpapers';
+const String dailyWallpapers = 'daily_wallpapers';
 
 /// [mobileEmpathConfig] with Liminal additions
 const Map<String, Object> defaultConfig = <String, Object>{
