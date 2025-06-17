@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   late final List<String> homeList =
-      EzConfig.getStringList(homePackages) ?? <String>[];
+      EzConfig.getStringList(homePackagesKey) ?? <String>[];
   late final List<AppInfo> homeApps = provider.apps
       .where((AppInfo app) => homeList.contains(app.package))
       .toList(); // TODO: faster
@@ -56,9 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
             late final String? package;
 
             if (details.primaryVelocity! < 0) {
-              package = EzConfig.get(leftPackage);
+              package = EzConfig.get(leftPackageKey);
             } else if (details.primaryVelocity! > 0) {
-              package = EzConfig.get(rightPackage);
+              package = EzConfig.get(rightPackageKey);
             } // No action for 0
 
             if (package != null && package.isNotEmpty) {
