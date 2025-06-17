@@ -8,7 +8,7 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 /// Liminal launcher
 const String appTitle = 'Liminal launcher';
 
-// Top third
+// Header
 const String homeTimeKey = 'home_time';
 const String homeDateKey = 'home_date';
 const String homeWeatherKey = 'home_weather';
@@ -43,7 +43,7 @@ const String dailyWallpapersKey = 'daily_wallpapers';
 const Map<String, Object> defaultConfig = <String, Object>{
   ...mobileEmpathConfig,
 
-  // Top third
+  // Header
   homeTimeKey: true,
   homeDateKey: true,
   homeWeatherKey: true,
