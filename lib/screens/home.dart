@@ -3,8 +3,7 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:empathetech_launcher/screens/export.dart';
-
+import '../screens/export.dart';
 import '../utils/export.dart';
 import '../widgets/export.dart';
 
@@ -25,7 +24,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const EzSpacer spacer = EzSpacer();
 
+  late final double safeTop = MediaQuery.paddingOf(context).top;
+  late final double safeBottom = MediaQuery.paddingOf(context).bottom;
+
+  late final TextTheme textTheme = Theme.of(context).textTheme;
+
   // Define the build data //
+
+  final bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
+  final bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
+
+  // TODO: Shared DateTime listener
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
@@ -69,19 +78,37 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         child: EzScreen(
-          child: Center(
-            child: EzScrollView(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: homeApps.expand((AppInfo app) {
-                return <Widget>[
-                  EzTextButton(
-                    text: app.label,
-                    onPressed: () => launchApp(app.package),
-                  ),
-                  spacer,
-                ];
-              }).toList(),
-            ),
+          child: Column(
+            children: <Widget>[
+              // Header
+              EzSpacer(space: safeTop),
+              // TODO: Function for this
+              if (homeTime) ...<Widget>[
+                EzText(
+                  '${DateTime.now().hour} : ${DateTime.now().minute.toString().padLeft(2, '0')}',
+                  style: textTheme.headlineLarge,
+                ),
+              ],
+              if (homeDate) ...<Widget>[
+                EzText(
+                  '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                  style: textTheme.labelLarge,
+                ),
+              ],
+
+              // App list
+              EzScrollView(
+                children: homeApps.expand((AppInfo app) {
+                  return <Widget>[
+                    EzTextButton(
+                      text: app.label,
+                      onPressed: () => launchApp(app.package),
+                    ),
+                    spacer,
+                  ];
+                }).toList(),
+              ),
+            ],
           ),
         ),
       ),
