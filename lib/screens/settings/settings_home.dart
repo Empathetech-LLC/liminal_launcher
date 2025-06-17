@@ -38,15 +38,15 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
       EzConfig.get(hideStatusBarKey) ?? defaultConfig[hideStatusBarKey];
 
   // Home list
-  final List<String> homePackages = EzConfig.getStringList(homePackagesKey) ??
+  final List<String> homePackages = EzConfig.get(homePackagesKey) ??
       defaultConfig[homePackagesKey] as List<String>;
   final String? leftPackage = EzConfig.get(leftPackageKey);
   final String? rightPackage = EzConfig.get(rightPackageKey);
 
   // Full list
   bool autoSearch = EzConfig.get(autoSearchKey) ?? defaultConfig[autoSearchKey];
-  List<String>? hiddenPackages = EzConfig.getStringList(hiddenPackagesKey);
-  List<String>? nonZenPackages = EzConfig.getStringList(nonZenPackagesKey);
+  List<String>? hiddenPackages = EzConfig.get(hiddenPackagesKey);
+  List<String>? nonZenPackages = EzConfig.get(nonZenPackagesKey);
   bool zenStream = EzConfig.get(zenStreamKey) ?? defaultConfig[zenStreamKey];
 
   //* Return the build *//
