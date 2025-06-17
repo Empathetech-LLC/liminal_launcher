@@ -7,6 +7,7 @@ import '../screens/export.dart';
 import '../utils/export.dart';
 import '../widgets/export.dart';
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -28,13 +29,16 @@ class _HomeScreenState extends State<HomeScreen> {
   late final double safeBottom = MediaQuery.paddingOf(context).bottom;
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
+  late final MaterialLocalizations localizations =
+      MaterialLocalizations.of(context);
 
   // Define the build data //
 
   final bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
   final bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
 
-  // TODO: Shared DateTime listener
+  DateTime now = DateTime.now();
+  late Timer ticker;
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
@@ -43,6 +47,38 @@ class _HomeScreenState extends State<HomeScreen> {
   late final List<AppInfo> homeApps = provider.apps
       .where((AppInfo app) => homeList.contains(app.package))
       .toList(); // TODO: faster
+
+  // Define custom Widgets //
+
+  Widget header() {
+    final List<Widget> children = <Widget>[];
+
+    if (homeTime) {
+      children.add(EzText(
+        TimeOfDay.fromDateTime(now).format(context),
+        style: textTheme.headlineLarge,
+      ));
+    }
+
+    if (homeDate) {
+      children.add(EzText(
+        localizations.formatMediumDate(now),
+        style: textTheme.labelLarge,
+      ));
+    }
+
+    return Column(mainAxisSize: MainAxisSize.min, children: children);
+  }
+
+  // Init //
+
+  @override
+  void initState() {
+    super.initState();
+    ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() => now = DateTime.now());
+    });
+  }
 
   // Return the build //
 
@@ -80,21 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: EzScreen(
           child: Column(
             children: <Widget>[
-              // Header
               EzSpacer(space: safeTop),
-              // TODO: Function for this
-              if (homeTime) ...<Widget>[
-                EzText(
-                  '${DateTime.now().hour} : ${DateTime.now().minute.toString().padLeft(2, '0')}',
-                  style: textTheme.headlineLarge,
-                ),
-              ],
-              if (homeDate) ...<Widget>[
-                EzText(
-                  '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                  style: textTheme.labelLarge,
-                ),
-              ],
+              header(),
 
               // App list
               EzScrollView(
@@ -113,5 +136,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    ticker.cancel();
+    super.dispose();
   }
 }
