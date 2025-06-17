@@ -4,33 +4,55 @@
  */
 
 import '../../screens/export.dart';
+import '../../utils/export.dart';
 import '../../widgets/export.dart';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
-class SettingsHomeScreen extends StatelessWidget {
+class SettingsHomeScreen extends StatefulWidget {
   const SettingsHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => LiminalScaffold(
-        SafeArea(
-          child: EzSettingsHome(
-            textSettingsPath: textSettingsPath,
-            layoutSettingsPath: layoutSettingsPath,
-            colorSettingsPath: colorSettingsPath,
-            imageSettingsPath: imageSettingsPath,
-            additionalRoutes: <Widget>[
+  State<SettingsHomeScreen> createState() => _SettingsHomeScreenState();
+}
+
+class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
+  // Gather the theme data //
+
+  static const EzSeparator separator = EzSeparator();
+
+  // Define the build data //
+
+  late final Lang l10n = Lang.of(context)!;
+  late final EFUILang el10n = ezL10n(context);
+
+  @override
+  Widget build(BuildContext context) {
+    return LiminalScaffold(
+      SafeArea(
+        child: EzScreen(
+          child: EzScrollView(
+            children: <Widget>[
+              // Functionality disclaimer
+              const EzWarning(
+                'Changes will take full effect after a restart.\n\nHave fun!',
+              ),
+              separator,
+
+              // Appearance
               EzElevatedIconButton(
-                onPressed: () => context.goNamed(designSettingsPath),
+                onPressed: () => context.goNamed(ezSettingsHomePath),
                 icon: EzIcon(Icons.navigate_next),
-                label: 'Design settings',
-              )
+                label: 'Appearance settings',
+              ),
+              separator,
             ],
-            allowRandom: true,
           ),
         ),
-        fab: EzBackFAB(context),
-      );
+      ),
+      fab: EzBackFAB(context),
+    );
+  }
 }
