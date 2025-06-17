@@ -84,6 +84,11 @@ final GoRouter router = GoRouter(
       builder: (_, __) => const HomeScreen(),
       routes: <RouteBase>[
         GoRoute(
+          path: appListPath,
+          name: appListPath,
+          builder: (_, __) => const AppListScreen(),
+        ),
+        GoRoute(
           path: settingsHomePath,
           name: settingsHomePath,
           builder: (_, __) => const SettingsHomeScreen(),
@@ -106,11 +111,6 @@ final GoRouter router = GoRouter(
                       const TextSettingsScreen(target: EzTSType.advanced),
                 ),
               ],
-            ),
-            GoRoute(
-              path: designSettingsPath,
-              name: designSettingsPath,
-              builder: (_, __) => const DesignSettingsScreen(),
             ),
             GoRoute(
               path: layoutSettingsPath,
@@ -140,6 +140,11 @@ final GoRouter router = GoRouter(
               path: imageSettingsPath,
               name: imageSettingsPath,
               builder: (_, __) => const ImageSettingsScreen(),
+            ),
+            GoRoute(
+              path: designSettingsPath,
+              name: designSettingsPath,
+              builder: (_, __) => const DesignSettingsScreen(),
             ),
           ],
         ),

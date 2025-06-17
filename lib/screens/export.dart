@@ -6,6 +6,7 @@
 // Exports //
 
 export 'error.dart';
+export 'app_list.dart';
 export 'home.dart';
 
 export 'settings/settings_home.dart';
@@ -16,6 +17,9 @@ export 'settings/image_settings.dart';
 export 'settings/design_settings.dart';
 
 // Route names //
+
+/// 'app-list'
+const String appListPath = 'app-list';
 
 /// 'settings-home'
 const String settingsHomePath = 'settings-home';
