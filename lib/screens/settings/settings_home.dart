@@ -29,7 +29,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
 
   // Define the build data //
 
-  // Top third
+  // Header
   bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
   bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
   bool homeWeather =
@@ -66,7 +66,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               ),
               separator,
 
-              // Top third //
+              // Header //
               EzSwitchPair(
                 text: 'Home time',
                 value: homeTime,
