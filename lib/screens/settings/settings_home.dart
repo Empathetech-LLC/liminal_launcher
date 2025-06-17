@@ -67,15 +67,51 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               separator,
 
               // Top third //
-              const EzSwitchPair(text: 'Home time', value: true),
+              EzSwitchPair(
+                text: 'Home time',
+                value: homeTime,
+                onChanged: (bool? value) async {
+                  if (value == null) return;
+
+                  await EzConfig.setBool(homeTimeKey, value);
+                  setState(() => homeTime = value);
+                },
+              ),
               spacer,
-              const EzSwitchPair(text: 'Home date', value: true),
+              EzSwitchPair(
+                text: 'Home date',
+                value: homeDate,
+                onChanged: (bool? value) async {
+                  if (value == null) return;
+
+                  await EzConfig.setBool(homeDateKey, value);
+                  setState(() => homeDate = value);
+                },
+              ),
               spacer,
-              const EzSwitchPair(text: 'Home weather', value: true),
+              EzSwitchPair(
+                text: 'Home weather',
+                value: homeWeather,
+                onChanged: (bool? value) async {
+                  if (value == null) return;
+
+                  await EzConfig.setBool(homeWeatherKey, value);
+                  setState(() => homeWeather = value);
+                },
+              ),
               spacer,
               const EzSwitchPair(text: 'WeatherPos2Layout', value: false),
               spacer,
-              const EzSwitchPair(text: 'Hide status bar', value: true),
+              EzSwitchPair(
+                text: 'Hide status bar',
+                value: hideStatusBar,
+                onChanged: (bool? value) async {
+                  if (value == null) return;
+
+                  await EzConfig.setBool(hideStatusBarKey, value);
+                  setState(() => hideStatusBar = value);
+                },
+              ),
               separator,
 
               // Home list //
@@ -91,15 +127,33 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               // Full list //
               const EzSwitchPair(text: 'FLAlign2Layout', value: false),
               spacer,
-              const EzSwitchPair(text: 'ETile2Design', value: true),
+              const EzSwitchPair(text: 'ETile2Design', value: false),
               spacer,
-              const EzSwitchPair(text: 'Auto search', value: true),
+              EzSwitchPair(
+                text: 'Auto search',
+                value: autoSearch,
+                onChanged: (bool? value) async {
+                  if (value == null) return;
+
+                  await EzConfig.setBool(autoSearchKey, value);
+                  setState(() => autoSearch = value);
+                },
+              ),
               spacer,
               const EzSwitchPair(text: 'Hidden packages', value: true),
               spacer,
               const EzSwitchPair(text: 'Non-zen packages', value: true),
               spacer,
-              const EzSwitchPair(text: 'Zen stream', value: true),
+              EzSwitchPair(
+                text: 'Zen stream',
+                value: zenStream,
+                onChanged: (bool? value) async {
+                  if (value == null) return;
+
+                  await EzConfig.setBool(zenStreamKey, value);
+                  setState(() => zenStream = value);
+                },
+              ),
               separator,
 
               // Appearance
