@@ -32,8 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Define the build data //
 
-  int count = 0;
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+
+  late final List<AppInfo> homeApps = provider.apps
+      .where((AppInfo app) => EzConfig.get(homePackages).any(
+          (List<String>? packages) => packages?.contains(app.package) ?? false))
+      .toList(); // TODO: faster
 
   // Set the page title //
 
@@ -51,38 +55,63 @@ class _HomeScreenState extends State<HomeScreen> {
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onLongPress: () => context.goNamed(settingsHomePath),
-        onVerticalDragEnd: (DragEndDetails details) {
+        onVerticalDragEnd: (DragEndDetails details) async {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < 0) {
               // Swiped up
-              launchApp(provider.apps.first.package);
+              // TODO: not a sheet
+              await showModalBottomSheet(
+                context: context,
+                builder: (_) => StatefulBuilder(
+                  builder: (_, StateSetter setModalState) {
+                    return EzScrollView(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: provider.apps.expand((AppInfo app) {
+                        return <Widget>[
+                          EzTextButton(
+                            text: app.label,
+                            onPressed: () => launchApp(app.package),
+                          ),
+                          spacer,
+                        ];
+                      }).toList(),
+                    );
+                  },
+                ),
+              );
             }
           }
         },
         onHorizontalDragEnd: (DragEndDetails details) {
           if (details.primaryVelocity != null) {
+            late final String? package;
+
             if (details.primaryVelocity! < 0) {
-              // Swiped left
-              launchApp(provider.apps.first.package);
+              package = EzConfig.get(leftPackage);
             } else if (details.primaryVelocity! > 0) {
-              // Swiped right
-              launchApp(provider.apps.first.package);
-            }
+              package = EzConfig.get(rightPackage);
+            } // No action for 0
+
+            if (package != null) {
+              launchApp(provider.apps
+                  .firstWhere((AppInfo app) => app.package == package)
+                  .package);
+            } // TODO: faster
           }
         },
         child: EzScreen(
           child: Center(
             child: EzScrollView(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: provider.apps
-                  .expand((AppInfo app) => <Widget>[
-                        EzTextButton(
-                          text: app.label,
-                          onPressed: () => launchApp(app.package),
-                        ),
-                        spacer,
-                      ])
-                  .toList(),
+              children: homeApps.expand((AppInfo app) {
+                return <Widget>[
+                  EzTextButton(
+                    text: app.label,
+                    onPressed: () => launchApp(app.package),
+                  ),
+                  spacer,
+                ];
+              }).toList(),
             ),
           ),
         ),
