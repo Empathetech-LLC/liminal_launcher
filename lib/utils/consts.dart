@@ -16,7 +16,6 @@ const String weatherPosition = 'weather_position';
 const String hideStatusBar = 'hide_status_bar';
 
 // Home list
-const String homeLength = 'home_length';
 const String homePackages = 'home_packages';
 const String homeAlignment = 'home_alignment';
 const String leftPackage = 'left_package';
@@ -52,7 +51,6 @@ const Map<String, Object> defaultConfig = <String, Object>{
   hideStatusBar: false,
 
   // Home list
-  homeLength: 5,
   homePackages: <String>[],
   homeAlignment: 'center',
   leftPackage: '',
