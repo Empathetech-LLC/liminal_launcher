@@ -3,10 +3,18 @@
  * See LICENSE for distribution and usage details.
  */
 
+import './models.dart';
+
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 /// Liminal launcher
 const String appTitle = 'Liminal launcher';
+
+/// [AppInfo] with package 'net.empathetech.liminal'
+const AppInfo self = AppInfo(
+  label: 'Liminal launcher',
+  package: 'net.empathetech.liminal',
+);
 
 // Header
 const String homeTimeKey = 'home_time';
