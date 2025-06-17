@@ -94,57 +94,64 @@ final GoRouter router = GoRouter(
           builder: (_, __) => const SettingsHomeScreen(),
           routes: <RouteBase>[
             GoRoute(
-              path: textSettingsPath,
-              name: textSettingsPath,
-              builder: (_, __) => const TextSettingsScreen(),
+              path: ezSettingsHomePath,
+              name: ezSettingsHomePath,
+              builder: (_, __) => const EzSettingsHomeScreen(),
               routes: <RouteBase>[
                 GoRoute(
-                  path: EzTSType.quick.path,
-                  name: EzTSType.quick.name,
-                  builder: (_, __) =>
-                      const TextSettingsScreen(target: EzTSType.quick),
+                  path: textSettingsPath,
+                  name: textSettingsPath,
+                  builder: (_, __) => const TextSettingsScreen(),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: EzTSType.quick.path,
+                      name: EzTSType.quick.name,
+                      builder: (_, __) =>
+                          const TextSettingsScreen(target: EzTSType.quick),
+                    ),
+                    GoRoute(
+                      path: EzTSType.advanced.path,
+                      name: EzTSType.advanced.name,
+                      builder: (_, __) =>
+                          const TextSettingsScreen(target: EzTSType.advanced),
+                    ),
+                  ],
                 ),
                 GoRoute(
-                  path: EzTSType.advanced.path,
-                  name: EzTSType.advanced.name,
-                  builder: (_, __) =>
-                      const TextSettingsScreen(target: EzTSType.advanced),
+                  path: layoutSettingsPath,
+                  name: layoutSettingsPath,
+                  builder: (_, __) => const LayoutSettingsScreen(),
+                ),
+                GoRoute(
+                  path: colorSettingsPath,
+                  name: colorSettingsPath,
+                  builder: (_, __) => const ColorSettingsScreen(),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: EzCSType.quick.path,
+                      name: EzCSType.quick.name,
+                      builder: (_, __) =>
+                          const ColorSettingsScreen(target: EzCSType.quick),
+                    ),
+                    GoRoute(
+                      path: EzCSType.advanced.path,
+                      name: EzCSType.advanced.name,
+                      builder: (_, __) =>
+                          const ColorSettingsScreen(target: EzCSType.advanced),
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: imageSettingsPath,
+                  name: imageSettingsPath,
+                  builder: (_, __) => const ImageSettingsScreen(),
+                ),
+                GoRoute(
+                  path: designSettingsPath,
+                  name: designSettingsPath,
+                  builder: (_, __) => const DesignSettingsScreen(),
                 ),
               ],
-            ),
-            GoRoute(
-              path: layoutSettingsPath,
-              name: layoutSettingsPath,
-              builder: (_, __) => const LayoutSettingsScreen(),
-            ),
-            GoRoute(
-              path: colorSettingsPath,
-              name: colorSettingsPath,
-              builder: (_, __) => const ColorSettingsScreen(),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: EzCSType.quick.path,
-                  name: EzCSType.quick.name,
-                  builder: (_, __) =>
-                      const ColorSettingsScreen(target: EzCSType.quick),
-                ),
-                GoRoute(
-                  path: EzCSType.advanced.path,
-                  name: EzCSType.advanced.name,
-                  builder: (_, __) =>
-                      const ColorSettingsScreen(target: EzCSType.advanced),
-                ),
-              ],
-            ),
-            GoRoute(
-              path: imageSettingsPath,
-              name: imageSettingsPath,
-              builder: (_, __) => const ImageSettingsScreen(),
-            ),
-            GoRoute(
-              path: designSettingsPath,
-              name: designSettingsPath,
-              builder: (_, __) => const DesignSettingsScreen(),
             ),
           ],
         ),
