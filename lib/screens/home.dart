@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: provider.apps
                   .expand((AppInfo app) => <Widget>[
-                        EzElevatedButton(
+                        EzTextButton(
                           text: app.label,
                           onPressed: () => launchApp(app.package),
                         ),
