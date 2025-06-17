@@ -34,7 +34,7 @@ void main() async {
 
   EzConfig.init(
     preferences: prefs,
-    defaults: mobileEmpathConfig,
+    defaults: defaultConfig,
     fallbackLang: await EFUILang.delegate.load(english),
     assetPaths: <String>{},
   );
