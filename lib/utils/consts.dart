@@ -7,12 +7,12 @@ import './models.dart';
 
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
-/// Liminal launcher
-const String appTitle = 'Liminal launcher';
+/// Liminal Launcher
+const String appTitle = 'Liminal Launcher';
 
 /// [AppInfo] with package 'net.empathetech.liminal'
 const AppInfo self = AppInfo(
-  label: 'Liminal launcher',
+  label: 'Liminal Launcher',
   package: 'net.empathetech.liminal',
 );
 
