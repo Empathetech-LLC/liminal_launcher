@@ -9,70 +9,70 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 const String appTitle = 'Liminal launcher';
 
 // Top third
-const String homeTime = 'home_time';
-const String homeDate = 'home_date';
-const String homeWeather = 'home_weather';
-const String weatherPosition = 'weather_position';
-const String hideStatusBar = 'hide_status_bar';
+const String homeTimeKey = 'home_time';
+const String homeDateKey = 'home_date';
+const String homeWeatherKey = 'home_weather';
+const String weatherPositionKey = 'weather_position';
+const String hideStatusBarKey = 'hide_status_bar';
 
 // Home list
-const String homePackages = 'home_packages';
-const String homeAlignment = 'home_alignment';
-const String leftPackage = 'left_package';
-const String rightPackage = 'right_package';
+const String homePackagesKey = 'home_packages';
+const String homeAlignmentKey = 'home_alignment';
+const String leftPackageKey = 'left_package';
+const String rightPackageKey = 'right_package';
 
 // Full list
-const String fullListAlignment = 'full_list_alignment';
-const String extendTile = 'extend_tile';
-const String autoSearch = 'auto_search';
-const String hiddenPackages = 'hidden_packages';
-const String nonZenPackages = 'non_zen_packages';
-const String zenStream = 'zen_stream'; // Extreme zen
+const String fullListAlignmentKey = 'full_list_alignment';
+const String extendTileKey = 'extend_tile';
+const String autoSearchKey = 'auto_search';
+const String hiddenPackagesKey = 'hidden_packages';
+const String nonZenPackagesKey = 'non_zen_packages';
+const String zenStreamKey = 'zen_stream'; // Extreme zen
 
 // Design
-const String notificationIcon = 'notification_icon';
-const String buttonType = 'button_type';
-const String authToEdit = 'auth_to_edit';
-const String tapLock = 'tap_lock';
+const String notificationIconKey = 'notification_icon';
+const String buttonTypeKey = 'button_type';
+const String authToEditKey = 'auth_to_edit';
+const String tapLockKey = 'tap_lock';
 
 // Wallpaper(s)
-const String wallpapers = 'wallpapers';
-const String dailyWallpapers = 'daily_wallpapers';
+const String wallpapersKey = 'wallpapers';
+const String dailyWallpapersKey = 'daily_wallpapers';
 
 /// [mobileEmpathConfig] with Liminal additions
 const Map<String, Object> defaultConfig = <String, Object>{
   ...mobileEmpathConfig,
 
   // Top third
-  homeTime: true,
-  homeDate: true,
-  homeWeather: true,
-  weatherPosition: 'top_right',
-  hideStatusBar: false,
+  homeTimeKey: true,
+  homeDateKey: true,
+  homeWeatherKey: true,
+  weatherPositionKey: 'top_right',
+  hideStatusBarKey: false,
 
   // Home list
-  homePackages: <String>[],
-  homeAlignment: 'center',
-  leftPackage: '',
-  rightPackage: '',
-
-  // Wallpaper(s)
-  wallpapers: <String>[],
-  dailyWallpapers: false,
+  homePackagesKey: <String>[],
+  homeAlignmentKey: 'center',
+  leftPackageKey: '',
+  rightPackageKey: '',
 
   // Full list
-  fullListAlignment: 'center',
-  extendTile: false,
-  autoSearch: false,
-  hiddenPackages: <String>[],
-  nonZenPackages: <String>[],
-  zenStream: false,
+  fullListAlignmentKey: 'center',
+  extendTileKey: false,
+  autoSearchKey: false,
+  hiddenPackagesKey: <String>[],
+  nonZenPackagesKey: <String>[],
+  zenStreamKey: false,
 
   // Design
-  notificationIcon: '',
-  buttonType: 'text',
-  authToEdit: false,
-  tapLock: false,
+  notificationIconKey: '',
+  buttonTypeKey: 'text',
+  authToEditKey: false,
+  tapLockKey: false,
+
+  // Wallpaper(s)
+  wallpapersKey: <String>[],
+  dailyWallpapersKey: false,
 };
 
 // TODO: turn the values above into an enum (probs on the relevant page)
