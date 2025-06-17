@@ -37,6 +37,7 @@ const String zenStream = 'zen_stream'; // Extreme zen
 // Design
 const String notificationIcon = 'notification_icon';
 const String buttonType = 'button_type';
+const String authToEdit = 'auth_to_edit';
 const String tapLock = 'tap_lock';
 
 /// [mobileEmpathConfig] with Liminal additions
@@ -72,6 +73,7 @@ const Map<String, Object> defaultConfig = <String, Object>{
   // Design
   notificationIcon: '',
   buttonType: 'text',
+  authToEdit: false,
   tapLock: false,
 };
 
