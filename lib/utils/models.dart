@@ -5,11 +5,18 @@
 
 import 'package:flutter/services.dart';
 
+/// Helpful for creating [AppInfo] lists
+/// Label 'None' and package ''
+const AppInfo nullApp = AppInfo(label: '---', package: '');
+
 class AppInfo {
   final String label;
   final String package;
   final Uint8List? icon;
 
+  /// [Object] to store app information
+  /// Label, package, and icon
+  /// [AppInfo]s with == packages are ==
   const AppInfo({required this.label, required this.package, this.icon});
 
   factory AppInfo.fromMap(Map<String, dynamic> map) => AppInfo(
