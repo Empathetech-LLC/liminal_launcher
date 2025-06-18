@@ -4,4 +4,5 @@
  */
 
 export 'app_tile.dart';
+export 'fabulous.dart';
 export 'liminal_scaffold.dart';
