@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
+  static const EzSeparator separator = EzSeparator();
 
   late final double safeTop = MediaQuery.paddingOf(context).top;
   late final double safeBottom = MediaQuery.paddingOf(context).bottom;
@@ -33,6 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialLocalizations.of(context);
 
   // Define the build data //
+
+  bool editing = false;
 
   final bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
   final bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
@@ -87,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return LiminalScaffold(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onLongPress: () => context.goNamed(settingsHomePath),
+        onLongPress: () => setState(() => editing = !editing),
         onVerticalDragEnd: (DragEndDetails details) async {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < 0) {
@@ -133,6 +137,31 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+        ),
+      ),
+      fab: Visibility(
+        visible: editing,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            FloatingActionButton(
+              heroTag: 'add_fab',
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                useSafeArea: true,
+                isScrollControlled: true,
+                builder: (_) => StatefulBuilder(
+                  builder: (_, StateSetter setModalState) {
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+              tooltip: 'Add app to home list',
+              child: EzIcon(PlatformIcons(context).add),
+            ),
+            separator,
+            SettingsFAB(context)
+          ],
         ),
       ),
     );
