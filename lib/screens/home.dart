@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -144,23 +143,32 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            FloatingActionButton(
-              heroTag: 'add_fab',
-              onPressed: () => showModalBottomSheet(
+            AddFAB(
+              context,
+              () => showModalBottomSheet(
                 context: context,
                 useSafeArea: true,
                 isScrollControlled: true,
                 builder: (_) => StatefulBuilder(
                   builder: (_, StateSetter setModalState) {
-                    return const SizedBox.shrink();
+                    return EzScrollView(
+                      mainAxisSize: MainAxisSize.min,
+                      children: provider.apps
+                          .map((AppInfo app) => EzTextButton(
+                                text: app.label,
+                                onPressed: doNothing,
+                              ))
+                          .toList(),
+                    );
                   },
                 ),
               ),
-              tooltip: 'Add app to home list',
-              child: EzIcon(PlatformIcons(context).add),
             ),
             separator,
-            SettingsFAB(context)
+            SettingsFAB(context, () {
+              context.goNamed(settingsHomePath);
+              setState(() => editing = false);
+            })
           ],
         ),
       ),
