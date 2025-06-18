@@ -8,6 +8,7 @@ import '../../utils/export.dart';
 import '../../widgets/export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
@@ -24,10 +25,18 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   static const EzSpacer spacer = EzSpacer();
   static const EzSeparator separator = EzSeparator();
 
+  late final ButtonStyle menuButtonStyle = TextButton.styleFrom(
+    padding: EzInsets.wrap(EzConfig.get(paddingKey)),
+  );
+
   late final Lang l10n = Lang.of(context)!;
   late final EFUILang el10n = ezL10n(context);
 
+  late final TextTheme textTheme = Theme.of(context).textTheme;
+
   // Define the build data //
+
+  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   // Header
   bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
@@ -40,14 +49,53 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   // Home list
   final List<String> homePackages = EzConfig.get(homePackagesKey) ??
       defaultConfig[homePackagesKey] as List<String>;
-  final String? leftPackage = EzConfig.get(leftPackageKey);
-  final String? rightPackage = EzConfig.get(rightPackageKey);
+
+  late final List<String> appNames =
+      provider.apps.map((AppInfo app) => app.label).toList();
+  late final List<DropdownMenuEntry<AppInfo>> dropdownPackages;
+
+  late AppInfo leftPackage;
+  late AppInfo rightPackage;
 
   // Full list
   bool autoSearch = EzConfig.get(autoSearchKey) ?? defaultConfig[autoSearchKey];
   List<String>? hiddenPackages = EzConfig.get(hiddenPackagesKey);
   List<String>? nonZenPackages = EzConfig.get(nonZenPackagesKey);
   bool zenStream = EzConfig.get(zenStreamKey) ?? defaultConfig[zenStreamKey];
+
+  // Init //
+
+  @override
+  void initState() {
+    super.initState();
+
+    dropdownPackages = provider.apps
+        .map((AppInfo app) => DropdownMenuEntry<AppInfo>(
+              value: app,
+              label: app.label,
+              style: menuButtonStyle,
+            ))
+        .toList();
+    dropdownPackages.insert(
+        0,
+        DropdownMenuEntry<AppInfo>(
+          value: nullApp,
+          label: nullApp.label,
+          style: menuButtonStyle,
+        ));
+
+    final String? storedLeft = EzConfig.get(leftPackageKey) ?? '';
+    final String? storedRight = EzConfig.get(rightPackageKey) ?? '';
+
+    leftPackage = dropdownPackages
+        .firstWhere((DropdownMenuEntry<AppInfo> entry) =>
+            entry.value.package == storedLeft)
+        .value; // TODO: faster
+    rightPackage = dropdownPackages
+        .firstWhere((DropdownMenuEntry<AppInfo> entry) =>
+            entry.value.package == storedRight)
+        .value; // TODO: faster
+  }
 
   //* Return the build *//
   // TODO: Should some of these go into custom pre-existing screens?
@@ -60,13 +108,14 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         child: EzScreen(
           child: EzScrollView(
             children: <Widget>[
-              // Functionality disclaimer
               const EzWarning(
                 'Changes will take full effect after a restart.\n\nHave fun!',
               ),
               separator,
 
               // Header //
+
+              // Time
               EzSwitchPair(
                 text: 'Home time',
                 value: homeTime,
@@ -78,6 +127,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 },
               ),
               spacer,
+
+              // Date
               EzSwitchPair(
                 text: 'Home date',
                 value: homeDate,
@@ -89,6 +140,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 },
               ),
               spacer,
+
+              // Weather
               EzSwitchPair(
                 text: 'Home weather',
                 value: homeWeather,
@@ -100,6 +153,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 },
               ),
               spacer,
+
+              // tmp
               const EzSwitchPair(text: 'WeatherPos2Layout', value: false),
               spacer,
               EzSwitchPair(
@@ -115,20 +170,68 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               separator,
 
               // Home list //
+
+              // Home list
               const EzSwitchPair(text: 'Home packages', value: true),
               spacer,
+
+              // tmp
               const EzSwitchPair(text: 'HomeAlign2Layout', value: false),
               spacer,
-              const EzSwitchPair(text: 'Left package', value: true),
+
+              // Left swipe
+              EzRow(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  EzText('Left package', style: textTheme.bodyLarge),
+                  spacer,
+                  EzDropdownMenu<AppInfo>(
+                    widthEntries: appNames,
+                    dropdownMenuEntries: dropdownPackages,
+                    initialSelection: leftPackage,
+                    onSelected: (AppInfo? app) async {
+                      if (app == null || app == leftPackage) return;
+
+                      await EzConfig.setString(leftPackageKey, app.package);
+                      setState(() => leftPackage = app);
+                    },
+                  )
+                ],
+              ),
               spacer,
-              const EzSwitchPair(text: 'Right package', value: true),
+
+              // Right swipe
+              EzRow(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  EzText('Right package', style: textTheme.bodyLarge),
+                  spacer,
+                  EzDropdownMenu<AppInfo>(
+                    widthEntries: appNames,
+                    dropdownMenuEntries: dropdownPackages,
+                    initialSelection: rightPackage,
+                    onSelected: (AppInfo? app) async {
+                      if (app == null || app == rightPackage) return;
+
+                      await EzConfig.setString(rightPackageKey, app.package);
+                      setState(() => rightPackage = app);
+                    },
+                  )
+                ],
+              ),
               separator,
 
               // Full list //
+
+              // tmp
               const EzSwitchPair(text: 'FLAlign2Layout', value: false),
               spacer,
+
+              // tmp
               const EzSwitchPair(text: 'ETile2Design', value: false),
               spacer,
+
+              // Auto search
               EzSwitchPair(
                 text: 'Auto search',
                 value: autoSearch,
@@ -140,23 +243,25 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 },
               ),
               spacer,
+
+              // Always hidden packages
               const EzSwitchPair(text: 'Hidden packages', value: true),
               spacer,
-              const EzSwitchPair(text: 'Non-zen packages', value: true),
-              spacer,
-              EzSwitchPair(
-                text: 'Zen stream',
-                value: zenStream,
-                onChanged: (bool? value) async {
-                  if (value == null) return;
 
-                  await EzConfig.setBool(zenStreamKey, value);
-                  setState(() => zenStream = value);
-                },
-              ),
+              // Always quarantined packages
+              const EzSwitchPair(text: 'Quarantined packages', value: true),
+              spacer,
+
+              // Packages hidden during focus
+              const EzSwitchPair(text: 'Non-zen packages I', value: true),
+              spacer,
+
+              // Packages quarantined during focus
+              const EzSwitchPair(text: 'Non-zen packages II', value: true),
               separator,
 
-              // Appearance
+              // Navigation //
+
               EzElevatedIconButton(
                 onPressed: () => context.goNamed(ezSettingsHomePath),
                 icon: EzIcon(Icons.navigate_next),
