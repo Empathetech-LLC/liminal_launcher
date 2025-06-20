@@ -129,9 +129,18 @@ class _HomeScreenState extends State<HomeScreen> {
               EzScrollView(
                 children: homeApps.expand((AppInfo app) {
                   return <Widget>[
-                    EzTextButton(
-                      text: app.label,
-                      onPressed: () => launchApp(app.package),
+                    AppTile(
+                      app: app,
+                      homeApp: true,
+                      editing: editing,
+                      editCallback: (String package) {
+                        setState(() {
+                          homeList.remove(package);
+                          EzConfig.setStringList(homePackagesKey, homeList);
+                          homeApps
+                              .remove(AppInfo(label: 'n/a', package: package));
+                        });
+                      },
                     ),
                     spacer,
                   ];
