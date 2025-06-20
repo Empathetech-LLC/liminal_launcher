@@ -26,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   static const EzSpacer spacer = EzSpacer();
   static const EzSeparator separator = EzSeparator();
 
+  final EdgeInsets modalPadding = EzInsets.col(EzConfig.get(spacingKey));
+
   late final double safeTop = MediaQuery.paddingOf(context).top;
   late final double safeBottom = MediaQuery.paddingOf(context).bottom;
 
@@ -35,8 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Define the build data //
 
-  bool editing = false;
-
   final bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
   final bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
 
@@ -45,11 +45,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  late final List<String> homeList =
-      EzConfig.get(homePackagesKey) ?? <String>[];
+  late final List<String> homeList = List<String>.from(
+      EzConfig.get(homePackagesKey) ??
+          defaultConfig[homePackagesKey] as List<String>);
   late final List<AppInfo> homeApps = provider.apps
       .where((AppInfo app) => homeList.contains(app.package))
       .toList(); // TODO: faster
+
+  bool editing = false;
 
   // Define custom Widgets //
 
@@ -154,10 +157,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     return EzScrollView(
                       mainAxisSize: MainAxisSize.min,
                       children: provider.apps
-                          .map((AppInfo app) => EzTextButton(
-                                text: app.label,
-                                onPressed: doNothing,
-                              ))
+                          .where((AppInfo app) => !homeApps.contains(app))
+                          .map((AppInfo app) => Padding(
+                                padding: modalPadding,
+                                child: EzTextButton(
+                                  key: ValueKey<String>(app.package),
+                                  text: app.label,
+                                  onPressed: () {
+                                    homeList.add(app.package);
+                                    EzConfig.setStringList(
+                                      homePackagesKey,
+                                      homeList,
+                                    );
+                                    homeApps.add(app);
+
+                                    setState(() {});
+                                    setModalState(() {});
+                                  },
+                                ),
+                              )) // TODO: faster?
                           .toList(),
                     );
                   },
