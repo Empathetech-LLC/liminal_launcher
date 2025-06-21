@@ -5,12 +5,14 @@
 
 import './export.dart';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 const MethodChannel platform = MethodChannel('net.empathetech.liminal/query');
 
-/// Get installed apps
+/// Get all installed apps
 Future<List<AppInfo>> getApps() async {
   try {
     final List<dynamic>? appData = await platform.invokeMethod('getApps');
@@ -27,12 +29,56 @@ Future<List<AppInfo>> getApps() async {
   }
 }
 
+/// Open the app with [package] name
 Future<void> launchApp(String package) async {
   try {
     await platform.invokeMethod('launchApp', <String, dynamic>{
       'packageName': package,
     });
   } catch (e) {
-    ezLog('Failed to launch app: $e');
+    ezLog('Failed to launch $package: $e');
+  }
+}
+
+/// Open the settings for the app with [package] name
+Future<void> openSettings(String package) async {
+  try {
+    await platform.invokeMethod('openSettings', <String, dynamic>{
+      'packageName': package,
+    });
+  } catch (e) {
+    ezLog('Failed to open the settings for $package: $e');
+  }
+}
+
+Future<void> deleteApp(BuildContext context, AppInfo app) async {
+  late final List<Widget> materialActions;
+  late final List<Widget> cupertinoActions;
+
+  (materialActions, cupertinoActions) = ezActionPairs(
+    context: context,
+    onConfirm: () => Navigator.of(context).pop(true),
+    onDeny: () => Navigator.of(context).pop(false),
+  );
+
+  final bool confirmed = await showPlatformDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return EzAlertDialog(
+        title: Text('Delete ${app.label}?'),
+        materialActions: materialActions,
+        cupertinoActions: cupertinoActions,
+      );
+    },
+  );
+
+  if (confirmed == false) return;
+
+  try {
+    await platform.invokeMethod('deleteApp', <String, dynamic>{
+      'packageName': app.package,
+    });
+  } catch (e) {
+    ezLog('Failed to delete ${app.package}: $e');
   }
 }
