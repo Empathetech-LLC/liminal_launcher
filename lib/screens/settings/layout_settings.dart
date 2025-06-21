@@ -11,9 +11,19 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 class LayoutSettingsScreen extends StatelessWidget {
   const LayoutSettingsScreen({super.key});
 
+  static const EzSpacer spacer = EzSpacer();
+
   @override
   Widget build(BuildContext context) => LiminalScaffold(
-        const SafeArea(child: EzLayoutSettings()),
+        const SafeArea(
+          child: EzLayoutSettings(additionalSettings: <Widget>[
+            EzText('Weather layout'),
+            spacer,
+            EzText('Home list alignment'),
+            spacer,
+            EzText('Full list alignment'),
+          ]),
+        ),
         fab: EzBackFAB(context),
       );
 }
