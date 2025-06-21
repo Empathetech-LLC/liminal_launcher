@@ -23,6 +23,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
+  static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
 
@@ -81,7 +82,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   EzText('Left package', style: textTheme.bodyLarge),
-                  spacer,
+                  rowSpacer,
                   EzDropdownMenu<AppInfo>(
                     widthEntries: <String>['Play Store'],
                     dropdownMenuEntries: dropdownPackages,
@@ -102,7 +103,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   EzText('Right package', style: textTheme.bodyLarge),
-                  spacer,
+                  rowSpacer,
                   EzDropdownMenu<AppInfo>(
                     widthEntries: <String>['Play Store'],
                     dropdownMenuEntries: dropdownPackages,
@@ -116,7 +117,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   )
                 ],
               ),
-              divider,
+              spacer,
 
               // Auto search
               EzSwitchPair(
@@ -185,7 +186,6 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               divider,
 
               // Reset
-              // TODO: Add liminal stuffs
               const EzResetButton(),
               separator,
             ],
