@@ -55,6 +55,19 @@ class MainActivity : FlutterActivity() {
             result.error("LAUNCH_ERROR", "Could not open settings", e.message)
           }
         }
+        "deleteApp" -> {
+          try {
+            val packageName = call.argument<String>("packageName")
+            if (packageName != null) {
+              deleteApp(packageName)
+              result.success(true)
+            } else {
+              result.error("INVALID_PACKAGE", "null package name", null)
+            }
+          } catch (e: Exception) {
+            result.error("DELETE_ERROR", "Could not uninstall app", e.message)
+          }
+        }
         else -> result.notImplemented() 
       }
     }
@@ -118,6 +131,13 @@ class MainActivity : FlutterActivity() {
 
   private fun openSettings(packageName: String) {
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+    intent.data = Uri.fromParts("package", packageName, null)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(intent)
+  }
+
+  private fun deleteApp(packageName: String) {
+    val intent = Intent(Intent.ACTION_DELETE)
     intent.data = Uri.fromParts("package", packageName, null)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     startActivity(intent)
