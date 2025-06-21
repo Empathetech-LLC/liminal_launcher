@@ -17,7 +17,13 @@ class LayoutSettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) => LiminalScaffold(
         const SafeArea(
           child: EzLayoutSettings(additionalSettings: <Widget>[
-            EzText('Weather layout'),
+            EzRow(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                EzText('Weather layout'),
+                //DropdownMenu(dropdownMenuEntries: blarg),
+              ],
+            ),
             spacer,
             EzText('Home list alignment'),
             spacer,
@@ -27,3 +33,6 @@ class LayoutSettingsScreen extends StatelessWidget {
         fab: EzBackFAB(context),
       );
 }
+
+// const EzDominantHandSwitch(),
+//               spacer,
