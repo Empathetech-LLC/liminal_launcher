@@ -26,10 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   static const EzSpacer spacer = EzSpacer();
   static const EzSeparator separator = EzSeparator();
 
-  final EdgeInsets modalPadding = EzInsets.col(EzConfig.get(spacingKey));
-
   late final double safeTop = MediaQuery.paddingOf(context).top;
-  late final double safeBottom = MediaQuery.paddingOf(context).bottom;
+  final EdgeInsets modalPadding = EzInsets.col(EzConfig.get(spacingKey));
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
   late final MaterialLocalizations localizations =
@@ -45,12 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  late final List<String> homeList = List<String>.from(
-      EzConfig.get(homePackagesKey) ??
-          defaultConfig[homePackagesKey] as List<String>);
-  late final List<AppInfo> homeApps = provider.apps
-      .where((AppInfo app) => homeList.contains(app.package))
-      .toList(); // TODO: faster
+  /// Ordered list of home package [String]s
+  late final List<String> homePackages = List<String>.from(
+      EzConfig.get(homePackagesKey) ?? defaultConfig[homePackagesKey]);
+
+  /// Ordered list of home [AppInfo]s
+  late final List<AppInfo> homeApps = homeP2A();
+
+  /// Ordered list of home [AppTile]s
+  late List<Widget> homeTiles = homeA2T();
 
   bool editing = false;
 
@@ -75,6 +76,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Column(mainAxisSize: MainAxisSize.min, children: children);
   }
+
+  // Define custom functions //
+
+  /// Home packages [String]s to [AppInfo]s
+  List<AppInfo> homeP2A() => homePackages
+      .map((String package) => provider.getAppFromID(package))
+      .whereType<AppInfo>() // Filter nulls
+      .toList();
+
+  /// Home [AppInfo]s to [AppTile]s
+  List<Widget> homeA2T() => homeApps.expand((AppInfo app) {
+        return <Widget>[
+          AppTile(
+            key: ValueKey<String>(app.package),
+            app: app,
+            homeApp: true,
+            editing: editing,
+            editCallback: (String package) async {
+              homePackages.remove(package);
+              homeApps.remove(provider.getAppFromID(package));
+              homeTiles = homeA2T();
+
+              await EzConfig.setStringList(homePackagesKey, homePackages);
+              setState(() {});
+            },
+          ),
+          spacer,
+        ];
+      }).toList();
 
   // Init //
 
@@ -112,11 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
               package = EzConfig.get(rightPackageKey);
             } // No action for 0
 
-            if (package != null && package.isNotEmpty) {
-              launchApp(provider.apps
-                  .firstWhere((AppInfo app) => app.package == package)
-                  .package);
-            } // TODO: faster
+            if (package != null && package.isNotEmpty) launchApp(package);
           }
         },
         child: EzScreen(
@@ -124,28 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               EzSpacer(space: safeTop),
               header(),
+              separator,
 
               // App list
-              EzScrollView(
-                children: homeApps.expand((AppInfo app) {
-                  return <Widget>[
-                    AppTile(
-                      app: app,
-                      homeApp: true,
-                      editing: editing,
-                      editCallback: (String package) {
-                        setState(() {
-                          homeList.remove(package);
-                          EzConfig.setStringList(homePackagesKey, homeList);
-                          homeApps
-                              .remove(AppInfo(label: 'n/a', package: package));
-                        });
-                      },
-                    ),
-                    spacer,
-                  ];
-                }).toList(),
-              ),
+              EzScrollView(children: homeTiles),
             ],
           ),
         ),
@@ -172,19 +180,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: EzTextButton(
                                   key: ValueKey<String>(app.package),
                                   text: app.label,
-                                  onPressed: () {
-                                    homeList.add(app.package);
-                                    EzConfig.setStringList(
-                                      homePackagesKey,
-                                      homeList,
-                                    );
+                                  onPressed: () async {
+                                    homePackages.add(app.package);
                                     homeApps.add(app);
+                                    homeTiles.addAll(<Widget>[
+                                      AppTile(
+                                        key: ValueKey<String>(app.package),
+                                        app: app,
+                                        homeApp: true,
+                                        editing: editing,
+                                        editCallback: (String package) async {
+                                          homePackages.remove(package);
+                                          homeApps.remove(
+                                              provider.getAppFromID(package));
+                                          homeTiles = homeA2T();
+
+                                          await EzConfig.setStringList(
+                                              homePackagesKey, homePackages);
+                                          setState(() {});
+                                        },
+                                      ),
+                                      spacer,
+                                    ]);
+
+                                    await EzConfig.setStringList(
+                                      homePackagesKey,
+                                      homePackages,
+                                    );
 
                                     setState(() {});
                                     setModalState(() {});
                                   },
                                 ),
-                              )) // TODO: faster?
+                              ))
                           .toList(),
                     );
                   },
