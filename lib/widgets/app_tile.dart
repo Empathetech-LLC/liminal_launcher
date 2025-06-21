@@ -14,7 +14,7 @@ class AppTile extends StatefulWidget {
   final AppInfo app;
   final bool homeApp;
   final bool editing;
-  final void Function(String package) editCallback;
+  final void Function() editCallback;
 
   const AppTile({
     super.key,
@@ -33,7 +33,7 @@ class _AppTileState extends State<AppTile> {
   late final AppInfo app = widget.app;
   late final bool homeApp = widget.homeApp;
   late bool editing = widget.editing;
-  late final void Function(String package) editCallback = widget.editCallback;
+  late final void Function() editCallback = widget.editCallback;
 
   // Gather the theme data //
 
@@ -55,10 +55,16 @@ class _AppTileState extends State<AppTile> {
             reverseHands: true,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              // Delete
+              // Add to home/remove from home
               EzIconButton(
-                onPressed: () => deleteApp(context, app),
-                icon: Icon(PlatformIcons(context).delete),
+                onPressed: () async {
+                  // TODO: The actual work
+                  editCallback();
+                  setState(() => editing = false);
+                },
+                icon: Icon(homeApp
+                    ? PlatformIcons(context).remove
+                    : PlatformIcons(context).add),
               ),
               spacer,
 
@@ -83,6 +89,19 @@ class _AppTileState extends State<AppTile> {
               EzIconButton(
                 onPressed: () => openSettings(app.package),
                 icon: Icon(PlatformIcons(context).info),
+              ),
+              spacer,
+
+              // Delete
+              EzIconButton(
+                onPressed: () async {
+                  final bool deleted = await deleteApp(context, app);
+                  if (deleted) {
+                    editCallback();
+                    setState(() => editing = false);
+                  }
+                },
+                icon: Icon(PlatformIcons(context).delete),
               ),
               spacer,
 
