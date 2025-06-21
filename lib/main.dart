@@ -89,6 +89,11 @@ final GoRouter router = GoRouter(
           builder: (_, __) => const AppListScreen(),
         ),
         GoRoute(
+          path: hiddenListPath,
+          name: hiddenListPath,
+          builder: (_, __) => const HiddenAppListScreen(),
+        ),
+        GoRoute(
           path: settingsHomePath,
           name: settingsHomePath,
           builder: (_, __) => const SettingsHomeScreen(),

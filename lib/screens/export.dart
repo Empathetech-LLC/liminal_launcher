@@ -7,6 +7,7 @@
 
 export 'error.dart';
 export 'app_list.dart';
+export 'hidden_app_list.dart';
 export 'home.dart';
 
 export 'settings/color_settings.dart';
@@ -21,6 +22,9 @@ export 'settings/text_settings.dart';
 
 /// 'app-list'
 const String appListPath = 'app-list';
+
+/// 'hidden-list'
+const String hiddenListPath = 'hidden-list';
 
 /// 'color-settings'
 const String colorSettingsPath = 'color-settings';
