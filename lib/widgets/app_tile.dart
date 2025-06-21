@@ -39,6 +39,9 @@ class _AppTileState extends State<AppTile> {
 
   static const EzSpacer spacer = EzSpacer();
 
+  final double iconSize = EzConfig.get(iconSizeKey);
+  final double padding = EzConfig.get(paddingKey);
+
   // Gather the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
@@ -55,6 +58,17 @@ class _AppTileState extends State<AppTile> {
             reverseHands: true,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              // App icon
+              if (app.icon != null) ...<Widget>[
+                Image.memory(
+                  app.icon!,
+                  semanticLabel: app.label,
+                  width: iconSize + padding,
+                  height: iconSize + padding,
+                ),
+                spacer,
+              ],
+
               // Add to home/remove from home
               EzIconButton(
                 onPressed: () async {
@@ -103,13 +117,15 @@ class _AppTileState extends State<AppTile> {
                 },
                 icon: Icon(PlatformIcons(context).delete),
               ),
-              spacer,
 
               // Close
-              EzIconButton(
-                onPressed: () => setState(() => editing = !editing),
-                icon: const Icon(Icons.close),
-              ),
+              if (!homeApp) ...<Widget>[
+                spacer,
+                EzIconButton(
+                  onPressed: () => setState(() => editing = !editing),
+                  icon: const Icon(Icons.close),
+                ),
+              ]
             ],
           )
         : EzTextButton(
