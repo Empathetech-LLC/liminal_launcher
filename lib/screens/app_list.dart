@@ -22,9 +22,13 @@ class _AppListScreenState extends State<AppListScreen> {
 
   static const EzSpacer spacer = EzSpacer();
 
+  late final double safeTop = MediaQuery.paddingOf(context).top;
+
   // Define the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+
+  bool editing = false;
 
   // Return the build //
 
@@ -42,22 +46,24 @@ class _AppListScreenState extends State<AppListScreen> {
           }
         },
         child: EzScreen(
-          child: Center(
-            child: EzScrollView(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: provider.apps.expand((AppInfo app) {
+          child: EzScrollView(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              EzSpacer(space: safeTop),
+              ...provider.apps.expand((AppInfo app) {
                 return <Widget>[
-                  EzTextButton(
-                    text: app.label,
-                    onPressed: () {
-                      launchApp(app.package);
-                      Navigator.of(context).pop();
+                  AppTile(
+                    app: app,
+                    homeApp: false,
+                    editing: editing,
+                    editCallback: () {
+                      // Set state? Should mostly be in the provider
                     },
                   ),
                   spacer,
                 ];
-              }).toList(),
-            ),
+              }),
+            ],
           ),
         ),
       ),
