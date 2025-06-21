@@ -50,9 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Ordered list of home [AppInfo]s
   late final List<AppInfo> homeApps = homeP2A();
 
-  /// Ordered list of home [AppTile]s
-  late List<Widget> homeTiles = homeA2T();
-
   bool editing = false;
 
   // Define custom Widgets //
@@ -96,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
             editCallback: () async {
               homePackages.remove(app.package);
               homeApps.remove(provider.getAppFromID(app.package));
-              homeTiles = homeA2T();
 
               await EzConfig.setStringList(homePackagesKey, homePackages);
               setState(() {});
@@ -153,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
               separator,
 
               // App list
-              EzScrollView(children: homeTiles),
+              EzScrollView(key: UniqueKey(), children: homeA2T()),
             ],
           ),
         ),
@@ -183,25 +179,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onPressed: () async {
                                     homePackages.add(app.package);
                                     homeApps.add(app);
-                                    homeTiles.addAll(<Widget>[
-                                      AppTile(
-                                        key: ValueKey<String>(app.package),
-                                        app: app,
-                                        homeApp: true,
-                                        editing: editing,
-                                        editCallback: () async {
-                                          homePackages.remove(app.package);
-                                          homeApps.remove(provider
-                                              .getAppFromID(app.package));
-                                          homeTiles = homeA2T();
-
-                                          await EzConfig.setStringList(
-                                              homePackagesKey, homePackages);
-                                          setState(() {});
-                                        },
-                                      ),
-                                      spacer,
-                                    ]);
 
                                     await EzConfig.setStringList(
                                       homePackagesKey,
