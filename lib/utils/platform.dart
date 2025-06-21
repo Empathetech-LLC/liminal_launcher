@@ -29,7 +29,7 @@ Future<List<AppInfo>> getApps() async {
   }
 }
 
-/// Open the app with [package] name
+/// Open [package]
 Future<void> launchApp(String package) async {
   try {
     await platform.invokeMethod('launchApp', <String, dynamic>{
@@ -40,7 +40,7 @@ Future<void> launchApp(String package) async {
   }
 }
 
-/// Open the settings for the app with [package] name
+/// Open the settings for [package]
 Future<void> openSettings(String package) async {
   try {
     await platform.invokeMethod('openSettings', <String, dynamic>{
@@ -51,6 +51,27 @@ Future<void> openSettings(String package) async {
   }
 }
 
+/// Hide [package]
+Future<bool> hideApp(String package) async {
+  final List<String> curr = List<String>.from(
+    EzConfig.get(hiddenPackagesKey) ?? <String>[],
+  );
+
+  curr.add(package);
+  return await EzConfig.setStringList(hiddenPackagesKey, curr);
+} // TODO: Update provider and alert listeners
+
+/// Un-hide [package]
+Future<bool> showApp(String package) async {
+  final List<String> curr = List<String>.from(
+    EzConfig.get(hiddenPackagesKey) ?? <String>[],
+  );
+
+  curr.remove(package);
+  return await EzConfig.setStringList(hiddenPackagesKey, curr);
+} // TODO: Update provider and alert listeners
+
+/// Uninstall [app] (con confirmation)
 Future<void> deleteApp(BuildContext context, AppInfo app) async {
   late final List<Widget> materialActions;
   late final List<Widget> cupertinoActions;
@@ -81,4 +102,4 @@ Future<void> deleteApp(BuildContext context, AppInfo app) async {
   } catch (e) {
     ezLog('Failed to delete ${app.package}: $e');
   }
-}
+} // TODO: Update provider and alert listeners
