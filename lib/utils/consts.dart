@@ -16,73 +16,56 @@ const AppInfo self = AppInfo(
   package: 'net.empathetech.liminal',
 );
 
-// Header
-const String homeTimeKey = 'home_time';
-const String homeDateKey = 'home_date';
-const String homeWeatherKey = 'home_weather';
-const String weatherPositionKey = 'weather_position';
-const String hideStatusBarKey = 'hide_status_bar';
-
-// Home list
+// BTS
 const String homePackagesKey = 'home_packages';
-const String homeAlignmentKey = 'home_alignment';
+const String hiddenPackagesKey = 'hidden_packages';
+
+// Functionality
 const String leftPackageKey = 'left_package';
 const String rightPackageKey = 'right_package';
-
-// Full list
-const String fullListAlignmentKey = 'full_list_alignment';
-const String extendTileKey = 'extend_tile';
 const String autoSearchKey = 'auto_search';
-const String hiddenPackagesKey = 'hidden_packages';
-const String nonZenPackagesKey = 'non_zen_packages';
-const String zenStreamKey = 'zen_stream'; // Extreme zen
-
-// Design
-const String notificationIconKey = 'notification_icon';
-const String buttonTypeKey = 'button_type';
 const String authToEditKey = 'auth_to_edit';
 const String tapLockKey = 'tap_lock';
 
-// Wallpaper(s)
-const String wallpapersKey = 'wallpapers';
-const String dailyWallpapersKey = 'daily_wallpapers';
+// Layout
+const String weatherPositionKey = 'weather_position';
+const String homeAlignmentKey = 'home_alignment';
+const String fullListAlignmentKey = 'full_list_alignment';
+
+// Design
+const String homeTimeKey = 'home_time';
+const String homeDateKey = 'home_date';
+const String homeWeatherKey = 'home_weather';
+const String buttonTypeKey = 'button_type';
+const String extendTileKey = 'extend_tile';
 
 /// [mobileEmpathConfig] with Liminal additions
 final Map<String, Object> defaultConfig = <String, Object>{
   ...mobileEmpathConfig,
   hideScrollKey: true,
 
-  // Header
-  homeTimeKey: true,
-  homeDateKey: true,
-  homeWeatherKey: true,
-  weatherPositionKey: 'top_right',
-  hideStatusBarKey: false,
-
-  // Home list
+  // BTS
   homePackagesKey: <String>[],
-  homeAlignmentKey: 'center',
+  hiddenPackagesKey: <String>[],
+
+  // Functionality
   leftPackageKey: '',
   rightPackageKey: '',
-
-  // Full list
-  fullListAlignmentKey: 'center',
-  extendTileKey: false,
   autoSearchKey: false,
-  hiddenPackagesKey: <String>[],
-  nonZenPackagesKey: <String>[],
-  zenStreamKey: false,
-
-  // Design
-  notificationIconKey: '',
-  buttonTypeKey: 'text',
   authToEditKey: false,
   tapLockKey: false,
 
-  // Wallpaper(s)
-  wallpapersKey: <String>[],
-  dailyWallpapersKey: false,
+  // Layout
+  weatherPositionKey: 'top_right',
+  homeAlignmentKey: 'center',
+  fullListAlignmentKey: 'center',
+
+  // Design
+  homeTimeKey: true,
+  homeDateKey: true,
+  homeWeatherKey: true,
+  buttonTypeKey: 'text',
+  extendTileKey: false,
 };
 
 // TODO: turn the values above into an enum (probs on the relevant page)
-// TODO: make a model or equivalent for zen schedule
