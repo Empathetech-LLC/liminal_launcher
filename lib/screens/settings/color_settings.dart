@@ -19,3 +19,7 @@ class ColorSettingsScreen extends StatelessWidget {
         fab: EzBackFAB(context),
       );
 }
+
+
+// const EzThemeModeSwitch(),
+//               separator,
