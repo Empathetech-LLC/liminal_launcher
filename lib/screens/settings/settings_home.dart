@@ -87,8 +87,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      SafeArea(
-        child: EzScreen(
+      EzScreen(
+        child: SafeArea(
           child: EzScrollView(
             children: <Widget>[
               const EzWarning(
@@ -169,7 +169,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   EzText('Left package', style: textTheme.bodyLarge),
                   spacer,
                   EzDropdownMenu<AppInfo>(
-                    widthEntries: appNames,
+                    widthEntries: <String>['Play Store'],
                     dropdownMenuEntries: dropdownPackages,
                     initialSelection: leftPackage,
                     onSelected: (AppInfo? app) async {
@@ -190,7 +190,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   EzText('Right package', style: textTheme.bodyLarge),
                   spacer,
                   EzDropdownMenu<AppInfo>(
-                    widthEntries: appNames,
+                    widthEntries: <String>['Play Store'],
                     dropdownMenuEntries: dropdownPackages,
                     initialSelection: rightPackage,
                     onSelected: (AppInfo? app) async {
