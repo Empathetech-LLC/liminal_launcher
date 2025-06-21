@@ -135,32 +135,9 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   setState(() => homeWeather = value);
                 },
               ),
-              spacer,
-
-              // tmp
-              const EzText('WeatherPos2Layout'),
-              spacer,
-              EzSwitchPair(
-                text: 'Hide status bar',
-                value: hideStatusBar,
-                onChanged: (bool? value) async {
-                  if (value == null) return;
-
-                  await EzConfig.setBool(hideStatusBarKey, value);
-                  setState(() => hideStatusBar = value);
-                },
-              ),
               divider,
 
               // Home list //
-
-              // Home list
-              const EzText('HomePackages2Home'),
-              spacer,
-
-              // tmp
-              const EzText('HomeAlign2Layout'),
-              spacer,
 
               // Left swipe
               EzRow(
@@ -205,10 +182,6 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               divider,
 
               // Full list //
-
-              // tmp
-              const EzText('FLAlign2Layout'),
-              spacer,
 
               // tmp
               const EzText('ETile2Design'),
