@@ -10,8 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-// TODO: Extend tile settings
-
 class AppTile extends StatefulWidget {
   final AppInfo app;
   final bool homeApp;
@@ -49,6 +47,12 @@ class _AppTileState extends State<AppTile> {
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   late bool isHidden = provider.isHidden(app.package);
+  late final bool extend = EzConfig.get(extendTileKey);
+
+  // Define custom functions //
+
+  Future<void> activateTile() => launchApp(widget.app.package);
+  void holdTile() => setState(() => editing = !editing);
 
   // Return the build //
 
@@ -130,10 +134,23 @@ class _AppTileState extends State<AppTile> {
               ]
             ],
           )
-        : EzTextButton(
-            text: widget.app.label,
-            onPressed: () => launchApp(widget.app.package),
-            onLongPress: () => setState(() => editing = !editing),
-          );
+        : extend
+            ? SizedBox(
+                width: double.infinity,
+                child: GestureDetector(
+                  onTap: activateTile,
+                  onLongPress: holdTile,
+                  child: EzTextButton(
+                    text: widget.app.label,
+                    onPressed: activateTile,
+                    onLongPress: holdTile,
+                  ),
+                ),
+              )
+            : EzTextButton(
+                text: widget.app.label,
+                onPressed: activateTile,
+                onLongPress: holdTile,
+              );
   }
 }
