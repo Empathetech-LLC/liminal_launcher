@@ -48,8 +48,9 @@ const String wallpapersKey = 'wallpapers';
 const String dailyWallpapersKey = 'daily_wallpapers';
 
 /// [mobileEmpathConfig] with Liminal additions
-const Map<String, Object> defaultConfig = <String, Object>{
+final Map<String, Object> defaultConfig = <String, Object>{
   ...mobileEmpathConfig,
+  hideScrollKey: true,
 
   // Header
   homeTimeKey: true,
