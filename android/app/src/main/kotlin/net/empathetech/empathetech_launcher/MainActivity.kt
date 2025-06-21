@@ -6,7 +6,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 
 import androidx.annotation.NonNull
 
@@ -38,6 +40,19 @@ class MainActivity : FlutterActivity() {
             }
           } catch (e: Exception) {
             result.error("LAUNCH_ERROR", "Could not launch app", e.message)
+          }
+        }
+        "openSettings" -> {
+          try {
+            val packageName = call.argument<String>("packageName")
+            if (packageName != null) {
+              openSettings(packageName)
+              result.success(true)
+            } else {
+              result.error("INVALID_PACKAGE", "null package name", null)
+            }
+          } catch (e: Exception) {
+            result.error("LAUNCH_ERROR", "Could not open settings", e.message)
           }
         }
         else -> result.notImplemented() 
@@ -99,5 +114,12 @@ class MainActivity : FlutterActivity() {
   private fun launchApp(packageName: String) {
     val launchIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
     if (launchIntent != null) startActivity(launchIntent)
+  }
+
+  private fun openSettings(packageName: String) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+    intent.data = Uri.fromParts("package", packageName, null)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(intent)
   }
 }
