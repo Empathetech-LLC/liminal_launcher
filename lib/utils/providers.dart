@@ -6,18 +6,24 @@
 import './export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class AppInfoProvider extends ChangeNotifier {
   final List<AppInfo> _apps;
   final Map<String, AppInfo> _appMap;
+  final Set<String> _hiddenPackages;
 
   AppInfoProvider(List<AppInfo> apps)
       : _apps = apps,
         _appMap = <String, AppInfo>{
           for (AppInfo app in apps) app.package: app,
-        };
+        },
+        _hiddenPackages = Set<String>.from(EzConfig.get(hiddenPackagesKey) ??
+            EzConfig.getDefault(hiddenPackagesKey));
 
   List<AppInfo> get apps => _apps;
 
   AppInfo? getAppFromID(String package) => _appMap[package];
+
+  bool isHidden(String package) => _hiddenPackages.contains(package);
 }
