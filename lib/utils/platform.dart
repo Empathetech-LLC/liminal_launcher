@@ -72,7 +72,7 @@ Future<bool> showApp(String package) async {
 } // TODO: Update provider and alert listeners
 
 /// Uninstall [app] (con confirmation)
-Future<void> deleteApp(BuildContext context, AppInfo app) async {
+Future<bool> deleteApp(BuildContext context, AppInfo app) async {
   late final List<Widget> materialActions;
   late final List<Widget> cupertinoActions;
 
@@ -93,13 +93,15 @@ Future<void> deleteApp(BuildContext context, AppInfo app) async {
     },
   );
 
-  if (confirmed == false) return;
+  if (confirmed == false) return false;
 
   try {
     await platform.invokeMethod('deleteApp', <String, dynamic>{
       'packageName': app.package,
     });
+    return true;
   } catch (e) {
     ezLog('Failed to delete ${app.package}: $e');
+    return false;
   }
-} // TODO: Update provider and alert listeners
+} // TODO: Update provider and alert listeners && check for a better bool strategy
