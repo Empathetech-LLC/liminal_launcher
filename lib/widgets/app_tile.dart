@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
+// TODO: Extend tile settings
+
 class AppTile extends StatefulWidget {
   final AppInfo app;
   final bool homeApp;
