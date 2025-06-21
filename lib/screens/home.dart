@@ -93,9 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
             app: app,
             homeApp: true,
             editing: editing,
-            editCallback: (String package) async {
-              homePackages.remove(package);
-              homeApps.remove(provider.getAppFromID(package));
+            editCallback: () async {
+              homePackages.remove(app.package);
+              homeApps.remove(provider.getAppFromID(app.package));
               homeTiles = homeA2T();
 
               await EzConfig.setStringList(homePackagesKey, homePackages);
@@ -189,10 +189,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         app: app,
                                         homeApp: true,
                                         editing: editing,
-                                        editCallback: (String package) async {
-                                          homePackages.remove(package);
-                                          homeApps.remove(
-                                              provider.getAppFromID(package));
+                                        editCallback: () async {
+                                          homePackages.remove(app.package);
+                                          homeApps.remove(provider
+                                              .getAppFromID(app.package));
                                           homeTiles = homeA2T();
 
                                           await EzConfig.setStringList(
