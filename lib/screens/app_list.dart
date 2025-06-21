@@ -57,7 +57,7 @@ class _AppListScreenState extends State<AppListScreen> {
                 return true;
               }
               return false;
-            },
+            }, // TODO: fix this
             child: EzScrollView(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
