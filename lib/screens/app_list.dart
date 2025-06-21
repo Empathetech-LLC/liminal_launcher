@@ -40,30 +40,46 @@ class _AppListScreenState extends State<AppListScreen> {
         onVerticalDragEnd: (DragEndDetails details) async {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! > 0) {
-              // Swiped down
+              // Pop on scroll down (backup for tiny lists)
               Navigator.of(context).pop();
             }
           }
         },
         child: EzScreen(
-          child: EzScrollView(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              EzSpacer(space: safeTop),
-              ...provider.apps.expand((AppInfo app) {
-                return <Widget>[
-                  AppTile(
-                    app: app,
-                    homeApp: false,
-                    editing: editing,
-                    editCallback: () {
-                      // Set state? Should mostly be in the provider
-                    },
-                  ),
-                  spacer,
-                ];
-              }),
-            ],
+          // Pop on overscroll
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification notification) {
+              if (notification is OverscrollNotification &&
+                  notification.overscroll < 0 &&
+                  notification.metrics.pixels <=
+                      notification.metrics.minScrollExtent + 1) {
+                Navigator.of(context).pop();
+                return true;
+              }
+              return false;
+            },
+            child: EzScrollView(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                EzSpacer(space: safeTop),
+
+                // Actual app list
+                ...provider.apps.expand((AppInfo app) {
+                  return <Widget>[
+                    AppTile(
+                      app: app,
+                      homeApp: false,
+                      editing: editing,
+                      editCallback: () {
+                        // Set state? Should mostly be in the provider
+                      },
+                    ),
+                    spacer,
+                  ];
+                }),
+              ],
+            ),
           ),
         ),
       ),
