@@ -6,7 +6,9 @@
 import '../utils/export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class AppTile extends StatefulWidget {
   final AppInfo app;
@@ -33,24 +35,63 @@ class _AppTileState extends State<AppTile> {
   late bool editing = widget.editing;
   late final void Function(String package) editCallback = widget.editCallback;
 
+  // Gather the theme data //
+
+  static const EzSpacer spacer = EzSpacer();
+
+  // Gather the build data //
+
+  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+
+  late bool isHidden = provider.isHidden(app.package);
+
+  // Return the build //
+
   @override
   Widget build(BuildContext context) {
     return editing
-        ? EzTextButton(
-            text: 'Editing',
-            onPressed: () {
-              final List<String> homeApps = List<String>.from(
-                  EzConfig.get(homePackagesKey) ??
-                      defaultConfig[homePackagesKey] as List<String>);
+        ? EzScrollView(
+            scrollDirection: Axis.horizontal,
+            reverseHands: true,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // Delete
+              EzIconButton(
+                onPressed: () => deleteApp(context, app),
+                icon: Icon(PlatformIcons(context).delete),
+              ),
+              spacer,
 
-              homeApp
-                  ? homeApps.remove(app.package)
-                  : homeApps.add(app.package);
+              // Show/hide
+              EzIconButton(
+                onPressed: () async {
+                  late final bool success;
 
-              EzConfig.setStringList(homePackagesKey, homeApps);
-              editCallback(app.package);
-            },
-            onLongPress: () => setState(() => editing = !editing),
+                  success = (isHidden)
+                      ? await showApp(app.package)
+                      : await hideApp(app.package);
+
+                  if (success) setState(() => isHidden = !isHidden);
+                },
+                icon: Icon(isHidden
+                    ? PlatformIcons(context).eyeSolid
+                    : PlatformIcons(context).eyeSlash),
+              ),
+              spacer,
+
+              // Info
+              EzIconButton(
+                onPressed: () => openSettings(app.package),
+                icon: Icon(PlatformIcons(context).info),
+              ),
+              spacer,
+
+              // Close
+              EzIconButton(
+                onPressed: () => setState(() => editing = !editing),
+                icon: const Icon(Icons.close),
+              ),
+            ],
           )
         : EzTextButton(
             text: widget.app.label,
