@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                 ),
                               ))
-                          .toList(),
+                          .toList(), // TODO: Move me to setup
                     );
                   },
                 ),
