@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < 0) {
               // Swiped up
-              context.goNamed(appListPath);
+              context.goNamed(editing ? hiddenListPath : appListPath);
             }
           }
         },
