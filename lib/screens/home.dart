@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
             editing: editing,
             editCallback: () async {
               homePackages.remove(app.package);
-              homeApps.remove(provider.getAppFromID(app.package));
+              homeApps.remove(app);
 
               await EzConfig.setStringList(homePackagesKey, homePackages);
               setState(() {});
