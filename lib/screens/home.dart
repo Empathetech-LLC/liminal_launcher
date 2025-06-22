@@ -197,8 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             separator,
-            SettingsFAB(context, () {
-              context.goNamed(settingsHomePath);
+            SettingsFAB(context, () async {
+              await context.pushNamed(settingsHomePath);
               setState(() => editing = false);
             })
           ],
