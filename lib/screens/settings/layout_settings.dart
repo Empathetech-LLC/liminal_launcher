@@ -26,6 +26,10 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
 
   // Define the build data //
 
+  HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
+    EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey),
+  );
+
   ListAlignment homeAlign = ListAlignmentConfig.fromValue(
     EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey),
   );
@@ -73,7 +77,8 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
               children: <Widget>[
                 const EzText('Header order'),
                 rowSpacer,
-                DropdownMenu<HeaderOrder>(
+                EzDropdownMenu<HeaderOrder>(
+                  widthEntries: <String>['Weather first'],
                   dropdownMenuEntries: <DropdownMenuEntry<HeaderOrder>>[
                     const DropdownMenuEntry<HeaderOrder>(
                       value: HeaderOrder.timeFirst,
@@ -84,12 +89,15 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
                       label: 'Weather first',
                     ),
                   ],
+                  enableSearch: false,
+                  initialSelection: headerOrder,
                   onSelected: (HeaderOrder? choice) async {
                     if (choice == null) return;
                     await EzConfig.setString(
                       headerOrderKey,
                       choice.configValue,
                     );
+                    setState(() => headerOrder = choice);
                   },
                 ),
               ],
