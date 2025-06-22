@@ -4,6 +4,7 @@
  */
 
 export 'consts.dart';
+export 'enums.dart';
 export 'models.dart';
 export 'platform.dart';
 export 'providers.dart';

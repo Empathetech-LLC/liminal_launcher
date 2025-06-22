@@ -3,7 +3,7 @@
  * See LICENSE for distribution and usage details.
  */
 
-import './models.dart';
+import './export.dart';
 
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
@@ -28,7 +28,7 @@ const String authToEditKey = 'auth_to_edit';
 const String tapLockKey = 'tap_lock';
 
 // Layout
-const String weatherPositionKey = 'weather_position';
+const String headerOrderKey = 'header_order';
 const String homeAlignmentKey = 'home_alignment';
 const String fullListAlignmentKey = 'full_list_alignment';
 
@@ -36,7 +36,9 @@ const String fullListAlignmentKey = 'full_list_alignment';
 const String homeTimeKey = 'home_time';
 const String homeDateKey = 'home_date';
 const String homeWeatherKey = 'home_weather';
-const String buttonTypeKey = 'button_type';
+const String showIconKey = 'show_icon';
+const String labelTypeKey = 'label_type';
+const String elevatedKey = 'are_elevated';
 const String extendTileKey = 'extend_tile';
 
 /// [mobileEmpathConfig] with Liminal additions
@@ -56,16 +58,16 @@ final Map<String, Object> defaultConfig = <String, Object>{
   tapLockKey: false,
 
   // Layout
-  weatherPositionKey: 'top_right',
-  homeAlignmentKey: 'center',
-  fullListAlignmentKey: 'center',
+  headerOrderKey: HeaderOrder.timeFirst.value,
+  homeAlignmentKey: ListAlignment.center.label,
+  fullListAlignmentKey: ListAlignment.center.label,
 
   // Design
   homeTimeKey: true,
   homeDateKey: true,
   homeWeatherKey: true,
-  buttonTypeKey: 'text',
+  showIconKey: false,
+  labelTypeKey: LabelType.full.value,
+  elevatedKey: false,
   extendTileKey: false,
 };
-
-// TODO: turn the values above into an enum (probs on the relevant page)
