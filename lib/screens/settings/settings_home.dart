@@ -94,7 +94,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                     top: 0,
                     right: 0,
                     child: IconButton(
-                      icon: const Icon(Icons.help_outline),
+                      icon: EzIcon(Icons.help_outline),
                       onPressed: showTips,
                     ),
                   ),
