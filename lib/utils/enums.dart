@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 enum HeaderOrder { timeFirst, weatherFirst }
 
 extension HeaderOrderConfig on HeaderOrder {
-  String get value {
+  String get configValue {
     switch (this) {
       case HeaderOrder.timeFirst:
         return 'time_first';
@@ -32,7 +32,7 @@ extension HeaderOrderConfig on HeaderOrder {
 enum ListAlignment { center, start, end }
 
 extension ListAlignmentConfig on ListAlignment {
-  String get label {
+  String get configValue {
     switch (this) {
       case ListAlignment.center:
         return 'center';
@@ -65,8 +65,8 @@ extension ListAlignmentConfig on ListAlignment {
     }
   }
 
-  static ListAlignment fromLabel(String label) {
-    switch (label) {
+  static ListAlignment fromValue(String value) {
+    switch (value) {
       case 'start':
         return ListAlignment.start;
       case 'end':
@@ -82,7 +82,7 @@ extension ListAlignmentConfig on ListAlignment {
 enum LabelType { none, initials, full, wingding }
 
 extension LabelTypeConfig on LabelType {
-  String get value {
+  String get configValue {
     switch (this) {
       case LabelType.none:
         return 'none';

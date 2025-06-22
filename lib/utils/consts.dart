@@ -58,16 +58,16 @@ final Map<String, Object> defaultConfig = <String, Object>{
   tapLockKey: false,
 
   // Layout
-  headerOrderKey: HeaderOrder.timeFirst.value,
-  homeAlignmentKey: ListAlignment.center.label,
-  fullListAlignmentKey: ListAlignment.center.label,
+  headerOrderKey: HeaderOrder.timeFirst.configValue,
+  homeAlignmentKey: ListAlignment.center.configValue,
+  fullListAlignmentKey: ListAlignment.center.configValue,
 
   // Design
   homeTimeKey: true,
   homeDateKey: true,
   homeWeatherKey: true,
   showIconKey: false,
-  labelTypeKey: LabelType.full.value,
+  labelTypeKey: LabelType.full.configValue,
   elevatedKey: false,
   extendTileKey: false,
 };
