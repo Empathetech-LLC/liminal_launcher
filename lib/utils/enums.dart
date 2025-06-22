@@ -19,14 +19,12 @@ extension HeaderOrderConfig on HeaderOrder {
     }
   }
 
-  static HeaderOrder? fromValue(String value) {
+  static HeaderOrder fromValue(String value) {
     switch (value) {
-      case 'time_first':
-        return HeaderOrder.timeFirst;
       case 'weather_first':
         return HeaderOrder.weatherFirst;
       default:
-        return null;
+        return HeaderOrder.timeFirst;
     }
   }
 }
@@ -45,7 +43,7 @@ extension ListAlignmentConfig on ListAlignment {
     }
   }
 
-  MainAxisAlignment get value {
+  MainAxisAlignment get axisValue {
     switch (this) {
       case ListAlignment.center:
         return MainAxisAlignment.center;
@@ -56,16 +54,25 @@ extension ListAlignmentConfig on ListAlignment {
     }
   }
 
-  static ListAlignment? fromLabel(String value) {
-    switch (value) {
-      case 'center':
-        return ListAlignment.center;
+  TextAlign get textValue {
+    switch (this) {
+      case ListAlignment.center:
+        return TextAlign.center;
+      case ListAlignment.start:
+        return TextAlign.start;
+      case ListAlignment.end:
+        return TextAlign.end;
+    }
+  }
+
+  static ListAlignment fromLabel(String label) {
+    switch (label) {
       case 'start':
         return ListAlignment.start;
       case 'end':
         return ListAlignment.end;
       default:
-        return null;
+        return ListAlignment.center;
     }
   }
 }
@@ -88,18 +95,16 @@ extension LabelTypeConfig on LabelType {
     }
   }
 
-  static LabelType? fromValue(String value) {
+  static LabelType fromValue(String value) {
     switch (value) {
       case 'none':
         return LabelType.none;
       case 'initials':
         return LabelType.initials;
-      case 'full':
-        return LabelType.full;
       case 'wingding':
         return LabelType.wingding;
       default:
-        return null;
+        return LabelType.full;
     }
   }
 }
