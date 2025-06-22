@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class SettingsHomeScreen extends StatefulWidget {
   const SettingsHomeScreen({super.key});
@@ -63,6 +64,16 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   bool autoSearch = EzConfig.get(autoSearchKey) ?? defaultConfig[autoSearchKey];
   bool authToEdit = EzConfig.get(authToEditKey) ?? defaultConfig[authToEditKey];
 
+  // Define custom functions //
+
+  Future<dynamic> showTips() => showPlatformDialog(
+        context: context,
+        builder: (_) => const EzAlertDialog(
+          title: Text('Tips', textAlign: TextAlign.center),
+          content: Text('&& tricks', textAlign: TextAlign.center),
+        ),
+      );
+
   // Return the build //
 
   @override
@@ -72,9 +83,23 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         child: SafeArea(
           child: EzScrollView(
             children: <Widget>[
-              const EzWarning(
-                'TODO: Be specific about which changes need a restart.\n\nHave fun!',
-              ),
+              Stack(
+                children: <Widget>[
+                  GestureDetector(
+                    onLongPress: showTips,
+                    child: const EzWarning(
+                        'Appearance settings take full effect on restart.\n\nHave fun!'),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.help_outline),
+                      onPressed: showTips,
+                    ),
+                  ),
+                ],
+              ), // TODO: semantics && tooltips
               separator,
 
               // Left swipe
@@ -117,7 +142,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   )
                 ],
               ),
-              spacer,
+              separator,
 
               // Auto search
               EzSwitchPair(
