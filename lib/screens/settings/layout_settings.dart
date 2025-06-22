@@ -105,7 +105,10 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
             separator,
 
             // Home align
-            EzText('Home list alignment', textAlign: homeText),
+            SizedBox(
+              width: double.infinity,
+              child: EzText('Home list alignment', textAlign: homeText),
+            ),
             SegmentedButton<ListAlignment>(
               segments: alignmentSegments,
               selected: <ListAlignment>{homeAlign},
@@ -128,7 +131,10 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
             spacer,
 
             // Full list align
-            EzText('Full list alignment', textAlign: fullText),
+            SizedBox(
+              width: double.infinity,
+              child: EzText('Full list alignment', textAlign: fullText),
+            ),
             SegmentedButton<ListAlignment>(
               segments: alignmentSegments,
               selected: <ListAlignment>{fullAlign},
