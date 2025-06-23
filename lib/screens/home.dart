@@ -47,6 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
       EzConfig.get(headerOrderKey) ?? defaultConfig[headerOrderKey]);
 
+  final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
+      EzConfig.get(homeAlignmentKey) ?? defaultConfig[homeAlignmentKey]);
+
   DateTime now = DateTime.now();
   late Timer ticker;
 
@@ -88,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children.add(
         Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: homeAlign.mainAxis,
           children: headerOrder == HeaderOrder.timeFirst
               ? rowChildren
               : rowChildren.reversed.toList(),
@@ -102,7 +106,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ));
     }
 
-    return Column(mainAxisSize: MainAxisSize.min, children: children);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: homeAlign.crossAxis,
+      children: children,
+    );
   }
 
   // Define custom functions //
@@ -196,13 +204,18 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: EzScreen(
           child: Column(
+            crossAxisAlignment: homeAlign.crossAxis,
             children: <Widget>[
               EzSpacer(space: safeTop),
               header(),
               separator,
 
               // App list
-              EzScrollView(key: UniqueKey(), children: homeA2T()),
+              EzScrollView(
+                key: UniqueKey(),
+                crossAxisAlignment: homeAlign.crossAxis,
+                children: homeA2T(),
+              ),
             ],
           ),
         ),
