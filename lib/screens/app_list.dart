@@ -28,6 +28,10 @@ class _AppListScreenState extends State<AppListScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
+  final ListAlignment listAlign = ListAlignmentConfig.fromValue(
+    EzConfig.get(fullListAlignmentKey) ?? defaultConfig[fullListAlignmentKey],
+  );
+
   bool editing = false;
 
   // Return the build //
@@ -61,6 +65,7 @@ class _AppListScreenState extends State<AppListScreen> {
             child: EzScrollView(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: listAlign.crossAxis,
               children: <Widget>[
                 EzSpacer(space: safeTop),
 

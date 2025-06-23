@@ -30,6 +30,10 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
 
   List<String> packages = EzConfig.get(hiddenPackagesKey) ?? <String>[];
 
+  final ListAlignment listAlign = ListAlignmentConfig.fromValue(
+    EzConfig.get(fullListAlignmentKey) ?? defaultConfig[fullListAlignmentKey],
+  );
+
   bool editing = false;
 
   // Return the build //
@@ -63,6 +67,7 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
             child: EzScrollView(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: listAlign.crossAxis,
               children: <Widget>[
                 EzSpacer(space: safeTop),
 
