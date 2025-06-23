@@ -11,6 +11,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -119,7 +120,29 @@ class _HomeScreenState extends State<HomeScreen> {
     return LiminalScaffold(
       GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onLongPress: () => setState(() => editing = !editing),
+        onLongPress: () async {
+          final bool needAuth =
+              EzConfig.get(authToEditKey) ?? defaultConfig[authToEditKey];
+          // Check every time so no reset is required; O(1)
+
+          if (needAuth) {
+            bool authed = false;
+
+            try {
+              authed = await LocalAuthentication().authenticate(
+                localizedReason: 'Authenticate to continue',
+              );
+            } catch (e) {
+              if (context.mounted) {
+                ezLogAlert(context, message: e.toString());
+              }
+            }
+
+            if (!authed) return;
+          }
+
+          setState(() => editing = !editing);
+        },
         onVerticalDragEnd: (DragEndDetails details) async {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < 0) {
