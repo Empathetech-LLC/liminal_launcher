@@ -33,15 +33,13 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   ListAlignment homeAlign = ListAlignmentConfig.fromValue(
     EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey),
   );
-  late MainAxisAlignment homeAxis = homeAlign.axisValue;
-  late TextAlign homeText = homeAlign.textValue;
+  late TextAlign homeText = homeAlign.textAlign;
 
   ListAlignment fullAlign = ListAlignmentConfig.fromValue(
     EzConfig.get(fullListAlignmentKey) ??
         EzConfig.getDefault(fullListAlignmentKey),
   );
-  late MainAxisAlignment fullAxis = fullAlign.axisValue;
-  late TextAlign fullText = fullAlign.textValue;
+  late TextAlign fullText = fullAlign.textAlign;
 
   // Define custom Widgets //
 
@@ -123,8 +121,7 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
                 );
                 setState(() {
                   homeAlign = selected;
-                  homeAxis = selected.axisValue;
-                  homeText = selected.textValue;
+                  homeText = selected.textAlign;
                 });
               },
             ),
@@ -149,8 +146,7 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
                 );
                 setState(() {
                   fullAlign = selected;
-                  fullAxis = selected.axisValue;
-                  fullText = selected.textValue;
+                  fullText = selected.textAlign;
                 });
               },
             ),
