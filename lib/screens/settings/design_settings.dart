@@ -133,12 +133,13 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                         labelTypeKey,
                         choice.configValue,
                       );
-
                       labelType = choice;
+
                       if (labelType == LabelType.none) {
-                        showIcon = true;
                         await EzConfig.setBool(showIconKey, true);
+                        showIcon = true;
                       }
+
                       setState(() {});
                     },
                   ),
@@ -154,7 +155,17 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                   if (value == null) return;
 
                   await EzConfig.setBool(homeTimeKey, value);
-                  setState(() => homeTime = value);
+                  homeTime = value;
+
+                  if (value == false && labelType == LabelType.none) {
+                    await EzConfig.setString(
+                      labelTypeKey,
+                      LabelType.full.configValue,
+                    );
+                    labelType = LabelType.full;
+                  }
+
+                  setState(() {});
                 },
               ),
               separator,
