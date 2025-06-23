@@ -15,6 +15,7 @@ dependencies:
   # Flutter (Google)
   go_router: ^14.8.1
   intl: ^0.20.2
+  local_auth: ^2.3.0
   shared_preferences: ^2.5.3
   url_launcher: ^6.3.1
 
