@@ -46,13 +46,26 @@ class _AppTileState extends State<AppTile> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  late bool isHidden = provider.isHidden(app.package);
+  final bool showIcon = EzConfig.get(showIconKey);
+  final LabelType labelType = LabelTypeConfig.fromValue(
+    EzConfig.get(labelTypeKey) ?? defaultConfig[labelTypeKey],
+  );
   late final bool extend = EzConfig.get(extendTileKey);
+  late bool isHidden = provider.isHidden(app.package);
 
   // Define custom functions //
 
   Future<void> activateTile() => launchApp(widget.app.package);
   void holdTile() => setState(() => editing = !editing);
+
+  // Define custom Widgets //
+
+  late final Image icon = Image.memory(
+    app.icon!,
+    semanticLabel: app.label,
+    width: iconSize + padding,
+    height: iconSize + padding,
+  );
 
   // Return the build //
 
@@ -65,15 +78,7 @@ class _AppTileState extends State<AppTile> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               // App icon
-              if (app.icon != null) ...<Widget>[
-                Image.memory(
-                  app.icon!,
-                  semanticLabel: app.label,
-                  width: iconSize + padding,
-                  height: iconSize + padding,
-                ),
-                spacer,
-              ],
+              if (app.icon != null) ...<Widget>[icon, spacer],
 
               // Add to home/remove from home
               EzIconButton(
@@ -140,17 +145,85 @@ class _AppTileState extends State<AppTile> {
                 child: GestureDetector(
                   onTap: activateTile,
                   onLongPress: holdTile,
-                  child: EzTextButton(
+                  child: _TileButton(
                     text: widget.app.label,
+                    type: labelType,
+                    showIcon: showIcon,
+                    icon: icon,
                     onPressed: activateTile,
                     onLongPress: holdTile,
                   ),
                 ),
               )
-            : EzTextButton(
+            : _TileButton(
                 text: widget.app.label,
+                type: labelType,
+                showIcon: showIcon,
+                icon: icon,
                 onPressed: activateTile,
                 onLongPress: holdTile,
               );
+  }
+}
+
+class _TileButton extends StatelessWidget {
+  final String text;
+  final LabelType type;
+  final bool showIcon;
+  final Image? icon;
+  final void Function()? onPressed;
+  final void Function()? onLongPress;
+
+  const _TileButton({
+    required this.text,
+    required this.type,
+    required this.showIcon,
+    required this.icon,
+    required this.onPressed,
+    required this.onLongPress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (type == LabelType.none) {
+      return EzIconButton(
+        icon: icon!,
+        tooltip: text,
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+      );
+    }
+
+    late final String label;
+
+    switch (type) {
+      case LabelType.none:
+        label = '';
+      case LabelType.initials:
+        label = text
+            .split(' ')
+            .map((String word) => word.isNotEmpty ? word[0] : '')
+            .join()
+            .toUpperCase();
+      case LabelType.full:
+        label = text;
+      case LabelType.wingding:
+        label = text.runes
+            .map((int rune) => String.fromCharCode(rune + 69))
+            .join(); // TODO: For realz (or remove)
+    }
+
+    return showIcon
+        ? EzTextIconButton(
+            icon: icon!,
+            label: label,
+            onPressed: onPressed,
+            onLongPress: onLongPress,
+          )
+        : EzTextButton(
+            text: label,
+            onPressed: onPressed,
+            onLongPress: onLongPress,
+          );
   }
 }
