@@ -42,7 +42,6 @@ const String extendTileKey = 'extend_tile';
 /// [mobileEmpathConfig] with Liminal additions
 final Map<String, Object> defaultConfig = <String, Object>{
   ...mobileEmpathConfig,
-  hideScrollKey: true,
 
   // BTS
   homePackagesKey: <String>[],
