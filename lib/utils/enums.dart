@@ -43,7 +43,7 @@ extension ListAlignmentConfig on ListAlignment {
     }
   }
 
-  MainAxisAlignment get axisValue {
+  MainAxisAlignment get mainAxis {
     switch (this) {
       case ListAlignment.center:
         return MainAxisAlignment.center;
@@ -54,7 +54,18 @@ extension ListAlignmentConfig on ListAlignment {
     }
   }
 
-  TextAlign get textValue {
+  CrossAxisAlignment get crossAxis {
+    switch (this) {
+      case ListAlignment.center:
+        return CrossAxisAlignment.center;
+      case ListAlignment.start:
+        return CrossAxisAlignment.start;
+      case ListAlignment.end:
+        return CrossAxisAlignment.end;
+    }
+  }
+
+  TextAlign get textAlign {
     switch (this) {
       case ListAlignment.center:
         return TextAlign.center;
