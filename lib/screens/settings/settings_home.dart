@@ -211,7 +211,13 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               divider,
 
               // Reset
-              const EzResetButton(),
+              const EzResetButton(skip: <String>{
+                homePackagesKey,
+                hiddenPackagesKey,
+                leftPackageKey,
+                rightPackageKey,
+                authToEditKey,
+              }),
               separator,
             ],
           ),
