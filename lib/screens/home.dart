@@ -14,6 +14,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
+// TODO: Alignment for header and list
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -25,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
+  static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
 
   late final double safeTop = MediaQuery.paddingOf(context).top;
@@ -37,7 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
   // Define the build data //
 
   final bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
+  final bool homeWeather =
+      EzConfig.get(homeWeatherKey) ?? defaultConfig[homeWeatherKey];
   final bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
+
+  final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
+      EzConfig.get(headerOrderKey) ?? defaultConfig[headerOrderKey]);
 
   DateTime now = DateTime.now();
   late Timer ticker;
@@ -58,11 +66,33 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget header() {
     final List<Widget> children = <Widget>[];
 
-    if (homeTime) {
-      children.add(EzText(
-        TimeOfDay.fromDateTime(now).format(context),
-        style: textTheme.headlineLarge,
-      ));
+    if (homeTime || homeWeather) {
+      final List<Widget> rowChildren = <Widget>[];
+
+      if (homeTime) {
+        rowChildren.add(EzText(
+          TimeOfDay.fromDateTime(now).format(context),
+          style: textTheme.headlineLarge,
+        ));
+      }
+
+      if (homeWeather) {
+        rowChildren.add(EzText(
+          'Weather', // TODO: Weather widget
+          style: textTheme.headlineLarge,
+        ));
+      }
+
+      if (rowChildren.length == 2) rowChildren.insert(1, rowSpacer);
+
+      children.add(
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: headerOrder == HeaderOrder.timeFirst
+              ? rowChildren
+              : rowChildren.reversed.toList(),
+        ),
+      );
     }
 
     if (homeDate) {
