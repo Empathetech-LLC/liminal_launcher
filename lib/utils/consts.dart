@@ -25,7 +25,6 @@ const String leftPackageKey = 'left_package';
 const String rightPackageKey = 'right_package';
 const String autoSearchKey = 'auto_search';
 const String authToEditKey = 'auth_to_edit';
-const String tapLockKey = 'tap_lock';
 
 // Layout
 const String headerOrderKey = 'header_order';
@@ -55,7 +54,6 @@ final Map<String, Object> defaultConfig = <String, Object>{
   rightPackageKey: '',
   autoSearchKey: false,
   authToEditKey: false,
-  tapLockKey: false,
 
   // Layout
   headerOrderKey: HeaderOrder.timeFirst.configValue,
