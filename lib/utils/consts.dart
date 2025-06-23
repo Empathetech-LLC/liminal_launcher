@@ -37,7 +37,6 @@ const String homeDateKey = 'home_date';
 const String homeWeatherKey = 'home_weather';
 const String showIconKey = 'show_icon';
 const String labelTypeKey = 'label_type';
-const String elevatedKey = 'are_elevated';
 const String extendTileKey = 'extend_tile';
 
 /// [mobileEmpathConfig] with Liminal additions
@@ -66,6 +65,5 @@ final Map<String, Object> defaultConfig = <String, Object>{
   homeWeatherKey: true,
   showIconKey: false,
   labelTypeKey: LabelType.full.configValue,
-  elevatedKey: false,
   extendTileKey: false,
 };
