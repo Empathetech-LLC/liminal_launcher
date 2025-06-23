@@ -5,8 +5,9 @@
 
 // Exports //
 
-export 'home.dart';
 export 'error.dart';
+
+export 'home.dart';
 export 'app_list.dart';
 export 'hidden_app_list.dart';
 
