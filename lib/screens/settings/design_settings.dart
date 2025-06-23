@@ -21,7 +21,9 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
+  static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
+  static const EzDivider divider = EzDivider();
 
   late final ButtonStyle menuButtonStyle = TextButton.styleFrom(
     padding: EzInsets.wrap(EzConfig.get(paddingKey)),
@@ -41,7 +43,11 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   bool homeWeather =
       EzConfig.get(homeWeatherKey) ?? defaultConfig[homeWeatherKey];
 
-  // Return the build //
+  LabelType labelType = LabelTypeConfig.fromValue(
+      EzConfig.get(labelTypeKey) ?? defaultConfig[labelTypeKey]);
+  bool showIcon = EzConfig.get(showIconKey) ?? defaultConfig[showIconKey];
+
+  //* Return the build *//
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +56,8 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
         child: SafeArea(
           child: EzScrollView(
             children: <Widget>[
+              // Header //
+
               // Time
               EzSwitchPair(
                 text: 'Home time',
@@ -85,6 +93,68 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
                   await EzConfig.setBool(homeWeatherKey, value);
                   setState(() => homeWeather = value);
+                },
+              ),
+              divider,
+
+              // AppTile //
+
+              // Label type
+              EzRow(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const EzText('Label type'),
+                  rowSpacer,
+                  EzDropdownMenu<LabelType>(
+                    widthEntries: <String>['Full name'],
+                    dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
+                      const DropdownMenuEntry<LabelType>(
+                        value: LabelType.none,
+                        label: 'None',
+                      ),
+                      const DropdownMenuEntry<LabelType>(
+                        value: LabelType.initials,
+                        label: 'Initials',
+                      ),
+                      const DropdownMenuEntry<LabelType>(
+                        value: LabelType.full,
+                        label: 'Full name',
+                      ),
+                      const DropdownMenuEntry<LabelType>(
+                        value: LabelType.wingding,
+                        label: 'Wingding',
+                      ),
+                    ],
+                    enableSearch: false,
+                    initialSelection: labelType,
+                    onSelected: (LabelType? choice) async {
+                      if (choice == null) return;
+                      await EzConfig.setString(
+                        labelTypeKey,
+                        choice.configValue,
+                      );
+
+                      labelType = choice;
+                      if (labelType == LabelType.none) {
+                        showIcon = true;
+                        await EzConfig.setBool(showIconKey, true);
+                      }
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
+              spacer,
+
+              // Show icon
+              EzSwitchPair(
+                text: 'Show icon',
+                value: homeTime,
+                onChanged: (bool? value) async {
+                  if (value == null) return;
+
+                  await EzConfig.setBool(homeTimeKey, value);
+                  setState(() => homeTime = value);
                 },
               ),
               separator,
