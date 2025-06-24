@@ -3,9 +3,63 @@
  * See LICENSE for distribution and usage details.
  */
 
-// Layout settings //
-
 import 'package:flutter/material.dart';
+
+// BTS settings //
+
+enum AppListOrder { asc, des }
+
+extension AppListOrderConfig on AppListOrder {
+  String get configValue {
+    switch (this) {
+      case AppListOrder.asc:
+        return 'asc';
+      case AppListOrder.des:
+        return 'des';
+    }
+  }
+
+  static AppListOrder fromValue(String value) {
+    switch (value) {
+      case 'des':
+        return AppListOrder.des;
+      default:
+        return AppListOrder.asc;
+    }
+  }
+}
+
+enum AppListSort { name, publisher, date, size }
+
+extension AppListSortConfig on AppListSort {
+  String get configValue {
+    switch (this) {
+      case AppListSort.name:
+        return 'name';
+      case AppListSort.publisher:
+        return 'publisher';
+      case AppListSort.date:
+        return 'date';
+      case AppListSort.size:
+        return 'size';
+    }
+  }
+
+  static AppListSort fromValue(String value) {
+    switch (value) {
+      case 'publisher':
+        return AppListSort.publisher;
+      case 'date':
+        return AppListSort.date;
+      case 'size':
+        return AppListSort.size;
+      default:
+        return AppListSort.name;
+    }
+  }
+}
+
+// Layout settings //
 
 enum HeaderOrder { timeFirst, weatherFirst }
 
