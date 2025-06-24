@@ -14,8 +14,6 @@ import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
-// TODO: Alignment for header and list
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -66,49 +64,47 @@ class _HomeScreenState extends State<HomeScreen> {
   // Define custom Widgets //
 
   Widget header() {
-    final List<Widget> children = <Widget>[];
+    final List<Widget> rowChildren = <Widget>[];
+    final List<Widget> colChildren = <Widget>[];
 
-    if (homeTime || homeWeather) {
-      final List<Widget> rowChildren = <Widget>[];
-
-      if (homeTime) {
-        rowChildren.add(EzText(
-          TimeOfDay.fromDateTime(now).format(context),
-          style: textTheme.headlineLarge,
-        ));
-      }
-
-      if (homeWeather) {
-        rowChildren.add(EzText(
-          'Weather', // TODO: Weather widget
-          style: textTheme.headlineLarge,
-        ));
-      }
-
-      if (rowChildren.length == 2) rowChildren.insert(1, rowSpacer);
-
-      children.add(
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: homeAlign.mainAxis,
-          children: headerOrder == HeaderOrder.timeFirst
-              ? rowChildren
-              : rowChildren.reversed.toList(),
-        ),
-      );
+    if (homeTime) {
+      colChildren.add(EzText(
+        TimeOfDay.fromDateTime(now).format(context),
+        style: textTheme.headlineLarge,
+      ));
     }
 
     if (homeDate) {
-      children.add(EzText(
+      colChildren.add(EzText(
         localizations.formatMediumDate(now),
         style: textTheme.labelLarge,
       ));
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: homeAlign.crossAxis,
-      children: children,
+    if (homeTime || homeDate) {
+      rowChildren.add(
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: homeAlign.crossAxis,
+          children: colChildren,
+        ),
+      );
+    }
+
+    if (homeWeather) {
+      rowChildren.add(EzText(
+        'Weather', // TODO: Weather widget
+        style: textTheme.headlineLarge,
+      ));
+    }
+
+    if (rowChildren.length == 2) rowChildren.insert(1, rowSpacer);
+
+    return Row(
+      mainAxisAlignment: homeAlign.mainAxis,
+      children: headerOrder == HeaderOrder.timeFirst
+          ? rowChildren
+          : rowChildren.reversed.toList(),
     );
   }
 
