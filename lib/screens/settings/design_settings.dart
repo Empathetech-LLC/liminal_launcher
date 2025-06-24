@@ -154,12 +154,12 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             // Show icon
             EzSwitchPair(
               text: 'Show icon',
-              value: homeTime,
+              value: showIcon,
               onChanged: (bool? value) async {
                 if (value == null) return;
 
-                await EzConfig.setBool(homeTimeKey, value);
-                homeTime = value;
+                await EzConfig.setBool(showIconKey, value);
+                showIcon = value;
 
                 if (value == false && labelType == LabelType.none) {
                   await EzConfig.setString(
