@@ -23,6 +23,20 @@ class AppInfoProvider extends ChangeNotifier {
 
   List<AppInfo> get apps => _apps;
 
+  void sort(AppListSort sort, AppListOrder order) {
+    switch (sort) {
+      case AppListSort.name:
+        _apps.sort((AppInfo a, AppInfo b) => (order == AppListOrder.asc)
+            ? a.label.compareTo(b.label)
+            : b.label.compareTo(a.label));
+
+      case AppListSort.publisher:
+        _apps.sort((AppInfo a, AppInfo b) => (order == AppListOrder.asc)
+            ? a.package.compareTo(b.package)
+            : b.package.compareTo(a.package));
+    }
+  }
+
   AppInfo? getAppFromID(String package) => _appMap[package];
 
   bool isHidden(String package) => _hiddenPackages.contains(package);
