@@ -14,23 +14,15 @@ class LiminalScaffold extends StatelessWidget {
   final Widget? fab;
 
   /// Standardized [Scaffold] for all of the EFUI example app's screens
-  const LiminalScaffold(
-    this.body, {
-    super.key,
-    this.fab,
-  });
+  const LiminalScaffold(this.body, {super.key, this.fab});
 
   @override
   Widget build(BuildContext context) {
-    // Gather the theme data //
-
     final bool isLefty = EzConfig.get(isLeftyKey) ?? false;
-
-    // Return the build //
 
     final Widget theBuild = SelectionArea(
       child: Scaffold(
-        body: body,
+        body: SafeArea(child: body),
         floatingActionButton: fab,
         floatingActionButtonLocation: isLefty
             ? FloatingActionButtonLocation.startFloat
