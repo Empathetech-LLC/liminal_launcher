@@ -30,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
   static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
 
-  late final double safeTop = MediaQuery.paddingOf(context).top;
   final EdgeInsets modalPadding = EzInsets.col(EzConfig.get(spacingKey));
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
@@ -206,7 +205,6 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: homeAlign.crossAxis,
             children: <Widget>[
-              EzSpacer(space: safeTop),
               header(),
               separator,
 

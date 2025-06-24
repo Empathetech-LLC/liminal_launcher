@@ -22,8 +22,6 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
 
   static const EzSpacer spacer = EzSpacer();
 
-  late final double safeTop = MediaQuery.paddingOf(context).top;
-
   // Define the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
@@ -68,27 +66,22 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: listAlign.crossAxis,
-              children: <Widget>[
-                EzSpacer(space: safeTop),
+              children: packages.expand((String package) {
+                final AppInfo? app = provider.getAppFromID(package);
+                if (app == null) return <Widget>[];
 
-                // Actual app list
-                ...packages.expand((String package) {
-                  final AppInfo? app = provider.getAppFromID(package);
-                  if (app == null) return <Widget>[];
-
-                  return <Widget>[
-                    AppTile(
-                      app: app,
-                      homeApp: false,
-                      editing: editing,
-                      editCallback: () {
-                        // TODO: stuff, including not allowing it to be added to home until unhidden
-                      },
-                    ),
-                    spacer,
-                  ];
-                }),
-              ],
+                return <Widget>[
+                  AppTile(
+                    app: app,
+                    homeApp: false,
+                    editing: editing,
+                    editCallback: () {
+                      // TODO: stuff, including not allowing it to be added to home until unhidden
+                    },
+                  ),
+                  spacer,
+                ];
+              }).toList(),
             ),
           ),
         ),
