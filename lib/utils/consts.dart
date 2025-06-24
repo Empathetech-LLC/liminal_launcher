@@ -19,6 +19,8 @@ const AppInfo self = AppInfo(
 // BTS
 const String homePackagesKey = 'home_packages';
 const String hiddenPackagesKey = 'hidden_packages';
+const String appListSort = 'app_list_sort';
+const String appListOrder = 'app_list_order';
 
 // Functionality
 const String leftPackageKey = 'left_package';
@@ -46,6 +48,8 @@ final Map<String, Object> defaultConfig = <String, Object>{
   // BTS
   homePackagesKey: <String>[],
   hiddenPackagesKey: <String>[],
+  appListSort: AppListSort.name.configValue,
+  appListOrder: AppListOrder.asc.configValue,
 
   // Functionality
   leftPackageKey: '',
