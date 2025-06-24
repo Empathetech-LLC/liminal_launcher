@@ -29,7 +29,7 @@ extension AppListOrderConfig on AppListOrder {
   }
 }
 
-enum AppListSort { name, publisher, date, size }
+enum AppListSort { name, publisher }
 
 extension AppListSortConfig on AppListSort {
   String get configValue {
@@ -38,10 +38,6 @@ extension AppListSortConfig on AppListSort {
         return 'name';
       case AppListSort.publisher:
         return 'publisher';
-      case AppListSort.date:
-        return 'date';
-      case AppListSort.size:
-        return 'size';
     }
   }
 
@@ -49,10 +45,6 @@ extension AppListSortConfig on AppListSort {
     switch (value) {
       case 'publisher':
         return AppListSort.publisher;
-      case 'date':
-        return AppListSort.date;
-      case 'size':
-        return AppListSort.size;
       default:
         return AppListSort.name;
     }
