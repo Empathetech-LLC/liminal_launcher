@@ -6,6 +6,7 @@
 import '../utils/export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -59,15 +60,6 @@ class _AppTileState extends State<AppTile> {
   Future<void> activateTile() => launchApp(widget.app.package);
   void holdTile() => setState(() => editing = !editing);
 
-  // Define custom Widgets //
-
-  late final Image icon = Image.memory(
-    app.icon!,
-    semanticLabel: app.label,
-    width: iconSize + padding,
-    height: iconSize + padding,
-  );
-
   // Return the build //
 
   @override
@@ -79,7 +71,15 @@ class _AppTileState extends State<AppTile> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               // App icon
-              if (app.icon != null) ...<Widget>[icon, spacer],
+              if (app.icon != null) ...<Widget>[
+                Image.memory(
+                  app.icon!,
+                  semanticLabel: app.label,
+                  width: iconSize + padding,
+                  height: iconSize + padding,
+                ),
+                spacer
+              ],
 
               // Add to home/remove from home
               EzIconButton(
@@ -146,49 +146,66 @@ class _AppTileState extends State<AppTile> {
                 child: GestureDetector(
                   onTap: activateTile,
                   onLongPress: holdTile,
-                  child: _TileButton(
+                  child: TileButton(
                     text: widget.app.label,
                     type: labelType,
                     showIcon: showIcon,
-                    icon: icon,
+                    icon: widget.app.icon,
                     onPressed: activateTile,
                     onLongPress: holdTile,
                   ),
                 ),
               )
-            : _TileButton(
+            : TileButton(
                 text: widget.app.label,
                 type: labelType,
                 showIcon: showIcon,
-                icon: icon,
+                icon: widget.app.icon,
                 onPressed: activateTile,
                 onLongPress: holdTile,
               );
   }
 }
 
-class _TileButton extends StatelessWidget {
+class TileButton extends StatelessWidget {
   final String text;
   final LabelType type;
   final bool showIcon;
-  final Image? icon;
+  final Uint8List? icon;
   final void Function()? onPressed;
   final void Function()? onLongPress;
 
-  const _TileButton({
+  const TileButton({
+    super.key,
     required this.text,
     required this.type,
     required this.showIcon,
-    required this.icon,
-    required this.onPressed,
-    required this.onLongPress,
+    this.icon,
+    this.onPressed,
+    this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
+    late final double iconSize = EzConfig.get(iconSizeKey);
+    late final double padding = EzConfig.get(paddingKey);
+
+    late final Widget iconImage = (icon == null)
+        ? Icon(
+            Icons.question_mark,
+            semanticLabel: text,
+            size: iconSize + padding,
+          )
+        : Image.memory(
+            icon!,
+            semanticLabel: text,
+            width: iconSize + padding,
+            height: iconSize + padding,
+          );
+
     if (type == LabelType.none) {
       return EzIconButton(
-        icon: icon!,
+        icon: iconImage,
         tooltip: text,
         onPressed: onPressed,
         onLongPress: onLongPress,
@@ -216,7 +233,7 @@ class _TileButton extends StatelessWidget {
 
     return showIcon
         ? EzTextIconButton(
-            icon: icon!,
+            icon: iconImage,
             label: label,
             onPressed: onPressed,
             onLongPress: onLongPress,
