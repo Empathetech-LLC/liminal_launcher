@@ -19,7 +19,10 @@ class AppInfoProvider extends ChangeNotifier {
           for (AppInfo app in apps) app.package: app,
         },
         _hiddenPackages = Set<String>.from(EzConfig.get(hiddenPackagesKey) ??
-            EzConfig.getDefault(hiddenPackagesKey));
+            EzConfig.getDefault(hiddenPackagesKey)) {
+    sort(EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
+        EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey));
+  }
 
   List<AppInfo> get apps => _apps;
 
@@ -35,6 +38,7 @@ class AppInfoProvider extends ChangeNotifier {
             ? a.package.compareTo(b.package)
             : b.package.compareTo(a.package));
     }
+    notifyListeners();
   }
 
   AppInfo? getAppFromID(String package) => _appMap[package];
