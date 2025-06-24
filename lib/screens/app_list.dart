@@ -48,48 +48,43 @@ class _AppListScreenState extends State<AppListScreen> {
           }
         },
         child: EzScreen(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: listAlign.crossAxis,
-            children: <Widget>[
-              // Sort/order controls
-              const SizedBox.shrink(),
-              const EzSeparator(),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification notification) {
+              // Pop on overscroll
+              if (notification is OverscrollNotification &&
+                  notification.overscroll < 0 &&
+                  notification.metrics.pixels <=
+                      notification.metrics.minScrollExtent + 1) {
+                Navigator.of(context).pop();
+                return true;
+              }
+              return false;
+            }, // TODO: fix this
+            child: EzScrollView(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: listAlign.crossAxis,
+              children: <Widget>[
+                // Sort/order controls
+                const SizedBox.shrink(),
+                const EzSeparator(),
 
-              // App list
-              NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification notification) {
-                  // Pop on overscroll
-                  if (notification is OverscrollNotification &&
-                      notification.overscroll < 0 &&
-                      notification.metrics.pixels <=
-                          notification.metrics.minScrollExtent + 1) {
-                    Navigator.of(context).pop();
-                    return true;
-                  }
-                  return false;
-                }, // TODO: fix this
-                child: EzScrollView(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: listAlign.crossAxis,
-                  children: provider.apps.expand((AppInfo app) {
-                    return <Widget>[
-                      AppTile(
-                        app: app,
-                        homeApp: false,
-                        editing: editing,
-                        editCallback: () {
-                          // Set state? Should mostly be in the provider
-                        },
-                      ),
-                      spacer,
-                    ];
-                  }).toList(),
-                ),
-              ),
-            ],
+                // App list
+                ...provider.apps.expand((AppInfo app) {
+                  return <Widget>[
+                    AppTile(
+                      app: app,
+                      homeApp: false,
+                      editing: editing,
+                      editCallback: () {
+                        // Set state? Should mostly be in the provider
+                      },
+                    ),
+                    spacer,
+                  ];
+                }),
+              ],
+            ),
           ),
         ),
       ),
