@@ -241,10 +241,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 padding: modalPadding,
                                 child: TileButton(
                                   key: ValueKey<String>(app.package),
-                                  text: app.label,
+                                  app: app,
                                   type: labelType,
                                   showIcon: showIcon,
-                                  icon: app.icon,
                                   onPressed: () async {
                                     homePackages.add(app.package);
                                     homeApps.add(app);

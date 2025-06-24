@@ -6,7 +6,6 @@
 import '../utils/export.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -147,20 +146,18 @@ class _AppTileState extends State<AppTile> {
                   onTap: activateTile,
                   onLongPress: holdTile,
                   child: TileButton(
-                    text: widget.app.label,
+                    app: widget.app,
                     type: labelType,
                     showIcon: showIcon,
-                    icon: widget.app.icon,
                     onPressed: activateTile,
                     onLongPress: holdTile,
                   ),
                 ),
               )
             : TileButton(
-                text: widget.app.label,
+                app: widget.app,
                 type: labelType,
                 showIcon: showIcon,
-                icon: widget.app.icon,
                 onPressed: activateTile,
                 onLongPress: holdTile,
               );
@@ -168,19 +165,17 @@ class _AppTileState extends State<AppTile> {
 }
 
 class TileButton extends StatelessWidget {
-  final String text;
+  final AppInfo app;
   final LabelType type;
   final bool showIcon;
-  final Uint8List? icon;
   final void Function()? onPressed;
   final void Function()? onLongPress;
 
   const TileButton({
     super.key,
-    required this.text,
+    required this.app,
     required this.type,
     required this.showIcon,
-    this.icon,
     this.onPressed,
     this.onLongPress,
   });
@@ -190,15 +185,15 @@ class TileButton extends StatelessWidget {
     late final double iconSize = EzConfig.get(iconSizeKey);
     late final double padding = EzConfig.get(paddingKey);
 
-    late final Widget iconImage = (icon == null)
+    late final Widget iconImage = (app.icon == null)
         ? Icon(
             Icons.question_mark,
-            semanticLabel: text,
+            semanticLabel: app.label,
             size: iconSize + padding,
           )
         : Image.memory(
-            icon!,
-            semanticLabel: text,
+            app.icon!,
+            semanticLabel: app.label,
             width: iconSize + padding,
             height: iconSize + padding,
           );
@@ -206,7 +201,7 @@ class TileButton extends StatelessWidget {
     if (type == LabelType.none) {
       return EzIconButton(
         icon: iconImage,
-        tooltip: text,
+        tooltip: app.label,
         onPressed: onPressed,
         onLongPress: onLongPress,
       );
@@ -218,15 +213,15 @@ class TileButton extends StatelessWidget {
       case LabelType.none:
         label = '';
       case LabelType.initials:
-        label = text
+        label = app.label
             .split(' ')
             .map((String word) => word.isNotEmpty ? word[0] : '')
             .join()
             .toUpperCase();
       case LabelType.full:
-        label = text;
+        label = app.label;
       case LabelType.wingding:
-        label = text.runes
+        label = app.label.runes
             .map((int rune) => String.fromCharCode(rune + 69))
             .join(); // TODO: For realz (or remove)
     }
