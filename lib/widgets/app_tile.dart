@@ -46,7 +46,8 @@ class _AppTileState extends State<AppTile> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  final bool showIcon = EzConfig.get(showIconKey);
+  final bool showIcon =
+      EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
   final LabelType labelType = LabelTypeConfig.fromValue(
     EzConfig.get(labelTypeKey) ?? defaultConfig[labelTypeKey],
   );
