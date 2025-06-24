@@ -20,8 +20,11 @@ class AppInfoProvider extends ChangeNotifier {
         },
         _hiddenPackages = Set<String>.from(EzConfig.get(hiddenPackagesKey) ??
             EzConfig.getDefault(hiddenPackagesKey)) {
-    sort(EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
-        EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey));
+    sort(
+        AppListSortConfig.fromValue(EzConfig.get(appListSortKey) ??
+            EzConfig.getDefault(appListSortKey)),
+        AppListOrderConfig.fromValue(EzConfig.get(appListOrderKey) ??
+            EzConfig.getDefault(appListOrderKey)));
   }
 
   List<AppInfo> get apps => _apps;
