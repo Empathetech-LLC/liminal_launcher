@@ -37,20 +37,21 @@ class _HomeScreenState extends State<HomeScreen> {
   // Define the build data //
 
   final bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
-  final bool homeWeather =
-      EzConfig.get(homeWeatherKey) ?? defaultConfig[homeWeatherKey];
   final bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
-
-  final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
-      EzConfig.get(headerOrderKey) ?? defaultConfig[headerOrderKey]);
-
-  final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(homeAlignmentKey) ?? defaultConfig[homeAlignmentKey]);
 
   DateTime now = DateTime.now();
   late Timer ticker;
 
+  final bool homeWeather =
+      EzConfig.get(homeWeatherKey) ?? defaultConfig[homeWeatherKey];
+
+  final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
+      EzConfig.get(headerOrderKey) ?? defaultConfig[headerOrderKey]);
+
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+
+  final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
+      EzConfig.get(homeAlignmentKey) ?? defaultConfig[homeAlignmentKey]);
 
   /// Ordered list of home package [String]s
   late final List<String> homePackages = List<String>.from(
@@ -58,6 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Ordered list of home [AppInfo]s
   late final List<AppInfo> homeApps = homeP2A();
+
+  final LabelType labelType = LabelTypeConfig.fromValue(
+      EzConfig.get(labelTypeKey) ?? defaultConfig[labelTypeKey]);
+
+  final bool showIcon = EzConfig.get(showIconKey) ?? defaultConfig[showIconKey];
 
   bool editing = false;
 
@@ -233,9 +239,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           .where((AppInfo app) => !homeApps.contains(app))
                           .map((AppInfo app) => Padding(
                                 padding: modalPadding,
-                                child: EzTextButton(
+                                child: TileButton(
                                   key: ValueKey<String>(app.package),
                                   text: app.label,
+                                  type: labelType,
+                                  showIcon: showIcon,
+                                  icon: app.icon,
                                   onPressed: () async {
                                     homePackages.add(app.package);
                                     homeApps.add(app);
