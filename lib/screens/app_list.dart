@@ -22,8 +22,6 @@ class _AppListScreenState extends State<AppListScreen> {
 
   static const EzSpacer spacer = EzSpacer();
 
-  late final double safeTop = MediaQuery.paddingOf(context).top;
-
   // Define the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
@@ -44,47 +42,54 @@ class _AppListScreenState extends State<AppListScreen> {
         onVerticalDragEnd: (DragEndDetails details) async {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! > 0) {
-              // Pop on scroll down (backup for tiny lists)
+              // Pop on swipe down (backup for non-scroll portions)
               Navigator.of(context).pop();
             }
           }
         },
         child: EzScreen(
-          // Pop on overscroll
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification notification) {
-              if (notification is OverscrollNotification &&
-                  notification.overscroll < 0 &&
-                  notification.metrics.pixels <=
-                      notification.metrics.minScrollExtent + 1) {
-                Navigator.of(context).pop();
-                return true;
-              }
-              return false;
-            }, // TODO: fix this
-            child: EzScrollView(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: listAlign.crossAxis,
-              children: <Widget>[
-                EzSpacer(space: safeTop),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: listAlign.crossAxis,
+            children: <Widget>[
+              // Sort/order controls
+              const SizedBox.shrink(),
+              const EzSeparator(),
 
-                // Actual app list
-                ...provider.apps.expand((AppInfo app) {
-                  return <Widget>[
-                    AppTile(
-                      app: app,
-                      homeApp: false,
-                      editing: editing,
-                      editCallback: () {
-                        // Set state? Should mostly be in the provider
-                      },
-                    ),
-                    spacer,
-                  ];
-                }),
-              ],
-            ),
+              // App list
+              NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification notification) {
+                  // Pop on overscroll
+                  if (notification is OverscrollNotification &&
+                      notification.overscroll < 0 &&
+                      notification.metrics.pixels <=
+                          notification.metrics.minScrollExtent + 1) {
+                    Navigator.of(context).pop();
+                    return true;
+                  }
+                  return false;
+                }, // TODO: fix this
+                child: EzScrollView(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: listAlign.crossAxis,
+                  children: provider.apps.expand((AppInfo app) {
+                    return <Widget>[
+                      AppTile(
+                        app: app,
+                        homeApp: false,
+                        editing: editing,
+                        editCallback: () {
+                          // Set state? Should mostly be in the provider
+                        },
+                      ),
+                      spacer,
+                    ];
+                  }).toList(),
+                ),
+              ),
+            ],
           ),
         ),
       ),
