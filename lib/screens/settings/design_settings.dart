@@ -25,8 +25,12 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
 
+  final double margin = EzConfig.get(marginKey);
+  final double padding = EzConfig.get(paddingKey);
+  final double spacing = EzConfig.get(spacingKey);
+
   late final ButtonStyle menuButtonStyle = TextButton.styleFrom(
-    padding: EzInsets.wrap(EzConfig.get(paddingKey)),
+    padding: EzInsets.wrap(padding),
   );
 
   late final Lang l10n = Lang.of(context)!;
@@ -55,6 +59,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
       EzScreen(
         child: EzScrollView(
           children: <Widget>[
+            if (spacing > margin) EzSpacer(space: spacing - margin),
             // Header //
 
             // Time
