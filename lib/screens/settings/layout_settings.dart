@@ -64,95 +64,93 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      SafeArea(
-        child: EzLayoutSettings(
-          beforeLayout: <Widget>[const EzDominantHandSwitch()],
-          prefixSpacer: spacer,
-          postfixSpacer: divider,
-          afterLayout: <Widget>[
-            EzRow(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const EzText('Header order'),
-                rowSpacer,
-                EzDropdownMenu<HeaderOrder>(
-                  widthEntries: <String>['Weather first'],
-                  dropdownMenuEntries: <DropdownMenuEntry<HeaderOrder>>[
-                    const DropdownMenuEntry<HeaderOrder>(
-                      value: HeaderOrder.timeFirst,
-                      label: 'Time first',
-                    ),
-                    const DropdownMenuEntry<HeaderOrder>(
-                      value: HeaderOrder.weatherFirst,
-                      label: 'Weather first',
-                    ),
-                  ],
-                  enableSearch: false,
-                  initialSelection: headerOrder,
-                  onSelected: (HeaderOrder? choice) async {
-                    if (choice == null) return;
-                    await EzConfig.setString(
-                      headerOrderKey,
-                      choice.configValue,
-                    );
-                    setState(() => headerOrder = choice);
-                  },
-                ),
-              ],
-            ),
-            separator,
+      EzLayoutSettings(
+        beforeLayout: <Widget>[const EzDominantHandSwitch()],
+        prefixSpacer: spacer,
+        postfixSpacer: divider,
+        afterLayout: <Widget>[
+          EzRow(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const EzText('Header order'),
+              rowSpacer,
+              EzDropdownMenu<HeaderOrder>(
+                widthEntries: <String>['Weather first'],
+                dropdownMenuEntries: <DropdownMenuEntry<HeaderOrder>>[
+                  const DropdownMenuEntry<HeaderOrder>(
+                    value: HeaderOrder.timeFirst,
+                    label: 'Time first',
+                  ),
+                  const DropdownMenuEntry<HeaderOrder>(
+                    value: HeaderOrder.weatherFirst,
+                    label: 'Weather first',
+                  ),
+                ],
+                enableSearch: false,
+                initialSelection: headerOrder,
+                onSelected: (HeaderOrder? choice) async {
+                  if (choice == null) return;
+                  await EzConfig.setString(
+                    headerOrderKey,
+                    choice.configValue,
+                  );
+                  setState(() => headerOrder = choice);
+                },
+              ),
+            ],
+          ),
+          separator,
 
-            // Home align
-            SizedBox(
-              width: double.infinity,
-              child: EzText('Home list alignment', textAlign: homeText),
-            ),
-            SegmentedButton<ListAlignment>(
-              segments: alignmentSegments,
-              selected: <ListAlignment>{homeAlign},
-              showSelectedIcon: false,
-              onSelectionChanged: (Set<ListAlignment>? choice) async {
-                if (choice?.first == null) return;
-                final ListAlignment selected = choice!.first;
+          // Home align
+          SizedBox(
+            width: double.infinity,
+            child: EzText('Home list alignment', textAlign: homeText),
+          ),
+          SegmentedButton<ListAlignment>(
+            segments: alignmentSegments,
+            selected: <ListAlignment>{homeAlign},
+            showSelectedIcon: false,
+            onSelectionChanged: (Set<ListAlignment>? choice) async {
+              if (choice?.first == null) return;
+              final ListAlignment selected = choice!.first;
 
-                await EzConfig.setString(
-                  homeAlignmentKey,
-                  selected.configValue,
-                );
-                setState(() {
-                  homeAlign = selected;
-                  homeText = selected.textAlign;
-                });
-              },
-            ),
-            spacer,
+              await EzConfig.setString(
+                homeAlignmentKey,
+                selected.configValue,
+              );
+              setState(() {
+                homeAlign = selected;
+                homeText = selected.textAlign;
+              });
+            },
+          ),
+          spacer,
 
-            // Full list align
-            SizedBox(
-              width: double.infinity,
-              child: EzText('Full list alignment', textAlign: fullText),
-            ),
-            SegmentedButton<ListAlignment>(
-              segments: alignmentSegments,
-              selected: <ListAlignment>{fullAlign},
-              showSelectedIcon: false,
-              onSelectionChanged: (Set<ListAlignment>? choice) async {
-                if (choice?.first == null) return;
-                final ListAlignment selected = choice!.first;
+          // Full list align
+          SizedBox(
+            width: double.infinity,
+            child: EzText('Full list alignment', textAlign: fullText),
+          ),
+          SegmentedButton<ListAlignment>(
+            segments: alignmentSegments,
+            selected: <ListAlignment>{fullAlign},
+            showSelectedIcon: false,
+            onSelectionChanged: (Set<ListAlignment>? choice) async {
+              if (choice?.first == null) return;
+              final ListAlignment selected = choice!.first;
 
-                await EzConfig.setString(
-                  fullListAlignmentKey,
-                  selected.configValue,
-                );
-                setState(() {
-                  fullAlign = selected;
-                  fullText = selected.textAlign;
-                });
-              },
-            ),
-          ],
-          resetSpacer: divider,
-        ),
+              await EzConfig.setString(
+                fullListAlignmentKey,
+                selected.configValue,
+              );
+              setState(() {
+                fullAlign = selected;
+                fullText = selected.textAlign;
+              });
+            },
+          ),
+        ],
+        resetSpacer: divider,
       ),
       fab: EzBackFAB(context),
     );

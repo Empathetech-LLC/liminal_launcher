@@ -80,150 +80,148 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   Widget build(BuildContext context) {
     return LiminalScaffold(
       EzScreen(
-        child: SafeArea(
-          child: EzScrollView(
-            children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onLongPress: showTips,
-                    child: const EzWarning(
-                        'Appearance settings take full effect on restart.\n\nHave fun!'),
+        child: EzScrollView(
+          children: <Widget>[
+            Stack(
+              children: <Widget>[
+                GestureDetector(
+                  onLongPress: showTips,
+                  child: const EzWarning(
+                      'Appearance settings take full effect on restart.\n\nHave fun!'),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: EzIcon(Icons.help_outline),
+                    onPressed: showTips,
                   ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: EzIcon(Icons.help_outline),
-                      onPressed: showTips,
-                    ),
-                  ),
-                ],
-              ), // TODO: semantics && tooltips
-              separator,
+                ),
+              ],
+            ), // TODO: semantics && tooltips
+            separator,
 
-              // Left swipe
-              EzRow(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  EzText('Left package', style: textTheme.bodyLarge),
-                  rowSpacer,
-                  EzDropdownMenu<AppInfo>(
-                    widthEntries: <String>['Play Store'],
-                    dropdownMenuEntries: dropdownPackages,
-                    initialSelection: leftApp,
-                    onSelected: (AppInfo? app) async {
-                      if (app == null || app == leftApp) return;
+            // Left swipe
+            EzRow(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                EzText('Left package', style: textTheme.bodyLarge),
+                rowSpacer,
+                EzDropdownMenu<AppInfo>(
+                  widthEntries: <String>['Play Store'],
+                  dropdownMenuEntries: dropdownPackages,
+                  initialSelection: leftApp,
+                  onSelected: (AppInfo? app) async {
+                    if (app == null || app == leftApp) return;
 
-                      await EzConfig.setString(leftPackageKey, app.package);
-                      setState(() => leftApp = app);
-                    },
-                  )
-                ],
-              ),
-              spacer,
+                    await EzConfig.setString(leftPackageKey, app.package);
+                    setState(() => leftApp = app);
+                  },
+                )
+              ],
+            ),
+            spacer,
 
-              // Right swipe
-              EzRow(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  EzText('Right package', style: textTheme.bodyLarge),
-                  rowSpacer,
-                  EzDropdownMenu<AppInfo>(
-                    widthEntries: <String>['Play Store'],
-                    dropdownMenuEntries: dropdownPackages,
-                    initialSelection: rightApp,
-                    onSelected: (AppInfo? app) async {
-                      if (app == null || app == rightApp) return;
+            // Right swipe
+            EzRow(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                EzText('Right package', style: textTheme.bodyLarge),
+                rowSpacer,
+                EzDropdownMenu<AppInfo>(
+                  widthEntries: <String>['Play Store'],
+                  dropdownMenuEntries: dropdownPackages,
+                  initialSelection: rightApp,
+                  onSelected: (AppInfo? app) async {
+                    if (app == null || app == rightApp) return;
 
-                      await EzConfig.setString(rightPackageKey, app.package);
-                      setState(() => rightApp = app);
-                    },
-                  )
-                ],
-              ),
-              separator,
+                    await EzConfig.setString(rightPackageKey, app.package);
+                    setState(() => rightApp = app);
+                  },
+                )
+              ],
+            ),
+            separator,
 
-              // Auto search
-              EzSwitchPair(
-                text: 'Auto search',
-                value: autoSearch,
-                onChanged: (bool? value) async {
-                  if (value == null) return;
+            // Auto search
+            EzSwitchPair(
+              text: 'Auto search',
+              value: autoSearch,
+              onChanged: (bool? value) async {
+                if (value == null) return;
 
-                  await EzConfig.setBool(autoSearchKey, value);
-                  setState(() => autoSearch = value);
-                },
-              ),
-              spacer,
+                await EzConfig.setBool(autoSearchKey, value);
+                setState(() => autoSearch = value);
+              },
+            ),
+            spacer,
 
-              // Auto search
-              EzSwitchPair(
-                text: 'Auth to edit',
-                value: authToEdit,
-                onChanged: (bool? value) async {
-                  if (value == null) return;
+            // Auto search
+            EzSwitchPair(
+              text: 'Auth to edit',
+              value: authToEdit,
+              onChanged: (bool? value) async {
+                if (value == null) return;
 
-                  await EzConfig.setBool(authToEditKey, value);
-                  setState(() => authToEdit = value);
-                },
-              ),
-              divider,
+                await EzConfig.setBool(authToEditKey, value);
+                setState(() => authToEdit = value);
+              },
+            ),
+            divider,
 
-              // GoTo layout settings
-              EzElevatedIconButton(
-                onPressed: () => context.goNamed(layoutSettingsPath),
-                icon: EzIcon(Icons.navigate_next),
-                label: el10n.lsPageTitle,
-              ),
-              spacer,
+            // GoTo layout settings
+            EzElevatedIconButton(
+              onPressed: () => context.goNamed(layoutSettingsPath),
+              icon: EzIcon(Icons.navigate_next),
+              label: el10n.lsPageTitle,
+            ),
+            spacer,
 
-              // GoTo design settings
-              EzElevatedIconButton(
-                onPressed: () => context.goNamed(designSettingsPath),
-                icon: EzIcon(Icons.navigate_next),
-                label: 'Design settings',
-              ),
-              spacer,
+            // GoTo design settings
+            EzElevatedIconButton(
+              onPressed: () => context.goNamed(designSettingsPath),
+              icon: EzIcon(Icons.navigate_next),
+              label: 'Design settings',
+            ),
+            spacer,
 
-              // GoTo text settings
-              EzElevatedIconButton(
-                onPressed: () => context.goNamed(textSettingsPath),
-                icon: EzIcon(Icons.navigate_next),
-                label: el10n.tsPageTitle,
-              ),
-              spacer,
+            // GoTo text settings
+            EzElevatedIconButton(
+              onPressed: () => context.goNamed(textSettingsPath),
+              icon: EzIcon(Icons.navigate_next),
+              label: el10n.tsPageTitle,
+            ),
+            spacer,
 
-              // GoTo color settings
-              EzElevatedIconButton(
-                onPressed: () => context.goNamed(colorSettingsPath),
-                icon: EzIcon(Icons.navigate_next),
-                label: el10n.csPageTitle,
-              ),
-              spacer,
+            // GoTo color settings
+            EzElevatedIconButton(
+              onPressed: () => context.goNamed(colorSettingsPath),
+              icon: EzIcon(Icons.navigate_next),
+              label: el10n.csPageTitle,
+            ),
+            spacer,
 
-              // GoTo image settings
-              EzElevatedIconButton(
-                onPressed: () => context.goNamed(imageSettingsPath),
-                icon: EzIcon(Icons.navigate_next),
-                label: el10n.isPageTitle,
-              ),
-              divider,
+            // GoTo image settings
+            EzElevatedIconButton(
+              onPressed: () => context.goNamed(imageSettingsPath),
+              icon: EzIcon(Icons.navigate_next),
+              label: el10n.isPageTitle,
+            ),
+            divider,
 
-              // Reset
-              const EzResetButton(skip: <String>{
-                homePackagesKey,
-                hiddenPackagesKey,
-                leftPackageKey,
-                rightPackageKey,
-                authToEditKey,
-              }),
-              separator,
-            ],
-          ),
+            // Reset
+            const EzResetButton(skip: <String>{
+              homePackagesKey,
+              hiddenPackagesKey,
+              leftPackageKey,
+              rightPackageKey,
+              authToEditKey,
+            }),
+            separator,
+          ],
         ),
       ),
-      fab: EzBackFAB(context),
+      fab: EzBackFAB(context, showHome: true),
     );
   }
 }

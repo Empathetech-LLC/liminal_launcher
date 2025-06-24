@@ -53,124 +53,122 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   Widget build(BuildContext context) {
     return LiminalScaffold(
       EzScreen(
-        child: SafeArea(
-          child: EzScrollView(
-            children: <Widget>[
-              // Header //
+        child: EzScrollView(
+          children: <Widget>[
+            // Header //
 
-              // Time
-              EzSwitchPair(
-                text: 'Home time',
-                value: homeTime,
-                onChanged: (bool? value) async {
-                  if (value == null) return;
+            // Time
+            EzSwitchPair(
+              text: 'Home time',
+              value: homeTime,
+              onChanged: (bool? value) async {
+                if (value == null) return;
 
-                  await EzConfig.setBool(homeTimeKey, value);
-                  setState(() => homeTime = value);
-                },
-              ),
-              spacer,
+                await EzConfig.setBool(homeTimeKey, value);
+                setState(() => homeTime = value);
+              },
+            ),
+            spacer,
 
-              // Date
-              EzSwitchPair(
-                text: 'Home date',
-                value: homeDate,
-                onChanged: (bool? value) async {
-                  if (value == null) return;
+            // Date
+            EzSwitchPair(
+              text: 'Home date',
+              value: homeDate,
+              onChanged: (bool? value) async {
+                if (value == null) return;
 
-                  await EzConfig.setBool(homeDateKey, value);
-                  setState(() => homeDate = value);
-                },
-              ),
-              spacer,
+                await EzConfig.setBool(homeDateKey, value);
+                setState(() => homeDate = value);
+              },
+            ),
+            spacer,
 
-              // Weather
-              EzSwitchPair(
-                text: 'Home weather',
-                value: homeWeather,
-                onChanged: (bool? value) async {
-                  if (value == null) return;
+            // Weather
+            EzSwitchPair(
+              text: 'Home weather',
+              value: homeWeather,
+              onChanged: (bool? value) async {
+                if (value == null) return;
 
-                  await EzConfig.setBool(homeWeatherKey, value);
-                  setState(() => homeWeather = value);
-                },
-              ),
-              divider,
+                await EzConfig.setBool(homeWeatherKey, value);
+                setState(() => homeWeather = value);
+              },
+            ),
+            divider,
 
-              // AppTile //
+            // AppTile //
 
-              // Label type
-              EzRow(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const EzText('Label type'),
-                  rowSpacer,
-                  EzDropdownMenu<LabelType>(
-                    widthEntries: <String>['Full name'],
-                    dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
-                      const DropdownMenuEntry<LabelType>(
-                        value: LabelType.none,
-                        label: 'None',
-                      ),
-                      const DropdownMenuEntry<LabelType>(
-                        value: LabelType.initials,
-                        label: 'Initials',
-                      ),
-                      const DropdownMenuEntry<LabelType>(
-                        value: LabelType.full,
-                        label: 'Full name',
-                      ),
-                      const DropdownMenuEntry<LabelType>(
-                        value: LabelType.wingding,
-                        label: 'Wingding',
-                      ),
-                    ],
-                    enableSearch: false,
-                    initialSelection: labelType,
-                    onSelected: (LabelType? choice) async {
-                      if (choice == null) return;
-                      await EzConfig.setString(
-                        labelTypeKey,
-                        choice.configValue,
-                      );
-                      labelType = choice;
-
-                      if (labelType == LabelType.none) {
-                        await EzConfig.setBool(showIconKey, true);
-                        showIcon = true;
-                      }
-
-                      setState(() {});
-                    },
-                  ),
-                ],
-              ),
-              spacer,
-
-              // Show icon
-              EzSwitchPair(
-                text: 'Show icon',
-                value: homeTime,
-                onChanged: (bool? value) async {
-                  if (value == null) return;
-
-                  await EzConfig.setBool(homeTimeKey, value);
-                  homeTime = value;
-
-                  if (value == false && labelType == LabelType.none) {
+            // Label type
+            EzRow(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const EzText('Label type'),
+                rowSpacer,
+                EzDropdownMenu<LabelType>(
+                  widthEntries: <String>['Full name'],
+                  dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
+                    const DropdownMenuEntry<LabelType>(
+                      value: LabelType.none,
+                      label: 'None',
+                    ),
+                    const DropdownMenuEntry<LabelType>(
+                      value: LabelType.initials,
+                      label: 'Initials',
+                    ),
+                    const DropdownMenuEntry<LabelType>(
+                      value: LabelType.full,
+                      label: 'Full name',
+                    ),
+                    const DropdownMenuEntry<LabelType>(
+                      value: LabelType.wingding,
+                      label: 'Wingding',
+                    ),
+                  ],
+                  enableSearch: false,
+                  initialSelection: labelType,
+                  onSelected: (LabelType? choice) async {
+                    if (choice == null) return;
                     await EzConfig.setString(
                       labelTypeKey,
-                      LabelType.full.configValue,
+                      choice.configValue,
                     );
-                    labelType = LabelType.full;
-                  }
+                    labelType = choice;
 
-                  setState(() {});
-                },
-              ),
-              separator,
-            ],
-          ),
+                    if (labelType == LabelType.none) {
+                      await EzConfig.setBool(showIconKey, true);
+                      showIcon = true;
+                    }
+
+                    setState(() {});
+                  },
+                ),
+              ],
+            ),
+            spacer,
+
+            // Show icon
+            EzSwitchPair(
+              text: 'Show icon',
+              value: homeTime,
+              onChanged: (bool? value) async {
+                if (value == null) return;
+
+                await EzConfig.setBool(homeTimeKey, value);
+                homeTime = value;
+
+                if (value == false && labelType == LabelType.none) {
+                  await EzConfig.setString(
+                    labelTypeKey,
+                    LabelType.full.configValue,
+                  );
+                  labelType = LabelType.full;
+                }
+
+                setState(() {});
+              },
+            ),
+            separator,
+          ],
         ),
       ),
       fab: EzBackFAB(context),
