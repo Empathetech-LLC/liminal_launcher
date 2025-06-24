@@ -24,9 +24,10 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
-  static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
+
+  final EzSpacer margin = EzMargin();
 
   late final ButtonStyle menuButtonStyle = TextButton.styleFrom(
     padding: EzInsets.wrap(EzConfig.get(paddingKey)),
@@ -106,7 +107,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 EzText('Left package', style: textTheme.bodyLarge),
-                rowSpacer,
+                margin,
                 EzDropdownMenu<AppInfo>(
                   widthEntries: <String>['Play Store'],
                   dropdownMenuEntries: dropdownPackages,
@@ -127,7 +128,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 EzText('Right package', style: textTheme.bodyLarge),
-                rowSpacer,
+                margin,
                 EzDropdownMenu<AppInfo>(
                   widthEntries: <String>['Play Store'],
                   dropdownMenuEntries: dropdownPackages,
