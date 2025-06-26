@@ -17,20 +17,16 @@ class LiminalScaffold extends StatelessWidget {
   const LiminalScaffold(this.body, {super.key, this.fab});
 
   @override
-  Widget build(BuildContext context) {
-    final bool isLefty = EzConfig.get(isLeftyKey) ?? false;
-
-    return EzAdaptiveScaffold(
-      small: SelectionArea(
-        child: Scaffold(
-          body: SafeArea(child: body),
-          floatingActionButton: fab,
-          floatingActionButtonLocation: isLefty
-              ? FloatingActionButtonLocation.startFloat
-              : FloatingActionButtonLocation.endFloat,
-          resizeToAvoidBottomInset: false,
+  Widget build(BuildContext context) => EzAdaptiveScaffold(
+        small: SelectionArea(
+          child: Scaffold(
+            body: SafeArea(child: body),
+            floatingActionButton: fab,
+            floatingActionButtonLocation: EzConfig.get(isLeftyKey) ?? false
+                ? FloatingActionButtonLocation.startFloat
+                : FloatingActionButtonLocation.endFloat,
+            resizeToAvoidBottomInset: false,
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
