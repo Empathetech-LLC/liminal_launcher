@@ -42,14 +42,14 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
-  bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
+  bool homeTime = EzConfig.get(homeTimeKey) ?? EzConfig.getDefault(homeTimeKey);
+  bool homeDate = EzConfig.get(homeDateKey) ?? EzConfig.getDefault(homeDateKey);
   bool homeWeather =
-      EzConfig.get(homeWeatherKey) ?? defaultConfig[homeWeatherKey];
+      EzConfig.get(homeWeatherKey) ?? EzConfig.getDefault(homeWeatherKey);
 
   LabelType labelType = LabelTypeConfig.fromValue(
-      EzConfig.get(labelTypeKey) ?? defaultConfig[labelTypeKey]);
-  bool showIcon = EzConfig.get(showIconKey) ?? defaultConfig[showIconKey];
+      EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey));
+  bool showIcon = EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
 
   //* Return the build *//
 

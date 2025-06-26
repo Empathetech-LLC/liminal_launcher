@@ -36,34 +36,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Define the build data //
 
-  final bool homeTime = EzConfig.get(homeTimeKey) ?? defaultConfig[homeTimeKey];
-  final bool homeDate = EzConfig.get(homeDateKey) ?? defaultConfig[homeDateKey];
+  final bool homeTime =
+      EzConfig.get(homeTimeKey) ?? EzConfig.getDefault(homeTimeKey);
+  final bool homeDate =
+      EzConfig.get(homeDateKey) ?? EzConfig.getDefault(homeDateKey);
 
   DateTime now = DateTime.now();
   late Timer ticker;
 
   final bool homeWeather =
-      EzConfig.get(homeWeatherKey) ?? defaultConfig[homeWeatherKey];
+      EzConfig.get(homeWeatherKey) ?? EzConfig.getDefault(homeWeatherKey);
 
   final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
-      EzConfig.get(headerOrderKey) ?? defaultConfig[headerOrderKey]);
+      EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey));
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(homeAlignmentKey) ?? defaultConfig[homeAlignmentKey]);
+      EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
 
   /// Ordered list of home package [String]s
   late final List<String> homePackages = List<String>.from(
-      EzConfig.get(homePackagesKey) ?? defaultConfig[homePackagesKey]);
+      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey));
 
   /// Ordered list of home [AppInfo]s
   late final List<AppInfo> homeApps = homeP2A();
 
   final LabelType labelType = LabelTypeConfig.fromValue(
-      EzConfig.get(labelTypeKey) ?? defaultConfig[labelTypeKey]);
+      EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey));
 
-  final bool showIcon = EzConfig.get(showIconKey) ?? defaultConfig[showIconKey];
+  final bool showIcon =
+      EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
 
   bool editing = false;
 
@@ -161,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
         behavior: HitTestBehavior.opaque,
         onLongPress: () async {
           final bool needAuth =
-              EzConfig.get(authToEditKey) ?? defaultConfig[authToEditKey];
+              EzConfig.get(authToEditKey) ?? EzConfig.getDefault(authToEditKey);
           // Check every time so no reset is required; O(1)
 
           if (needAuth) {

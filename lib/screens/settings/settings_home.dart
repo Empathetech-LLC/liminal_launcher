@@ -62,8 +62,10 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
       : provider.getAppFromID(rightPackage!) ?? nullApp;
 
   // Full list
-  bool autoSearch = EzConfig.get(autoSearchKey) ?? defaultConfig[autoSearchKey];
-  bool authToEdit = EzConfig.get(authToEditKey) ?? defaultConfig[authToEditKey];
+  bool autoSearch =
+      EzConfig.get(autoSearchKey) ?? EzConfig.getDefault(autoSearchKey);
+  bool authToEdit =
+      EzConfig.get(authToEditKey) ?? EzConfig.getDefault(authToEditKey);
 
   // Define custom functions //
 

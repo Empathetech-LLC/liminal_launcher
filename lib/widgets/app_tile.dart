@@ -49,7 +49,7 @@ class _AppTileState extends State<AppTile> {
   final bool showIcon =
       EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
   final LabelType labelType = LabelTypeConfig.fromValue(
-    EzConfig.get(labelTypeKey) ?? defaultConfig[labelTypeKey],
+    EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey),
   );
   late final bool extend = EzConfig.get(extendTileKey);
   late bool isHidden = provider.isHidden(app.package);

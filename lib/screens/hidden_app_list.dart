@@ -29,7 +29,8 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
   List<String> packages = EzConfig.get(hiddenPackagesKey) ?? <String>[];
 
   final ListAlignment listAlign = ListAlignmentConfig.fromValue(
-    EzConfig.get(fullListAlignmentKey) ?? defaultConfig[fullListAlignmentKey],
+    EzConfig.get(fullListAlignmentKey) ??
+        EzConfig.getDefault(fullListAlignmentKey),
   );
 
   bool editing = false;
