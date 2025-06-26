@@ -22,15 +22,23 @@ class _AppListScreenState extends State<AppListScreen> {
 
   static const EzSpacer spacer = EzSpacer();
 
+  final double margin = EzConfig.get(marginKey);
+  final double spacing = EzConfig.get(spacingKey);
+
   // Define the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   final ListAlignment listAlign = ListAlignmentConfig.fromValue(
-    EzConfig.get(fullListAlignmentKey) ?? defaultConfig[fullListAlignmentKey],
+      EzConfig.get(fullListAlignmentKey) ??
+          EzConfig.getDefault(fullListAlignmentKey));
+
+  ListSort listSort = AppListSortConfig.fromValue(
+    EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
   );
 
-  bool editing = false;
+  bool ascList =
+      EzConfig.get(ascListOrderKey) ?? EzConfig.getDefault(ascListOrderKey);
 
   // Return the build //
 
@@ -65,9 +73,59 @@ class _AppListScreenState extends State<AppListScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: listAlign.crossAxis,
               children: <Widget>[
-                // Sort/order controls
-                const SizedBox.shrink(),
-                const EzSeparator(),
+                if (spacing > margin) EzSpacer(space: spacing - margin),
+
+                // List controls
+                EzScrollView(
+                  scrollDirection: Axis.horizontal,
+                  mainAxisAlignment: listAlign.mainAxis,
+                  children: <Widget>[
+                    // Sort
+                    EzDropdownMenu<ListSort>(
+                      widthEntries: <String>['Publisher'],
+                      dropdownMenuEntries: const <DropdownMenuEntry<ListSort>>[
+                        DropdownMenuEntry<ListSort>(
+                          value: ListSort.name,
+                          label: 'Name',
+                        ),
+                        DropdownMenuEntry<ListSort>(
+                          value: ListSort.publisher,
+                          label: 'Publisher',
+                        ),
+                      ],
+                      enableSearch: false,
+                      initialSelection: listSort,
+                      onSelected: (ListSort? choice) async {
+                        if (choice == null) return;
+                        listSort = choice;
+
+                        await EzConfig.setString(
+                          appListSortKey,
+                          listSort.configValue,
+                        );
+                        provider.sort(listSort, ascList);
+
+                        setState(() {});
+                      },
+                    ),
+                    const EzSeparator(vertical: false),
+
+                    // Order
+                    EzIconButton(
+                      icon: EzIcon(
+                          ascList ? Icons.arrow_upward : Icons.arrow_downward),
+                      onPressed: () async {
+                        ascList = !ascList;
+
+                        await EzConfig.setBool(appListSortKey, ascList);
+                        provider.sort(listSort, ascList);
+
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+                spacer,
 
                 // App list
                 ...provider.apps.expand((AppInfo app) {
@@ -75,7 +133,7 @@ class _AppListScreenState extends State<AppListScreen> {
                     AppTile(
                       app: app,
                       homeApp: false,
-                      editing: editing,
+                      editing: false,
                       editCallback: () {
                         // Set state? Should mostly be in the provider
                       },
