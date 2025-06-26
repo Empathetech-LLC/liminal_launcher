@@ -7,46 +7,24 @@ import 'package:flutter/material.dart';
 
 // BTS settings //
 
-enum AppListOrder { asc, des }
+enum ListSort { name, publisher }
 
-extension AppListOrderConfig on AppListOrder {
+extension AppListSortConfig on ListSort {
   String get configValue {
     switch (this) {
-      case AppListOrder.asc:
-        return 'asc';
-      case AppListOrder.des:
-        return 'des';
-    }
-  }
-
-  static AppListOrder fromValue(String value) {
-    switch (value) {
-      case 'des':
-        return AppListOrder.des;
-      default:
-        return AppListOrder.asc;
-    }
-  }
-}
-
-enum AppListSort { name, publisher }
-
-extension AppListSortConfig on AppListSort {
-  String get configValue {
-    switch (this) {
-      case AppListSort.name:
+      case ListSort.name:
         return 'name';
-      case AppListSort.publisher:
+      case ListSort.publisher:
         return 'publisher';
     }
   }
 
-  static AppListSort fromValue(String value) {
+  static ListSort fromValue(String value) {
     switch (value) {
       case 'publisher':
-        return AppListSort.publisher;
+        return ListSort.publisher;
       default:
-        return AppListSort.name;
+        return ListSort.name;
     }
   }
 }

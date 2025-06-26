@@ -21,23 +21,23 @@ class AppInfoProvider extends ChangeNotifier {
         _hiddenPackages = Set<String>.from(EzConfig.get(hiddenPackagesKey) ??
             EzConfig.getDefault(hiddenPackagesKey)) {
     sort(
-        AppListSortConfig.fromValue(EzConfig.get(appListSortKey) ??
-            EzConfig.getDefault(appListSortKey)),
-        AppListOrderConfig.fromValue(EzConfig.get(appListOrderKey) ??
-            EzConfig.getDefault(appListOrderKey)));
+      AppListSortConfig.fromValue(
+        EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
+      ),
+      EzConfig.get(ascListOrderKey) ?? EzConfig.getDefault(ascListOrderKey),
+    );
   }
 
   List<AppInfo> get apps => _apps;
 
-  void sort(AppListSort sort, AppListOrder order) {
+  void sort(ListSort sort, bool asc) {
     switch (sort) {
-      case AppListSort.name:
-        _apps.sort((AppInfo a, AppInfo b) => (order == AppListOrder.asc)
-            ? a.label.compareTo(b.label)
-            : b.label.compareTo(a.label));
+      case ListSort.name:
+        _apps.sort((AppInfo a, AppInfo b) =>
+            (asc) ? a.label.compareTo(b.label) : b.label.compareTo(a.label));
 
-      case AppListSort.publisher:
-        _apps.sort((AppInfo a, AppInfo b) => (order == AppListOrder.asc)
+      case ListSort.publisher:
+        _apps.sort((AppInfo a, AppInfo b) => (asc)
             ? a.package.compareTo(b.package)
             : b.package.compareTo(a.package));
     }
