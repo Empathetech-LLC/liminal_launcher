@@ -86,7 +86,11 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: appListPath,
           name: appListPath,
-          builder: (_, __) => const AppListScreen(),
+          builder: (_, GoRouterState state) {
+            final void Function()? refreshHome =
+                state.extra as void Function()?;
+            return AppListScreen(refreshHome: refreshHome);
+          },
         ),
         GoRoute(
           path: hiddenListPath,
