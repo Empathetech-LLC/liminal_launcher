@@ -145,7 +145,7 @@ class _AppListScreenState extends State<AppListScreen> {
                   return <Widget>[
                     AppTile(
                       app: app,
-                      homeApp: false,
+                      onHomeScreen: false,
                       editing: false,
                       editCallback: () {
                         // Set state? Should mostly be in the provider
