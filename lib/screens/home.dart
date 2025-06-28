@@ -133,13 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
             app: app,
             onHomeScreen: true,
             editing: editing,
-            editCallback: () async {
-              homePackages.remove(app.package);
-              homeApps.remove(app);
-
-              await EzConfig.setStringList(homePackagesKey, homePackages);
-              setState(() {});
-            },
+            stateSetter: () => setState(() {}),
           ),
           spacer,
         ];
