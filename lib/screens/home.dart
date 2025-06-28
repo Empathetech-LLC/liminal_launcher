@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
           AppTile(
             key: ValueKey<String>(app.package),
             app: app,
-            homeApp: true,
+            onHomeScreen: true,
             editing: editing,
             editCallback: () async {
               homePackages.remove(app.package);
