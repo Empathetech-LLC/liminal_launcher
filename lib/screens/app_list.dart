@@ -11,7 +11,9 @@ import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class AppListScreen extends StatefulWidget {
-  const AppListScreen({super.key});
+  final void Function()? refreshHome;
+
+  const AppListScreen({super.key, this.refreshHome});
 
   @override
   State<AppListScreen> createState() => _AppListScreenState();
@@ -147,6 +149,7 @@ class _AppListScreenState extends State<AppListScreen> {
                       app: app,
                       onHomeScreen: false,
                       editing: false,
+                      refreshHome: widget.refreshHome,
                     ),
                     spacer,
                   ];
