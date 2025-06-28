@@ -12,16 +12,16 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class AppTile extends StatefulWidget {
   final AppInfo app;
-  final bool homeApp;
+  final bool onHomeScreen;
   final bool editing;
-  final void Function() editCallback;
+  final void Function()? stateSetter;
 
   const AppTile({
     super.key,
     required this.app,
-    required this.homeApp,
+    required this.onHomeScreen,
     required this.editing,
-    required this.editCallback,
+    this.stateSetter,
   });
 
   @override
@@ -29,12 +29,6 @@ class AppTile extends StatefulWidget {
 }
 
 class _AppTileState extends State<AppTile> {
-  // Set pointers //
-  late final AppInfo app = widget.app;
-  late final bool homeApp = widget.homeApp;
-  late bool editing = widget.editing;
-  late final void Function() editCallback = widget.editCallback;
-
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
@@ -45,6 +39,8 @@ class _AppTileState extends State<AppTile> {
   // Gather the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+  late final AppInfo app = widget.app;
+  late bool isHidden = provider.isHidden(app.package);
 
   final bool showIcon =
       EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
@@ -52,7 +48,13 @@ class _AppTileState extends State<AppTile> {
     EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey),
   );
   late final bool extend = EzConfig.get(extendTileKey);
-  late bool isHidden = provider.isHidden(app.package);
+
+  late final bool onHomeScreen = widget.onHomeScreen;
+  late bool editing = widget.editing;
+  late final void Function()? stateSetter = widget.stateSetter;
+
+  late final List<String> homePackages =
+      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey);
 
   // Define custom functions //
 
@@ -71,27 +73,47 @@ class _AppTileState extends State<AppTile> {
             children: <Widget>[
               // App icon
               if (app.icon != null) ...<Widget>[
-                Image.memory(
-                  app.icon!,
-                  semanticLabel: app.label,
-                  width: iconSize + padding,
-                  height: iconSize + padding,
+                GestureDetector(
+                  onTap: activateTile,
+                  child: Image.memory(
+                    app.icon!,
+                    semanticLabel: app.label,
+                    width: iconSize + padding,
+                    height: iconSize + padding,
+                  ),
                 ),
-                spacer
+                spacer,
               ],
 
               // Add to home/remove from home
-              EzIconButton(
-                onPressed: () async {
-                  // TODO: The actual work
-                  editCallback();
-                  setState(() => editing = false);
-                },
-                icon: Icon(homeApp
-                    ? PlatformIcons(context).remove
-                    : PlatformIcons(context).add),
-              ),
-              spacer,
+              if (!isHidden) ...<Widget>[
+                EzIconButton(
+                  onPressed: () async {
+                    if (onHomeScreen) {
+                      homePackages.remove(app.package);
+                      await EzConfig.setStringList(
+                        homePackagesKey,
+                        homePackages,
+                      );
+
+                      setState(() => editing = false);
+                      stateSetter?.call();
+                    } else {
+                      homePackages.add(app.package);
+                      await EzConfig.setStringList(
+                        homePackagesKey,
+                        homePackages,
+                      );
+
+                      setState(() => editing = false);
+                    }
+                  },
+                  icon: Icon(onHomeScreen
+                      ? PlatformIcons(context).remove
+                      : Icons.add_to_home_screen),
+                ),
+                spacer,
+              ],
 
               // Show/hide
               EzIconButton(
@@ -115,25 +137,28 @@ class _AppTileState extends State<AppTile> {
                 onPressed: () => openSettings(app.package),
                 icon: Icon(PlatformIcons(context).info),
               ),
-              spacer,
 
               // Delete
-              EzIconButton(
-                onPressed: () async {
-                  final bool deleted = await deleteApp(context, app);
-                  if (deleted) {
-                    editCallback();
-                    setState(() => editing = false);
-                  }
-                },
-                icon: Icon(PlatformIcons(context).delete),
-              ),
 
-              // Close
-              if (!homeApp) ...<Widget>[
+              if (app.removable) ...<Widget>[
                 spacer,
                 EzIconButton(
-                  onPressed: () => setState(() => editing = !editing),
+                  onPressed: () async {
+                    final bool deleted = await deleteApp(context, app);
+                    if (deleted) {
+                      setState(() => editing = false);
+                      stateSetter?.call();
+                    }
+                  },
+                  icon: Icon(PlatformIcons(context).delete),
+                ),
+              ],
+
+              // Close
+              if (!onHomeScreen) ...<Widget>[
+                spacer,
+                EzIconButton(
+                  onPressed: () => setState(() => editing = false),
                   icon: const Icon(Icons.close),
                 ),
               ]
