@@ -231,7 +231,14 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            AddFAB(
+            // Add folder
+            if (homePackages.isNotEmpty) ...<Widget>[
+              AddFolderFAB(context, doNothing),
+              separator,
+            ],
+
+            // Add app
+            AddAppFAB(
               context,
               () => showModalBottomSheet(
                 context: context,
@@ -271,6 +278,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             separator,
+
+            // Settings
             SettingsFAB(context, () => context.goNamed(settingsHomePath))
           ],
         ),
