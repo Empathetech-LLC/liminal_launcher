@@ -147,9 +147,6 @@ class _AppListScreenState extends State<AppListScreen> {
                       app: app,
                       onHomeScreen: false,
                       editing: false,
-                      editCallback: () {
-                        // Set state? Should mostly be in the provider
-                      },
                     ),
                     spacer,
                   ];

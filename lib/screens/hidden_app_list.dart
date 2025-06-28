@@ -76,9 +76,6 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
                     app: app,
                     onHomeScreen: false,
                     editing: editing,
-                    editCallback: () {
-                      // TODO: stuff, including not allowing it to be added to home until unhidden
-                    },
                   ),
                   spacer,
                 ];
