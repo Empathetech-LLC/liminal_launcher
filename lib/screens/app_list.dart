@@ -38,7 +38,7 @@ class _AppListScreenState extends State<AppListScreen> {
   );
 
   bool ascList =
-      EzConfig.get(ascListOrderKey) ?? EzConfig.getDefault(ascListOrderKey);
+      EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey);
 
   // Return the build //
 
@@ -117,7 +117,7 @@ class _AppListScreenState extends State<AppListScreen> {
                       onPressed: () async {
                         ascList = !ascList;
 
-                        await EzConfig.setBool(appListSortKey, ascList);
+                        await EzConfig.setBool(appListOrderKey, ascList);
                         provider.sort(listSort, ascList);
 
                         setState(() {});
