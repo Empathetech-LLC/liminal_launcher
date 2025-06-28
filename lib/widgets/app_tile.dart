@@ -53,8 +53,9 @@ class _AppTileState extends State<AppTile> {
   late bool editing = widget.editing;
   late final void Function()? refreshHome = widget.refreshHome;
 
-  late final List<String> homePackages =
+  late final List<String> homePL =
       EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey);
+  late final Set<String> homePS = homePL.toSet();
 
   // Define custom functions //
 
@@ -86,22 +87,25 @@ class _AppTileState extends State<AppTile> {
               ],
 
               // Add to home/remove from home
-              if (!isHidden) ...<Widget>[
+              if (!isHidden &&
+                  (onHomeScreen || !homePS.contains(app.package))) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
                     if (onHomeScreen) {
                       // Remove
-                      homePackages.remove(app.package);
+                      homePL.remove(app.package);
+                      homePS.remove(app.package);
                       await EzConfig.setStringList(
                         homePackagesKey,
-                        homePackages,
+                        homePL,
                       );
                     } else {
                       // Add
-                      homePackages.add(app.package);
+                      homePL.add(app.package);
+                      homePS.remove(app.package);
                       await EzConfig.setStringList(
                         homePackagesKey,
-                        homePackages,
+                        homePL,
                       );
                     }
                     setState(() => editing = false);
