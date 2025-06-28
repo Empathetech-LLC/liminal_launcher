@@ -14,6 +14,7 @@ const String appTitle = 'Liminal Launcher';
 const AppInfo self = AppInfo(
   label: 'Liminal Launcher',
   package: 'net.empathetech.liminal',
+  removable: false,
 );
 
 // BTS

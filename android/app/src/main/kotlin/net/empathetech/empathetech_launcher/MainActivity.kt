@@ -93,6 +93,9 @@ class MainActivity : FlutterFragmentActivity() {
       app["label"] = info.loadLabel(pm).toString()
       app["package"] = info.activityInfo.packageName
       app["icon"] = drawableToByteArray(info.loadIcon(pm))
+      
+      val isSystemApp = (info.activityInfo.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+      app["removable"] = !isSystemApp
 
       apps.add(app)
     }

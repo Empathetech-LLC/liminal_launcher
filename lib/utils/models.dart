@@ -5,24 +5,37 @@
 
 import 'package:flutter/services.dart';
 
+const String nullAppLabel = '---';
+
 /// Helpful for creating [AppInfo] lists
-/// Label 'None' and package ''
-const AppInfo nullApp = AppInfo(label: '---', package: '');
+/// [nullAppLabel], '', false
+const AppInfo nullApp = AppInfo(
+  label: nullAppLabel,
+  package: '', // If you update this, update launchApp
+  removable: false,
+);
 
 class AppInfo {
   final String label;
   final String package;
   final Uint8List? icon;
+  final bool removable;
 
   /// [Object] to store app information
   /// Label, package, and icon
   /// [AppInfo]s with == packages are ==
-  const AppInfo({required this.label, required this.package, this.icon});
+  const AppInfo({
+    required this.label,
+    required this.package,
+    this.icon,
+    required this.removable,
+  });
 
   factory AppInfo.fromMap(Map<String, dynamic> map) => AppInfo(
-        label: map['label'],
-        package: map['package'],
+        label: map['label'] ?? nullAppLabel,
+        package: map['package'] ?? '',
         icon: map['icon'],
+        removable: map['removable'] ?? false,
       );
 
   @override
