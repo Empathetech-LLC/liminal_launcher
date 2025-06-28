@@ -36,13 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Define the build data //
 
+  DateTime now = DateTime.now();
+  late Timer ticker;
+
   final bool homeTime =
       EzConfig.get(homeTimeKey) ?? EzConfig.getDefault(homeTimeKey);
   final bool homeDate =
       EzConfig.get(homeDateKey) ?? EzConfig.getDefault(homeDateKey);
-
-  DateTime now = DateTime.now();
-  late Timer ticker;
 
   final bool homeWeather =
       EzConfig.get(homeWeatherKey) ?? EzConfig.getDefault(homeWeatherKey);
@@ -50,17 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
       EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey));
 
-  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
-
   final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
       EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
-
-  /// Ordered list of home package [String]s
-  late final List<String> homePackages = List<String>.from(
-      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey));
-
-  /// Ordered list of home [AppInfo]s
-  late final List<AppInfo> homeApps = homeP2A();
 
   final LabelType labelType = LabelTypeConfig.fromValue(
       EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey));
@@ -69,6 +60,43 @@ class _HomeScreenState extends State<HomeScreen> {
       EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
 
   bool editing = false;
+
+  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+
+  /// Ordered list of home package [String]s
+  late List<String> homePackages = List<String>.from(
+      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey));
+
+  /// Ordered list of home [AppInfo]s
+  late List<AppInfo> homeApps = homeP2A();
+
+  // Define custom functions //
+
+  /// Home packages [String]s to [AppInfo]s
+  List<AppInfo> homeP2A() => homePackages
+      .map((String package) => provider.getAppFromID(package))
+      .whereType<AppInfo>() // Filter nulls
+      .toList();
+
+  /// Home [AppInfo]s to [AppTile]s
+  List<Widget> homeA2T() => homeApps.expand((AppInfo app) {
+        return <Widget>[
+          AppTile(
+            key: ValueKey<String>(app.package),
+            app: app,
+            onHomeScreen: true,
+            editing: editing,
+            refreshHome: refreshHome,
+          ),
+          spacer,
+        ];
+      }).toList();
+
+  void refreshHome() {
+    homePackages = EzConfig.get(homePackagesKey) ?? homePackages;
+    homeApps = homeP2A();
+    setState(() {});
+  }
 
   // Define custom Widgets //
 
@@ -117,28 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Define custom functions //
-
-  /// Home packages [String]s to [AppInfo]s
-  List<AppInfo> homeP2A() => homePackages
-      .map((String package) => provider.getAppFromID(package))
-      .whereType<AppInfo>() // Filter nulls
-      .toList();
-
-  /// Home [AppInfo]s to [AppTile]s
-  List<Widget> homeA2T() => homeApps.expand((AppInfo app) {
-        return <Widget>[
-          AppTile(
-            key: ValueKey<String>(app.package),
-            app: app,
-            onHomeScreen: true,
-            editing: editing,
-            stateSetter: () => setState(() {}),
-          ),
-          spacer,
-        ];
-      }).toList();
-
   // Init //
 
   @override
@@ -183,7 +189,10 @@ class _HomeScreenState extends State<HomeScreen> {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < 0) {
               // Swiped up
-              context.goNamed(editing ? hiddenListPath : appListPath);
+              context.goNamed(
+                editing ? hiddenListPath : appListPath,
+                extra: editing ? null : refreshHome,
+              );
             }
           }
         },
@@ -195,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
               package = EzConfig.get(leftPackageKey);
             } else if (details.primaryVelocity! > 0) {
               package = EzConfig.get(rightPackageKey);
-            } // No action for 0
+            }
 
             if (package != null && package.isNotEmpty) launchApp(package);
           }
