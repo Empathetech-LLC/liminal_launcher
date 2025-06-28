@@ -20,7 +20,7 @@ const AppInfo self = AppInfo(
 const String homePackagesKey = 'home_packages';
 const String hiddenPackagesKey = 'hidden_packages';
 const String appListSortKey = 'app_list_sort';
-const String ascListOrderKey = 'asc_list_order';
+const String appListOrderKey = 'app_list_order';
 
 // Functionality
 const String leftPackageKey = 'left_package';
@@ -49,7 +49,7 @@ final Map<String, Object> defaultConfig = <String, Object>{
   homePackagesKey: <String>[],
   hiddenPackagesKey: <String>[],
   appListSortKey: ListSort.name.configValue,
-  ascListOrderKey: true,
+  appListOrderKey: true,
 
   // Functionality
   leftPackageKey: '',

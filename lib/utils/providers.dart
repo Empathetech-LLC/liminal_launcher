@@ -24,7 +24,7 @@ class AppInfoProvider extends ChangeNotifier {
       AppListSortConfig.fromValue(
         EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
       ),
-      EzConfig.get(ascListOrderKey) ?? EzConfig.getDefault(ascListOrderKey),
+      EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey),
     );
   }
 
