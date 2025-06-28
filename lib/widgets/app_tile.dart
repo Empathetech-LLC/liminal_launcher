@@ -14,14 +14,14 @@ class AppTile extends StatefulWidget {
   final AppInfo app;
   final bool onHomeScreen;
   final bool editing;
-  final void Function()? stateSetter;
+  final void Function()? refreshHome;
 
   const AppTile({
     super.key,
     required this.app,
     required this.onHomeScreen,
     required this.editing,
-    this.stateSetter,
+    this.refreshHome,
   });
 
   @override
@@ -51,7 +51,7 @@ class _AppTileState extends State<AppTile> {
 
   late final bool onHomeScreen = widget.onHomeScreen;
   late bool editing = widget.editing;
-  late final void Function()? stateSetter = widget.stateSetter;
+  late final void Function()? refreshHome = widget.refreshHome;
 
   late final List<String> homePackages =
       EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey);
@@ -90,23 +90,22 @@ class _AppTileState extends State<AppTile> {
                 EzIconButton(
                   onPressed: () async {
                     if (onHomeScreen) {
+                      // Remove
                       homePackages.remove(app.package);
                       await EzConfig.setStringList(
                         homePackagesKey,
                         homePackages,
                       );
-
-                      setState(() => editing = false);
-                      stateSetter?.call();
                     } else {
+                      // Add
                       homePackages.add(app.package);
                       await EzConfig.setStringList(
                         homePackagesKey,
                         homePackages,
                       );
-
-                      setState(() => editing = false);
                     }
+                    setState(() => editing = false);
+                    refreshHome?.call();
                   },
                   icon: Icon(onHomeScreen
                       ? PlatformIcons(context).remove
@@ -139,7 +138,6 @@ class _AppTileState extends State<AppTile> {
               ),
 
               // Delete
-
               if (app.removable) ...<Widget>[
                 spacer,
                 EzIconButton(
@@ -147,7 +145,7 @@ class _AppTileState extends State<AppTile> {
                     final bool deleted = await deleteApp(context, app);
                     if (deleted) {
                       setState(() => editing = false);
-                      stateSetter?.call();
+                      refreshHome?.call();
                     }
                   },
                   icon: Icon(PlatformIcons(context).delete),
