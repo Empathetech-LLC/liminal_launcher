@@ -108,7 +108,7 @@ class _AppListScreenState extends State<AppListScreen> {
                         setState(() {});
                       },
                     ),
-                    const EzSeparator(vertical: false),
+                    const EzSpacer(vertical: false),
 
                     // Order
                     EzIconButton(
