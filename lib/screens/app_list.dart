@@ -40,6 +40,8 @@ class _AppListScreenState extends State<AppListScreen> {
   bool ascList =
       EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey);
 
+  bool atTop = true;
+
   // Return the build //
 
   @override
@@ -58,20 +60,31 @@ class _AppListScreenState extends State<AppListScreen> {
         child: EzScreen(
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
-              // Pop on overscroll
               if (notification is OverscrollNotification &&
-                  notification.overscroll < 0 &&
-                  notification.metrics.pixels <=
-                      notification.metrics.minScrollExtent + 1) {
-                Navigator.of(context).pop();
-                return true;
+                  notification.overscroll < 0) {
+                // Pop on overscroll (when already the top)
+                if (atTop) {
+                  Navigator.of(context).pop();
+                  return true;
+                } else {
+                  setState(() => atTop = true);
+                  return true;
+                }
+              } else if (notification is ScrollUpdateNotification) {
+                if (atTop && notification.metrics.pixels > 0) {
+                  setState(() => atTop = false);
+                }
+              } else if (notification is ScrollEndNotification) {
+                setState(() =>
+                    atTop = (notification.metrics.pixels == 0) ? true : false);
               }
-              return false;
-            }, // TODO: fix this
+              return false; // Let other notifications propagate
+            },
             child: EzScrollView(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: listAlign.crossAxis,
+              physics: const ClampingScrollPhysics(),
               children: <Widget>[
                 if (spacing > margin) EzSpacer(space: spacing - margin),
 
