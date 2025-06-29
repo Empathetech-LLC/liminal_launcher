@@ -84,4 +84,4 @@ Future<bool> deleteApp(BuildContext context, AppInfo app) async {
     ezLog('Failed to delete ${app.package}: $e');
     return false;
   }
-} // TODO: Update provider and alert listeners && check for a better bool strategy
+}
