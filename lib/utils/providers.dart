@@ -11,15 +11,23 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 class AppInfoProvider extends ChangeNotifier {
   final List<AppInfo> _apps;
   final Map<String, AppInfo> _appMap;
-  final Set<String> _hiddenPackages;
+
+  final Set<String> _homePS = Set<String>.from(
+      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey));
+  final List<String> _homePL =
+      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey);
+
+  final Set<String> _hiddenPS = Set<String>.from(
+      EzConfig.get(hiddenPackagesKey) ??
+          EzConfig.getDefault(hiddenPackagesKey));
+  final List<String> _hiddenPL =
+      EzConfig.get(hiddenPackagesKey) ?? EzConfig.getDefault(hiddenPackagesKey);
 
   AppInfoProvider(List<AppInfo> apps)
       : _apps = apps,
         _appMap = <String, AppInfo>{
           for (AppInfo app in apps) app.package: app,
-        },
-        _hiddenPackages = Set<String>.from(EzConfig.get(hiddenPackagesKey) ??
-            EzConfig.getDefault(hiddenPackagesKey)) {
+        } {
     sort(
       AppListSortConfig.fromValue(
         EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
@@ -29,6 +37,12 @@ class AppInfoProvider extends ChangeNotifier {
   }
 
   List<AppInfo> get apps => _apps;
+  List<String> get homeApps => _homePL;
+  Set<String> get homePackages => _homePS;
+  List<String> get hiddenApps => _hiddenPL;
+  Set<String> get hiddenPackages => _hiddenPS;
+
+  AppInfo? getAppFromID(String package) => _appMap[package];
 
   void sort(ListSort sort, bool asc) {
     switch (sort) {
@@ -44,7 +58,43 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  AppInfo? getAppFromID(String package) => _appMap[package];
+  void addHomeApp(String package) async {
+    if (_homePS.contains(package)) return;
 
-  bool isHidden(String package) => _hiddenPackages.contains(package);
+    _homePL.add(package);
+    _homePS.add(package);
+
+    await EzConfig.setStringList(homePackagesKey, _homePL);
+    notifyListeners();
+  }
+
+  void removeHomeApp(String package) async {
+    if (!_homePS.contains(package)) return;
+
+    _homePL.remove(package);
+    _homePS.remove(package);
+
+    await EzConfig.setStringList(homePackagesKey, _homePL);
+    notifyListeners();
+  }
+
+  void hideApp(String package) async {
+    if (_hiddenPS.contains(package)) return;
+
+    _hiddenPL.add(package);
+    _hiddenPS.add(package);
+
+    await EzConfig.setStringList(hiddenPackagesKey, _hiddenPL);
+    notifyListeners();
+  }
+
+  void showApp(String package) async {
+    if (!_hiddenPS.contains(package)) return;
+
+    _hiddenPL.remove(package);
+    _hiddenPS.remove(package);
+
+    await EzConfig.setStringList(hiddenPackagesKey, _hiddenPL);
+    notifyListeners();
+  }
 }
