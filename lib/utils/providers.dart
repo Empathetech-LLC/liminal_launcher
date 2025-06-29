@@ -37,10 +37,10 @@ class AppInfoProvider extends ChangeNotifier {
   }
 
   List<AppInfo> get apps => _apps;
-  List<String> get homeApps => _homePL;
-  Set<String> get homePackages => _homePS;
-  List<String> get hiddenApps => _hiddenPL;
-  Set<String> get hiddenPackages => _hiddenPS;
+  List<String> get homePL => _homePL;
+  Set<String> get homePS => _homePS;
+  List<String> get hiddenPL => _hiddenPL;
+  Set<String> get hiddenPS => _hiddenPS;
 
   AppInfo? getAppFromID(String package) => _appMap[package];
 
@@ -58,7 +58,7 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addHomeApp(String package) async {
+  Future<void> addHomeApp(String package) async {
     if (_homePS.contains(package)) return;
 
     _homePL.add(package);
@@ -68,7 +68,7 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeHomeApp(String package) async {
+  Future<void> removeHomeApp(String package) async {
     if (!_homePS.contains(package)) return;
 
     _homePL.remove(package);
@@ -78,7 +78,16 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void hideApp(String package) async {
+  Future<void> removeDeleted(String package) async {
+    await showApp(package);
+    await removeHomeApp(package);
+    _apps.remove(_appMap[package]);
+    _appMap.remove(package);
+
+    notifyListeners();
+  }
+
+  Future<void> hideApp(String package) async {
     if (_hiddenPS.contains(package)) return;
 
     _hiddenPL.add(package);
@@ -88,7 +97,7 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void showApp(String package) async {
+  Future<void> showApp(String package) async {
     if (!_hiddenPS.contains(package)) return;
 
     _hiddenPL.remove(package);
