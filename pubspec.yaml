@@ -55,6 +55,7 @@ flutter:
     - assets/fonts/Roboto-Regular.ttf
     - assets/fonts/Roboto-Thin.ttf
     - assets/fonts/Roboto-ThinItalic.ttf
+    - assets/fonts/wingding.ttf
     - assets/images/
     - assets/images/tmp-icon.jpg
 
