@@ -51,26 +51,6 @@ Future<void> openSettings(String package) async {
   }
 }
 
-/// Hide [package]
-Future<bool> hideApp(String package) async {
-  final List<String> curr = List<String>.from(
-    EzConfig.get(hiddenPackagesKey) ?? <String>[],
-  );
-
-  curr.add(package);
-  return await EzConfig.setStringList(hiddenPackagesKey, curr);
-} // TODO: Update provider and alert listeners
-
-/// Un-hide [package]
-Future<bool> showApp(String package) async {
-  final List<String> curr = List<String>.from(
-    EzConfig.get(hiddenPackagesKey) ?? <String>[],
-  );
-
-  curr.remove(package);
-  return await EzConfig.setStringList(hiddenPackagesKey, curr);
-} // TODO: Update provider and alert listeners
-
 /// Uninstall [app] (con confirmation)
 Future<bool> deleteApp(BuildContext context, AppInfo app) async {
   late final List<Widget> materialActions;
