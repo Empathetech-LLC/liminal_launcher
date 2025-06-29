@@ -40,7 +40,6 @@ class _AppTileState extends State<AppTile> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
   late final AppInfo app = widget.app;
-  late bool isHidden = provider.isHidden(app.package);
 
   final bool showIcon =
       EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
@@ -52,10 +51,6 @@ class _AppTileState extends State<AppTile> {
   late final bool onHomeScreen = widget.onHomeScreen;
   late bool editing = widget.editing;
   late final void Function()? refreshHome = widget.refreshHome;
-
-  late final List<String> homePL =
-      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey);
-  late final Set<String> homePS = homePL.toSet();
 
   // Define custom functions //
 
@@ -86,34 +81,32 @@ class _AppTileState extends State<AppTile> {
                 spacer,
               ],
 
-              // Add to home/remove from home
-              if (!isHidden &&
-                  (onHomeScreen || !homePS.contains(app.package))) ...<Widget>[
+              // Add to home
+              if (!provider.hiddenPS.contains(app.package) &&
+                  !onHomeScreen &&
+                  !provider.homePS.contains(app.package)) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    if (onHomeScreen) {
-                      // Remove
-                      homePL.remove(app.package);
-                      homePS.remove(app.package);
-                      await EzConfig.setStringList(
-                        homePackagesKey,
-                        homePL,
-                      );
-                    } else {
-                      // Add
-                      homePL.add(app.package);
-                      homePS.add(app.package);
-                      await EzConfig.setStringList(
-                        homePackagesKey,
-                        homePL,
-                      );
-                    }
+                    await provider.addHomeApp(app.package);
                     setState(() => editing = false);
                     refreshHome?.call();
                   },
-                  icon: Icon(onHomeScreen
-                      ? PlatformIcons(context).remove
-                      : Icons.add_to_home_screen),
+                  icon: const Icon(Icons.add_to_home_screen),
+                ),
+                spacer,
+              ],
+
+              // Remove from home
+              if (!provider.hiddenPS.contains(app.package) &&
+                  onHomeScreen &&
+                  provider.homePS.contains(app.package)) ...<Widget>[
+                EzIconButton(
+                  onPressed: () async {
+                    await provider.removeHomeApp(app.package);
+                    setState(() => editing = false);
+                    refreshHome?.call();
+                  },
+                  icon: Icon(PlatformIcons(context).remove),
                 ),
                 spacer,
               ],
@@ -121,15 +114,13 @@ class _AppTileState extends State<AppTile> {
               // Show/hide
               EzIconButton(
                 onPressed: () async {
-                  late final bool success;
-
-                  success = (isHidden)
-                      ? await showApp(app.package)
-                      : await hideApp(app.package);
-
-                  if (success) setState(() => isHidden = !isHidden);
+                  provider.hiddenPS.contains(app.package)
+                      ? await provider.showApp(app.package)
+                      : await provider.hideApp(app.package);
+                  setState(() => editing = false);
+                  refreshHome?.call();
                 },
-                icon: Icon(isHidden
+                icon: Icon(provider.hiddenPS.contains(app.package)
                     ? PlatformIcons(context).eyeSolid
                     : PlatformIcons(context).eyeSlash),
               ),
@@ -148,6 +139,7 @@ class _AppTileState extends State<AppTile> {
                   onPressed: () async {
                     final bool deleted = await deleteApp(context, app);
                     if (deleted) {
+                      await provider.removeDeleted(app.package);
                       setState(() => editing = false);
                       refreshHome?.call();
                     }
