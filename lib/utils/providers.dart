@@ -68,14 +68,16 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeHomeApp(String package) async {
-    if (!_homePS.contains(package)) return;
+  Future<bool> removeHomeApp(String package) async {
+    if (!_homePS.contains(package)) return false;
 
     _homePL.remove(package);
     _homePS.remove(package);
 
     await EzConfig.setStringList(homePackagesKey, _homePL);
     notifyListeners();
+
+    return true;
   }
 
   Future<void> removeDeleted(String package) async {
@@ -94,7 +96,9 @@ class AppInfoProvider extends ChangeNotifier {
     _hiddenPS.add(package);
 
     await EzConfig.setStringList(hiddenPackagesKey, _hiddenPL);
-    notifyListeners();
+
+    final bool notified = await removeHomeApp(package);
+    if (!notified) notifyListeners();
   }
 
   Future<void> showApp(String package) async {
