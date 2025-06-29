@@ -26,13 +26,12 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  List<String> packages = EzConfig.get(hiddenPackagesKey) ?? <String>[];
-
   final ListAlignment listAlign = ListAlignmentConfig.fromValue(
     EzConfig.get(fullListAlignmentKey) ??
         EzConfig.getDefault(fullListAlignmentKey),
   );
 
+  bool atTop = true;
   bool editing = false;
 
   // Return the build //
@@ -45,7 +44,7 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
         onVerticalDragEnd: (DragEndDetails details) async {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! > 0) {
-              // Pop on scroll down (backup for tiny lists)
+              // Pop on swipe down (backup for non-scroll portions)
               Navigator.of(context).pop();
             }
           }
@@ -55,19 +54,31 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
               if (notification is OverscrollNotification &&
-                  notification.overscroll < 0 &&
-                  notification.metrics.pixels <=
-                      notification.metrics.minScrollExtent + 1) {
-                Navigator.of(context).pop();
-                return true;
+                  notification.overscroll < 0) {
+                // Pop on overscroll (when already the top)
+                if (atTop) {
+                  Navigator.of(context).pop();
+                  return true;
+                } else {
+                  setState(() => atTop = true);
+                  return true;
+                }
+              } else if (notification is ScrollUpdateNotification) {
+                if (atTop && notification.metrics.pixels > 0) {
+                  setState(() => atTop = false);
+                }
+              } else if (notification is ScrollEndNotification) {
+                setState(() =>
+                    atTop = (notification.metrics.pixels == 0) ? true : false);
               }
-              return false;
-            }, // TODO: fix this
+              return false; // Let other notifications propagate
+            },
             child: EzScrollView(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: listAlign.crossAxis,
-              children: packages.expand((String package) {
+              physics: const ClampingScrollPhysics(),
+              children: provider.hiddenPL.expand((String package) {
                 final AppInfo? app = provider.getAppFromID(package);
                 if (app == null) return <Widget>[];
 
@@ -76,6 +87,7 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
                     app: app,
                     onHomeScreen: false,
                     editing: editing,
+                    // refreshHome: () => setState(() {}),
                   ),
                   spacer,
                 ];
