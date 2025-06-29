@@ -102,7 +102,7 @@ class _AppTileState extends State<AppTile> {
                     } else {
                       // Add
                       homePL.add(app.package);
-                      homePS.remove(app.package);
+                      homePS.add(app.package);
                       await EzConfig.setStringList(
                         homePackagesKey,
                         homePL,
