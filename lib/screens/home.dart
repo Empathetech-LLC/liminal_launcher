@@ -63,17 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  /// Ordered list of home package [String]s
-  late List<String> homePackages = List<String>.from(
-      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey));
-
   /// Ordered list of home [AppInfo]s
   late List<AppInfo> homeApps = homeP2A();
 
   // Define custom functions //
 
   /// Home packages [String]s to [AppInfo]s
-  List<AppInfo> homeP2A() => homePackages
+  List<AppInfo> homeP2A() => provider.homePL
       .map((String package) => provider.getAppFromID(package))
       .whereType<AppInfo>() // Filter nulls
       .toList();
@@ -92,11 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ];
       }).toList();
 
-  void refreshHome() {
-    homePackages = EzConfig.get(homePackagesKey) ?? homePackages;
-    homeApps = homeP2A();
-    setState(() {});
-  }
+  void refreshHome() => setState(() => homeApps = homeP2A());
 
   // Define custom Widgets //
 
@@ -232,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             // Add folder
-            if (homePackages.isNotEmpty) ...<Widget>[
+            if (provider.homePS.isNotEmpty) ...<Widget>[
               AddFolderFAB(context, doNothing),
               separator,
             ],
@@ -258,20 +250,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   type: labelType,
                                   showIcon: showIcon,
                                   onPressed: () async {
-                                    homePackages.add(app.package);
-                                    homeApps.add(app);
-
-                                    await EzConfig.setStringList(
-                                      homePackagesKey,
-                                      homePackages,
-                                    );
-
+                                    await provider.addHomeApp(app.package);
                                     setState(() {});
                                     setModalState(() {});
                                   },
                                 ),
                               ))
-                          .toList(), // TODO: Move me to setup
+                          .toList(),
                     );
                   },
                 ),
