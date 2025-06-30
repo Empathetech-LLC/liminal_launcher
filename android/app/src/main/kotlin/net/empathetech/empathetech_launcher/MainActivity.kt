@@ -45,12 +45,7 @@ class MainActivity : FlutterFragmentActivity() {
         }
         "getWallpaper" -> {
           try {
-            val wallpaper = getSystemWallpaper()
-            if (wallpaper != null) {
-              result.success(wallpaper)
-            } else {
-              result.failed("WALLPAPER_FAILURE", "null wallpaper", null)
-            }
+            result.success(getSystemWallpaper())
           } catch (e: Exception) {
             result.error("WALLPAPER_ERROR", "Could not retrieve wallpaper", e.message)
           }
