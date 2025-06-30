@@ -3,7 +3,11 @@
  * See LICENSE for distribution and usage details.
  */
 
+import '../utils/export.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class LiminalScaffold extends StatelessWidget {
@@ -35,10 +39,6 @@ class LiminalScreen extends StatelessWidget {
 
   /// Margin around the screen content
   final EdgeInsetsGeometry? margin;
-
-  /// Optional [Decoration] background for the screen
-  /// If provided, must set [useImageDecoration] to false
-  final Decoration? decoration;
 
   /// Whether the [darkDecorationImageKey]/[lightDecorationImageKey] should be used
   final bool useImageDecoration;
@@ -75,7 +75,6 @@ class LiminalScreen extends StatelessWidget {
     super.key,
     this.alignment,
     this.margin,
-    this.decoration,
     this.useImageDecoration = true,
     this.darkDecorationImageKey = darkBackgroundImageKey,
     this.lightDecorationImageKey = lightBackgroundImageKey,
@@ -90,11 +89,19 @@ class LiminalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EdgeInsetsGeometry screenMargin =
+    late final wallpaperProvider = Provider.of<WallpaperProvider>(context);
+
+    late final EdgeInsetsGeometry screenMargin =
         margin ?? EdgeInsets.all(EzConfig.get(marginKey));
 
     Decoration? buildDecoration() {
-      if (!useImageDecoration) return null;
+      if (wallpaperProvider.useOS) {
+        return (wallpaperProvider.wallpaper is Uint8List)
+            ? BoxDecoration(
+                image: DecorationImage(
+                    image: Image.memory(wallpaperProvider.wallpaper).image))
+            : null;
+      }
 
       final String decorationKey = isDarkTheme(context)
           ? darkDecorationImageKey
@@ -116,7 +123,7 @@ class LiminalScreen extends StatelessWidget {
     return Container(
       alignment: alignment,
       padding: screenMargin,
-      decoration: decoration ?? buildDecoration(),
+      decoration: buildDecoration(),
       width: width,
       height: height,
       constraints: constraints,
