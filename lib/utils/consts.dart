@@ -7,6 +7,8 @@ import './export.dart';
 
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
+// App config //
+
 /// Liminal Launcher
 const String appTitle = 'Liminal Launcher';
 
@@ -16,6 +18,8 @@ const AppInfo self = AppInfo(
   package: 'net.empathetech.liminal',
   removable: false,
 );
+
+// EzConfig //
 
 // BTS
 const String homePackagesKey = 'home_packages';
@@ -41,9 +45,6 @@ const String homeWeatherKey = 'home_weather';
 const String showIconKey = 'show_icon';
 const String labelTypeKey = 'label_type';
 const String extendTileKey = 'extend_tile';
-
-/// 'wingding'
-const String wingding = 'Wingding';
 
 /// [mobileEmpathConfig] with Liminal additions
 final Map<String, Object> defaultConfig = <String, Object>{
@@ -73,4 +74,67 @@ final Map<String, Object> defaultConfig = <String, Object>{
   showIconKey: false,
   labelTypeKey: LabelType.full.configValue,
   extendTileKey: false,
+};
+
+// Custom fonts //
+
+/// 'wingding'
+const String wingding = 'Wingding';
+
+const Map<String, String> wingdingMap = <String, String>{
+  // Lowercase
+  'a': '\u{264B}',
+  'b': '\u{264C}',
+  'c': '\u{264D}',
+  'd': '\u{264E}',
+  'e': '\u{264F}',
+  'f': '\u{2650}',
+  'g': '\u{2651}',
+  'h': '\u{2652}',
+  'i': '\u{2653}',
+  'j': '\u{1F670}',
+  'k': '\u{1F675}',
+  'l': '\u{25CF}',
+  'm': '\u{1F53E}',
+  'n': '\u{25A0}',
+  'o': '\u{25A1}',
+  'p': '\u{1F790}',
+  'q': '\u{2751}',
+  'r': '\u{2752}',
+  's': '\u{2B27}',
+  't': '\u{29EB}',
+  'u': '\u{25C6}',
+  'v': '\u{2756}',
+  'w': '\u{2B25}',
+  'x': '\u{2327}',
+  'y': '\u{2BB9}',
+  'z': '\u{2318}',
+
+  // Uppercase
+  'A': '\u{270C}',
+  'B': '\u{1F44C}',
+  'C': '\u{1F44D}',
+  'D': '\u{1F44E}',
+  'E': '\u{261C}',
+  'F': '\u{261E}',
+  'G': '\u{261D}',
+  'H': '\u{261F}',
+  'I': '\u{1F590}',
+  'J': '\u{263A}',
+  'K': '\u{1F610}',
+  'L': '\u{2639}',
+  'M': '\u{1F4A3}',
+  'N': '\u{2620}',
+  'O': '\u{1F3F3}',
+  'P': '\u{1F3F1}',
+  'Q': '\u{2708}',
+  'R': '\u{263C}',
+  'S': '\u{1F4A7}',
+  'T': '\u{2744}',
+  'U': '\u{1F546}',
+  'V': '\u{271E}',
+  'W': '\u{1F548}',
+  'X': '\u{2720}',
+  'Y': '\u{2721}',
+  'Z': '\u{262A}',
 };
