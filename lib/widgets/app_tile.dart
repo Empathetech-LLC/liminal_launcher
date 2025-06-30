@@ -227,33 +227,39 @@ class TileButton extends StatelessWidget {
     }
 
     late final String label;
+    TextStyle? textStyle = Theme.of(context).textTheme.bodyLarge;
 
     switch (type) {
       case LabelType.none:
         label = '';
+        break;
       case LabelType.initials:
         label = app.label
             .split(' ')
             .map((String word) => word.isNotEmpty ? word[0] : '')
             .join()
             .toUpperCase();
+        break;
       case LabelType.full:
         label = app.label;
+        break;
       case LabelType.wingding:
-        label = app.label.runes
-            .map((int rune) => String.fromCharCode(rune + 69))
-            .join(); // TODO: For realz (or remove)
+        label = app.label;
+        textStyle = textStyle?.copyWith(fontFamily: wingding);
+        break;
     }
 
     return showIcon
         ? EzTextIconButton(
             icon: iconImage,
             label: label,
+            textStyle: textStyle,
             onPressed: onPressed,
             onLongPress: onLongPress,
           )
         : EzTextButton(
             text: label,
+            textStyle: textStyle,
             onPressed: onPressed,
             onLongPress: onLongPress,
           );
