@@ -169,8 +169,15 @@ class EmpathetechLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AppInfoProvider>(
-      create: (_) => AppInfoProvider(installedApps),
+    return MultiProvider(
+      providers: <ChangeNotifierProvider<dynamic>>[
+        ChangeNotifierProvider<AppInfoProvider>(
+          create: (_) => AppInfoProvider(installedApps),
+        ),
+        ChangeNotifierProvider<WallpaperProvider>(
+          create: (_) => WallpaperProvider(),
+        ),
+      ],
       child: EzAppProvider(
         app: PlatformApp.router(
           debugShowCheckedModeBanner: false,
