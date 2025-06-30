@@ -49,7 +49,7 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
               style: Theme.of(context).textTheme.labelLarge,
               textAlign: TextAlign.center,
             ),
-            margin,
+            useOS ? spacer : margin,
 
             // Wallpaper
             if (!useOS) ...<Widget>[
