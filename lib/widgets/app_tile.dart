@@ -17,7 +17,7 @@ class AppTile extends StatefulWidget {
   final void Function()? refreshHome;
 
   const AppTile({
-    super.key,
+    required super.key,
     required this.app,
     required this.onHomeScreen,
     required this.editing,

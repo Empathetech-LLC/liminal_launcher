@@ -148,6 +148,7 @@ class _AppListScreenState extends State<AppListScreen> {
                         ? <Widget>[]
                         : <Widget>[
                             AppTile(
+                              key: ValueKey<String>(app.package),
                               app: app,
                               onHomeScreen: false,
                               editing: false,
