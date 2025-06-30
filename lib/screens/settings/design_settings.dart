@@ -56,7 +56,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      EzScreen(
+      LiminalScreen(
         child: EzScrollView(
           children: <Widget>[
             if (spacing > margin) EzSpacer(space: spacing - margin),

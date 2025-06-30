@@ -59,7 +59,7 @@ class _AppListScreenState extends State<AppListScreen> {
             }
           }
         },
-        child: EzScreen(
+        child: LiminalScreen(
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
               if (notification is OverscrollNotification &&

@@ -28,3 +28,102 @@ class LiminalScaffold extends StatelessWidget {
         ),
       );
 }
+
+class LiminalScreen extends StatelessWidget {
+  /// [Container.alignment] passthrough
+  final AlignmentGeometry? alignment;
+
+  /// Margin around the screen content
+  final EdgeInsetsGeometry? margin;
+
+  /// Optional [Decoration] background for the screen
+  /// If provided, must set [useImageDecoration] to false
+  final Decoration? decoration;
+
+  /// Whether the [darkDecorationImageKey]/[lightDecorationImageKey] should be used
+  final bool useImageDecoration;
+
+  /// [EzConfig] key that will be used to create a [DecorationImage] background for the screen (dark theme)
+  final String darkDecorationImageKey;
+
+  /// [EzConfig] key that will be used to create a [DecorationImage] background for the screen (light theme)
+  final String lightDecorationImageKey;
+
+  /// Screen width
+  final double width;
+
+  /// Screen height
+  final double height;
+
+  /// [Container.constraints] passthrough
+  final BoxConstraints? constraints;
+
+  /// [Container.transform] passthrough
+  final Matrix4? transform;
+
+  /// [Container.transformAlignment] passthrough
+  final AlignmentGeometry? transformAlignment;
+
+  /// [Container.clipBehavior] passthrough
+  final Clip clipBehavior;
+
+  /// Screen content
+  final Widget child;
+
+  /// [EzScreen] with updated background image handling
+  const LiminalScreen({
+    super.key,
+    this.alignment,
+    this.margin,
+    this.decoration,
+    this.useImageDecoration = true,
+    this.darkDecorationImageKey = darkBackgroundImageKey,
+    this.lightDecorationImageKey = lightBackgroundImageKey,
+    this.width = double.infinity,
+    this.height = double.infinity,
+    this.constraints,
+    this.transform,
+    this.transformAlignment,
+    this.clipBehavior = Clip.none,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final EdgeInsetsGeometry screenMargin =
+        margin ?? EdgeInsets.all(EzConfig.get(marginKey));
+
+    Decoration? buildDecoration() {
+      if (!useImageDecoration) return null;
+
+      final String decorationKey = isDarkTheme(context)
+          ? darkDecorationImageKey
+          : lightDecorationImageKey;
+      final String? imagePath = EzConfig.get(decorationKey);
+
+      if (imagePath == null || imagePath == noImageValue) {
+        return null;
+      } else {
+        final BoxFit? fit =
+            ezFitFromName(EzConfig.get('$decorationKey$boxFitSuffix'));
+
+        return BoxDecoration(
+          image: DecorationImage(image: ezImageProvider(imagePath), fit: fit),
+        );
+      }
+    }
+
+    return Container(
+      alignment: alignment,
+      padding: screenMargin,
+      decoration: decoration ?? buildDecoration(),
+      width: width,
+      height: height,
+      constraints: constraints,
+      transform: transform,
+      transformAlignment: transformAlignment,
+      clipBehavior: clipBehavior,
+      child: child,
+    );
+  }
+}

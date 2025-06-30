@@ -40,7 +40,7 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      EzScreen(
+      LiminalScreen(
         child: EzScrollView(
           children: <Widget>[
             // Current theme reminder
@@ -52,25 +52,27 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
             margin,
 
             // Wallpaper
-            EzScrollView(
-              scrollDirection: Axis.horizontal,
-              startCentered: true,
-              mainAxisSize: MainAxisSize.min,
-              child: isDark
-                  ? EzImageSetting(
-                      key: UniqueKey(),
-                      configKey: darkBackgroundImageKey,
-                      label: 'Wallpaper',
-                      updateTheme: Brightness.dark,
-                    )
-                  : EzImageSetting(
-                      key: UniqueKey(),
-                      configKey: lightBackgroundImageKey,
-                      label: 'Wallpaper',
-                      updateTheme: Brightness.light,
-                    ),
-            ),
-            spacer,
+            if (!useOS) ...<Widget>[
+              EzScrollView(
+                scrollDirection: Axis.horizontal,
+                startCentered: true,
+                mainAxisSize: MainAxisSize.min,
+                child: isDark
+                    ? EzImageSetting(
+                        key: UniqueKey(),
+                        configKey: darkBackgroundImageKey,
+                        label: 'Wallpaper',
+                        updateTheme: Brightness.dark,
+                      )
+                    : EzImageSetting(
+                        key: UniqueKey(),
+                        configKey: lightBackgroundImageKey,
+                        label: 'Wallpaper',
+                        updateTheme: Brightness.light,
+                      ),
+              ),
+              spacer,
+            ],
 
             // Use built in?
             EzSwitchPair(
