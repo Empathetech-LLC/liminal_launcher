@@ -6,7 +6,6 @@
 import './export.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class AppInfoProvider extends ChangeNotifier {
@@ -129,5 +128,5 @@ class WallpaperProvider extends ChangeNotifier {
   }
 
   bool get useOS => _useOS;
-  Uint8List? get wallpaper => _wallpaper;
+  dynamic get wallpaper => _wallpaper;
 }
