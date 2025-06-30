@@ -42,6 +42,18 @@ class MainActivity : FlutterFragmentActivity() {
             result.error("LAUNCH_ERROR", "Could not launch app", e.message)
           }
         }
+        "getWallpaper" -> {
+          try {
+            val wallpaper = getSystemWallpaper()
+            if (wallpaper != null) {
+              result.success(wallpaper)
+            } else {
+              result.failed("WALLPAPER_FAILURE", "null wallpaper", null)
+            }
+          } catch (e: Exception) {
+            result.error("WALLPAPER_ERROR", "Could not retrieve wallpaper", e.message)
+          }
+        }
         "openSettings" -> {
           try {
             val packageName = call.argument<String>("packageName")
@@ -125,6 +137,24 @@ class MainActivity : FlutterFragmentActivity() {
     val stream = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
     return stream.toByteArray()
+  }
+
+  private fun getSystemWallpaper(): ByteArray? {
+    val wallpaperManager = WallpaperManager.getInstance(applicationContext)
+    return try {
+      val wallpaperDrawable = wallpaperManager.drawable
+      if (wallpaperDrawable is BitmapDrawable) {
+        val bitmap = wallpaperDrawable.bitmap
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        stream.toByteArray()
+      } else {
+        null
+      }
+    } catch (e: Exception) {
+      e.printStackTrace()
+      null
+    }
   }
 
   private fun launchApp(packageName: String) {
