@@ -227,7 +227,6 @@ class TileButton extends StatelessWidget {
     }
 
     late final String label;
-    TextStyle? textStyle = Theme.of(context).textTheme.bodyLarge;
 
     switch (type) {
       case LabelType.none:
@@ -244,7 +243,6 @@ class TileButton extends StatelessWidget {
         label = app.label;
         break;
       case LabelType.wingding:
-        textStyle = textStyle?.copyWith(fontFamily: wingding);
         label = app.label
             .split('')
             .map((String char) => wingdingMap[char] ?? char)
@@ -256,13 +254,11 @@ class TileButton extends StatelessWidget {
         ? EzTextIconButton(
             icon: iconImage,
             label: label,
-            textStyle: textStyle,
             onPressed: onPressed,
             onLongPress: onLongPress,
           )
         : EzTextButton(
             text: label,
-            textStyle: textStyle,
             onPressed: onPressed,
             onLongPress: onLongPress,
           );
