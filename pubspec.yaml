@@ -43,8 +43,15 @@ flutter:
 
   assets:
     - assets/
+    - assets/fonts/
+    - assets/fonts/wingding.ttf
     - assets/images/
     - assets/images/tmp-icon.jpg
+
+  fonts:
+    - family: Wingding
+      fonts:
+        - asset: assets/fonts/wingding.ttf          
 
 flutter_launcher_icons:
   image_path: assets/images/tmp-icon.jpg
