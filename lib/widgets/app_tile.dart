@@ -244,8 +244,11 @@ class TileButton extends StatelessWidget {
         label = app.label;
         break;
       case LabelType.wingding:
-        label = app.label;
         textStyle = textStyle?.copyWith(fontFamily: wingding);
+        label = app.label
+            .split('')
+            .map((String char) => wingdingMap[char] ?? char)
+            .join();
         break;
     }
 
