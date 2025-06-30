@@ -6,6 +6,7 @@
 import './export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class AppInfoProvider extends ChangeNotifier {
@@ -110,4 +111,23 @@ class AppInfoProvider extends ChangeNotifier {
     await EzConfig.setStringList(hiddenPackagesKey, _hiddenPL);
     notifyListeners();
   }
+}
+
+class WallpaperProvider extends ChangeNotifier {
+  dynamic _wallpaper;
+  bool _useOS;
+
+  WallpaperProvider()
+      : _useOS = (EzConfig.get(useOSWallpaperKey) ??
+            EzConfig.getDefault(useOSWallpaperKey)) {
+    if (_useOS) {
+      _wallpaper = getWallpaper();
+    } else {
+      _wallpaper =
+          '${EzConfig.get(darkBackgroundImageKey)}:${EzConfig.get(lightBackgroundImageKey)}';
+    }
+  }
+
+  bool get useOS => _useOS;
+  Uint8List? get wallpaper => _wallpaper;
 }
