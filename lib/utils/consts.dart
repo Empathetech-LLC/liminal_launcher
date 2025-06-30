@@ -46,6 +46,9 @@ const String showIconKey = 'show_icon';
 const String labelTypeKey = 'label_type';
 const String extendTileKey = 'extend_tile';
 
+// Image
+const String useOSWallpaperKey = 'use_os_wallpaper';
+
 /// [mobileEmpathConfig] with Liminal additions
 final Map<String, Object> defaultConfig = <String, Object>{
   ...mobileEmpathConfig,
@@ -74,6 +77,9 @@ final Map<String, Object> defaultConfig = <String, Object>{
   showIconKey: false,
   labelTypeKey: LabelType.full.configValue,
   extendTileKey: false,
+
+  // Image
+  useOSWallpaperKey: true,
 };
 
 // Custom fonts //
