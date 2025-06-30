@@ -28,6 +28,15 @@ Future<List<AppInfo>> getApps() async {
   }
 }
 
+Future<Uint8List?> getWallpaper() async {
+  try {
+    return await platform.invokeMethod('getWallpaper');
+  } catch (e) {
+    ezLog('Failed to get wallpaper: $e');
+    return null;
+  }
+}
+
 /// Open [package]
 Future<void> launchApp(String package) async {
   try {
