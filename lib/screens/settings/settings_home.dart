@@ -90,7 +90,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 GestureDetector(
                   onLongPress: showTips,
                   child: const EzWarning(
-                      'Appearance settings take full effect on restart.\n\nHave fun!'),
+                      'Most appearance settings take full effect on restart.\n\nHave fun!'),
                 ),
                 Positioned(
                   top: 0,
