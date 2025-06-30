@@ -18,6 +18,7 @@ const AppInfo nullApp = AppInfo(
 class AppInfo {
   final String label;
   final String package;
+  final String keyLabel;
   final Uint8List? icon;
   final bool removable;
 
@@ -29,7 +30,7 @@ class AppInfo {
     required this.package,
     this.icon,
     required this.removable,
-  });
+  }) : keyLabel = '$label:$package';
 
   factory AppInfo.fromMap(Map<String, dynamic> map) => AppInfo(
         label: map['label'] ?? nullAppLabel,

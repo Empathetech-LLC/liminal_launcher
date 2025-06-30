@@ -84,7 +84,7 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
 
                 return <Widget>[
                   AppTile(
-                    key: ValueKey<String>(app.package),
+                    key: ValueKey<String>(app.keyLabel),
                     app: app,
                     onHomeScreen: false,
                     editing: editing,

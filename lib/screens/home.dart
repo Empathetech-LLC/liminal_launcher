@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> homeA2T() => homeApps.expand((AppInfo app) {
         return <Widget>[
           AppTile(
-            key: ValueKey<String>(app.package),
+            key: ValueKey<String>(app.keyLabel),
             app: app,
             onHomeScreen: true,
             editing: editing,
@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .map((AppInfo app) => Padding(
                                 padding: modalPadding,
                                 child: TileButton(
-                                  key: ValueKey<String>(app.package),
+                                  key: ValueKey<String>(app.keyLabel),
                                   app: app,
                                   type: labelType,
                                   showIcon: showIcon,
