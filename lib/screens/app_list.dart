@@ -143,17 +143,18 @@ class _AppListScreenState extends State<AppListScreen> {
                 spacer,
 
                 // App list
-                ...provider.apps.expand((AppInfo app) {
-                  return <Widget>[
-                    AppTile(
-                      app: app,
-                      onHomeScreen: false,
-                      editing: false,
-                      refreshHome: widget.refreshHome,
-                    ),
-                    spacer,
-                  ];
-                }),
+                ...provider.apps.expand(
+                    (AppInfo app) => (provider.hiddenPS.contains(app.package))
+                        ? <Widget>[]
+                        : <Widget>[
+                            AppTile(
+                              app: app,
+                              onHomeScreen: false,
+                              editing: false,
+                              refreshHome: widget.refreshHome,
+                            ),
+                            spacer,
+                          ]),
               ],
             ),
           ),

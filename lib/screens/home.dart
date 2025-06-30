@@ -241,7 +241,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     return EzScrollView(
                       mainAxisSize: MainAxisSize.min,
                       children: provider.apps
-                          .where((AppInfo app) => !homeApps.contains(app))
+                          .where((AppInfo app) =>
+                              !provider.homePS.contains(app.package) &&
+                              !provider.hiddenPS.contains(app.package))
                           .map((AppInfo app) => Padding(
                                 padding: modalPadding,
                                 child: TileButton(
