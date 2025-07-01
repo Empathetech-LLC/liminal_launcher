@@ -79,7 +79,7 @@ final Map<String, Object> defaultConfig = <String, Object>{
   extendTileKey: false,
 
   // Image
-  useOSWallpaperKey: true,
+  useOSWallpaperKey: false,
 };
 
 // Custom fonts //
