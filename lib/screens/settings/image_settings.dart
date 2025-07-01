@@ -7,6 +7,7 @@ import '../../utils/export.dart';
 import '../../widgets/export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class ImageSettingsScreen extends StatefulWidget {
@@ -80,6 +81,18 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
               value: useOS,
               onChanged: (bool? choice) async {
                 if (choice == null) return;
+
+                if (choice == true) {
+                  final PermissionStatus status =
+                      await Permission.storage.request();
+
+                  if (status.isDenied ||
+                      status.isRestricted ||
+                      status.isPermanentlyDenied) {
+                    return;
+                  }
+                }
+
                 await EzConfig.setBool(useOSWallpaperKey, choice);
                 setState(() => useOS = choice);
               },
