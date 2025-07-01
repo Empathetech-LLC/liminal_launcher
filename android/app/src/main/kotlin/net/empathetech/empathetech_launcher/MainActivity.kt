@@ -20,19 +20,30 @@ import io.flutter.plugin.common.MethodChannel
 import java.io.ByteArrayOutputStream
 
 class MainActivity : FlutterFragmentActivity() {
-  private val CHANNEL = "net.empathetech.liminal/query"
+  private val CHANNEL: String = "net.empathetech.liminal/query"
 
   override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
     MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
       when (call.method) {
         "getApps" -> {
-          val apps = getInstalledApps()
-          result.success(apps)
+          try{
+            result.success(getInstalledApps())
+          } catch (e: Exception) {
+            result.error("APPS_ERROR", "Could not retrieve installed apps", e.message)
+          }
+        }
+        "getWallpaper" -> {
+          try {
+            result.success(getSystemWallpaper())
+          } catch (e: Exception) {
+            result.error("WALLPAPER_ERROR", "Could not retrieve wallpaper", e.message)
+          }
         }
         "launchApp" -> {
           try {
-            val packageName = call.argument<String>("packageName")
+            val packageName: String? = call.argument<String>("packageName")
+
             if (packageName != null) {
               launchApp(packageName)
               result.success(true)
@@ -43,16 +54,10 @@ class MainActivity : FlutterFragmentActivity() {
             result.error("LAUNCH_ERROR", "Could not launch app", e.message)
           }
         }
-        "getWallpaper" -> {
-          try {
-            result.success(getSystemWallpaper())
-          } catch (e: Exception) {
-            result.error("WALLPAPER_ERROR", "Could not retrieve wallpaper", e.message)
-          }
-        }
         "openSettings" -> {
           try {
-            val packageName = call.argument<String>("packageName")
+            val packageName: String? = call.argument<String>("packageName")
+
             if (packageName != null) {
               openSettings(packageName)
               result.success(true)
@@ -65,7 +70,8 @@ class MainActivity : FlutterFragmentActivity() {
         }
         "deleteApp" -> {
           try {
-            val packageName = call.argument<String>("packageName")
+            val packageName: String? = call.argument<String>("packageName")
+            
             if (packageName != null) {
               deleteApp(packageName)
               result.success(true)
@@ -85,8 +91,9 @@ class MainActivity : FlutterFragmentActivity() {
     if (drawable == null) return null
     
     if (drawable is BitmapDrawable) {
-      val bitmap = drawable.bitmap
+      val bitmap: Bitmap = drawable.bitmap
       val stream = ByteArrayOutputStream()
+
       bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
       return stream.toByteArray()
     }
@@ -107,16 +114,14 @@ class MainActivity : FlutterFragmentActivity() {
   }
 
   private fun getInstalledApps(): List<Map<String, Any?>> {
-    val pm: PackageManager = packageManager
-
-    val intent = Intent(Intent.ACTION_MAIN, null)
-    intent.addCategory(Intent.CATEGORY_LAUNCHER)
+    val getIntent = Intent(Intent.ACTION_MAIN, null)
+    getIntent.addCategory(Intent.CATEGORY_LAUNCHER)
 
     val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      pm.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0L))
+      packageManager.queryIntentActivities(getIntent, PackageManager.ResolveInfoFlags.of(0L))
     } else {
       @Suppress("DEPRECATION")
-      pm.queryIntentActivities(intent, 0)
+      packageManager.queryIntentActivities(getIntent, 0)
     }
 
     val apps = mutableListOf<Map<String, Any?>>()
@@ -127,7 +132,7 @@ class MainActivity : FlutterFragmentActivity() {
       app["package"] = info.activityInfo.packageName
       app["icon"] = drawableToByteArray(info.loadIcon(pm))
       
-      val isSystemApp = (info.activityInfo.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+      val isSystemApp: Boolean = (info.activityInfo.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
       app["removable"] = !isSystemApp
 
       apps.add(app)
@@ -136,8 +141,7 @@ class MainActivity : FlutterFragmentActivity() {
   }
 
   private fun getSystemWallpaper(): ByteArray? {
-    val wallpaperManager = WallpaperManager.getInstance(applicationContext)
-    return drawableToByteArray(wallpaperManager.drawable)
+    return drawableToByteArray(WallpaperManager.getInstance(applicationContext).drawable)
   }
 
   private fun launchApp(packageName: String) {
@@ -146,16 +150,16 @@ class MainActivity : FlutterFragmentActivity() {
   }
 
   private fun openSettings(packageName: String) {
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-    intent.data = Uri.fromParts("package", packageName, null)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    startActivity(intent)
+    val infoIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+    infoIntent.data = Uri.fromParts("package", packageName, null)
+    infoIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(infoIntent)
   }
 
   private fun deleteApp(packageName: String) {
-    val intent = Intent(Intent.ACTION_DELETE)
-    intent.data = Uri.fromParts("package", packageName, null)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    startActivity(intent)
+    val deleteIntent = Intent(Intent.ACTION_DELETE)
+    deleteIntent.data = Uri.fromParts("package", packageName, null)
+    deleteIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(deleteIntent)
   }
 }
