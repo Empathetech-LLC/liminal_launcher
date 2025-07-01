@@ -80,7 +80,7 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
               value: useOS,
               onChanged: (bool? choice) async {
                 if (choice == null) return;
-                await EzConfig.setBool(useOSWallpaperKey, useOS);
+                await EzConfig.setBool(useOSWallpaperKey, choice);
                 setState(() => useOS = choice);
               },
             ),
