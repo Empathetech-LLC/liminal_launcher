@@ -62,12 +62,6 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
       ? nullApp
       : provider.getAppFromID(rightPackage!) ?? nullApp;
 
-  // Full list
-  bool autoSearch =
-      EzConfig.get(autoSearchKey) ?? EzConfig.getDefault(autoSearchKey);
-  bool authToEdit =
-      EzConfig.get(authToEditKey) ?? EzConfig.getDefault(authToEditKey);
-
   // Define custom functions //
 
   Future<dynamic> showTips() => showPlatformDialog(
@@ -148,29 +142,11 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
             separator,
 
             // Auto search
-            EzSwitchPair(
-              text: 'Auto search',
-              value: autoSearch,
-              onChanged: (bool? value) async {
-                if (value == null) return;
-
-                await EzConfig.setBool(autoSearchKey, value);
-                setState(() => autoSearch = value);
-              },
-            ), // TODO: private class
+            const EzSwitchPair(text: 'Auto search', valueKey: autoSearchKey),
             spacer,
 
             // Auto search
-            EzSwitchPair(
-              text: 'Auth to edit',
-              value: authToEdit,
-              onChanged: (bool? value) async {
-                if (value == null) return;
-
-                await EzConfig.setBool(authToEditKey, value);
-                setState(() => authToEdit = value);
-              },
-            ), // TODO: private class
+            const EzSwitchPair(text: 'Auth to edit', valueKey: authToEditKey),
             divider,
 
             // GoTo layout settings
