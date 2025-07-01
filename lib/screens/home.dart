@@ -31,13 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final EdgeInsets modalPadding = EzInsets.col(EzConfig.get(spacingKey));
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
-  late final MaterialLocalizations localizations =
-      MaterialLocalizations.of(context);
 
   // Define the build data //
-
-  DateTime now = DateTime.now();
-  late Timer ticker;
 
   final bool homeTime =
       EzConfig.get(homeTimeKey) ?? EzConfig.getDefault(homeTimeKey);
@@ -93,58 +88,32 @@ class _HomeScreenState extends State<HomeScreen> {
   // Define custom Widgets //
 
   Widget header() {
-    final List<Widget> rowChildren = <Widget>[];
-    final List<Widget> colChildren = <Widget>[];
-
-    if (homeTime) {
-      colChildren.add(EzText(
-        TimeOfDay.fromDateTime(now).format(context),
-        style: textTheme.headlineLarge,
-      ));
-    }
-
-    if (homeDate) {
-      colChildren.add(EzText(
-        localizations.formatMediumDate(now),
-        style: textTheme.labelLarge,
-      ));
-    }
+    final List<Widget> children = <Widget>[];
 
     if (homeTime || homeDate) {
-      rowChildren.add(
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: homeAlign.crossAxis,
-          children: colChildren,
-        ),
-      );
+      children.add(_Clock(
+        homeTime: homeTime,
+        homeDate: homeDate,
+        homeAlign: homeAlign,
+        textTheme: textTheme,
+      ));
     }
 
     if (homeWeather) {
-      rowChildren.add(EzText(
+      children.add(EzText(
         'Weather', // TODO: Weather widget
         style: textTheme.headlineLarge,
       ));
     }
 
-    if (rowChildren.length == 2) rowChildren.insert(1, rowSpacer);
+    if (children.length == 2) children.insert(1, rowSpacer);
 
     return Row(
       mainAxisAlignment: homeAlign.mainAxis,
       children: headerOrder == HeaderOrder.timeFirst
-          ? rowChildren
-          : rowChildren.reversed.toList(),
+          ? children
+          : children.reversed.toList(),
     );
-  }
-
-  // Init //
-
-  @override
-  void initState() {
-    super.initState();
-    ticker = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() => now = DateTime.now());
-    });
   }
 
   // Return the build //
@@ -271,6 +240,56 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _Clock extends StatefulWidget {
+  final bool homeTime;
+  final bool homeDate;
+  final ListAlignment homeAlign;
+  final TextTheme textTheme;
+
+  const _Clock({
+    required this.homeTime,
+    required this.homeDate,
+    required this.homeAlign,
+    required this.textTheme,
+  });
+
+  @override
+  State<_Clock> createState() => _ClockState();
+}
+
+class _ClockState extends State<_Clock> {
+  DateTime now = DateTime.now();
+  late Timer ticker;
+
+  @override
+  void initState() {
+    super.initState();
+    ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() => now = DateTime.now());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: widget.homeAlign.crossAxis,
+      children: <Widget>[
+        if (widget.homeTime)
+          EzText(
+            TimeOfDay.fromDateTime(now).format(context),
+            style: widget.textTheme.headlineLarge,
+          ),
+        if (widget.homeDate)
+          EzText(
+            MaterialLocalizations.of(context).formatMediumDate(now),
+            style: widget.textTheme.labelLarge,
+          ),
+      ],
     );
   }
 
