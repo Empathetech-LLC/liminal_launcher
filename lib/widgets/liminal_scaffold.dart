@@ -89,17 +89,18 @@ class LiminalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    late final wallpaperProvider = Provider.of<WallpaperProvider>(context);
+    late final WallpaperProvider wallpaper =
+        Provider.of<WallpaperProvider>(context);
 
     late final EdgeInsetsGeometry screenMargin =
         margin ?? EdgeInsets.all(EzConfig.get(marginKey));
 
     Decoration? buildDecoration() {
-      if (wallpaperProvider.useOS) {
-        return (wallpaperProvider.wallpaper is Uint8List)
+      if (wallpaper.useOS) {
+        return (wallpaper.wallpaper is Uint8List)
             ? BoxDecoration(
                 image: DecorationImage(
-                    image: Image.memory(wallpaperProvider.wallpaper).image))
+                    image: Image.memory(wallpaper.wallpaper).image))
             : null;
       }
 
