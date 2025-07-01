@@ -2,6 +2,7 @@ package net.empathetech.liminal
 
 import android.app.WallpaperManager
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -128,11 +129,11 @@ class MainActivity : FlutterFragmentActivity() {
     for (info in appInfo) {
       val app = mutableMapOf<String, Any?>()
 
-      app["label"] = info.loadLabel(pm).toString()
+      app["label"] = info.loadLabel(packageManager).toString()
       app["package"] = info.activityInfo.packageName
-      app["icon"] = drawableToByteArray(info.loadIcon(pm))
+      app["icon"] = drawableToByteArray(info.loadIcon(packageManager))
       
-      val isSystemApp: Boolean = (info.activityInfo.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+      val isSystemApp: Boolean = (info.activityInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
       app["removable"] = !isSystemApp
 
       apps.add(app)
