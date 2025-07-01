@@ -42,13 +42,9 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  bool homeTime = EzConfig.get(homeTimeKey) ?? EzConfig.getDefault(homeTimeKey);
-  bool homeDate = EzConfig.get(homeDateKey) ?? EzConfig.getDefault(homeDateKey);
-  bool homeWeather =
-      EzConfig.get(homeWeatherKey) ?? EzConfig.getDefault(homeWeatherKey);
-
   LabelType labelType = LabelTypeConfig.fromValue(
       EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey));
+
   bool showIcon = EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
 
   //* Return the build *//
@@ -63,42 +59,15 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             // Header //
 
             // Time
-            EzSwitchPair(
-              text: 'Home time',
-              value: homeTime,
-              onChanged: (bool? value) async {
-                if (value == null) return;
-
-                await EzConfig.setBool(homeTimeKey, value);
-                setState(() => homeTime = value);
-              },
-            ), // TODO: private class
+            const EzSwitchPair(text: 'Home time', valueKey: homeTimeKey),
             spacer,
 
             // Date
-            EzSwitchPair(
-              text: 'Home date',
-              value: homeDate,
-              onChanged: (bool? value) async {
-                if (value == null) return;
-
-                await EzConfig.setBool(homeDateKey, value);
-                setState(() => homeDate = value);
-              },
-            ), // TODO: private class
+            const EzSwitchPair(text: 'Home date', valueKey: homeDateKey),
             spacer,
 
             // Weather
-            EzSwitchPair(
-              text: 'Home weather',
-              value: homeWeather,
-              onChanged: (bool? value) async {
-                if (value == null) return;
-
-                await EzConfig.setBool(homeWeatherKey, value);
-                setState(() => homeWeather = value);
-              },
-            ), // TODO: private class
+            const EzSwitchPair(text: 'Home weather', valueKey: homeWeatherKey),
             divider,
 
             // AppTile //
@@ -154,13 +123,11 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             // Show icon
             EzSwitchPair(
               text: 'Show icon',
-              value: showIcon,
-              onChanged: (bool? value) async {
+              valueKey: showIconKey,
+              onChangedCallback: (bool? value) async {
                 if (value == null) return;
 
-                await EzConfig.setBool(showIconKey, value);
                 showIcon = value;
-
                 if (value == false && labelType == LabelType.none) {
                   await EzConfig.setString(
                     labelTypeKey,
