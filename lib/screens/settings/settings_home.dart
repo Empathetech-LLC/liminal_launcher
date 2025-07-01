@@ -14,7 +14,6 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class SettingsHomeScreen extends StatefulWidget {
-  // TODO: stateless
   const SettingsHomeScreen({super.key});
 
   @override
@@ -43,7 +42,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  late final List<DropdownMenuEntry<AppInfo>> dropdownPackages =
+  late final List<DropdownMenuEntry<AppInfo>> swipeEntries =
       <AppInfo>[nullApp, ...provider.apps]
           .map((AppInfo app) => DropdownMenuEntry<AppInfo>(
                 value: app,
@@ -51,16 +50,6 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 style: menuButtonStyle,
               ))
           .toList();
-
-  final String? leftPackage = EzConfig.get(leftPackageKey);
-  final String? rightPackage = EzConfig.get(rightPackageKey);
-
-  late AppInfo leftApp = (leftPackage == null || leftPackage!.isEmpty)
-      ? nullApp
-      : provider.getAppFromID(leftPackage!) ?? nullApp;
-  late AppInfo rightApp = (rightPackage == null || rightPackage!.isEmpty)
-      ? nullApp
-      : provider.getAppFromID(rightPackage!) ?? nullApp;
 
   // Define custom functions //
 
@@ -96,49 +85,25 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   ),
                 ),
               ],
-            ), // TODO: semantics && tooltips
+            ),
             separator,
 
             // Left swipe
-            EzRow(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                EzText('Left package', style: textTheme.bodyLarge),
-                margin,
-                EzDropdownMenu<AppInfo>(
-                  widthEntries: <String>['Play Store'],
-                  dropdownMenuEntries: dropdownPackages,
-                  initialSelection: leftApp,
-                  onSelected: (AppInfo? app) async {
-                    if (app == null || app == leftApp) return;
-
-                    await EzConfig.setString(leftPackageKey, app.package);
-                    setState(() => leftApp = app);
-                  },
-                )
-              ],
-            ), // TODO: private class
+            _SwipeSelector(
+              isLefty: true,
+              entries: swipeEntries,
+              provider: provider,
+              textTheme: textTheme,
+            ),
             spacer,
 
             // Right swipe
-            EzRow(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                EzText('Right package', style: textTheme.bodyLarge),
-                margin,
-                EzDropdownMenu<AppInfo>(
-                  widthEntries: <String>['Play Store'],
-                  dropdownMenuEntries: dropdownPackages,
-                  initialSelection: rightApp,
-                  onSelected: (AppInfo? app) async {
-                    if (app == null || app == rightApp) return;
-
-                    await EzConfig.setString(rightPackageKey, app.package);
-                    setState(() => rightApp = app);
-                  },
-                )
-              ],
-            ), // TODO: private class
+            _SwipeSelector(
+              isLefty: false,
+              entries: swipeEntries,
+              provider: provider,
+              textTheme: textTheme,
+            ),
             separator,
 
             // Auto search
@@ -202,6 +167,76 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         ),
       ),
       fab: EzBackFAB(context, showHome: true),
+    );
+  }
+}
+
+class _SwipeSelector extends StatefulWidget {
+  final bool isLefty;
+  final List<DropdownMenuEntry<AppInfo>> entries;
+  final AppInfoProvider provider;
+  final TextTheme textTheme;
+
+  const _SwipeSelector({
+    required this.isLefty,
+    required this.entries,
+    required this.provider,
+    required this.textTheme,
+  });
+
+  @override
+  State<_SwipeSelector> createState() => _SwipeSelectorState();
+}
+
+class _SwipeSelectorState extends State<_SwipeSelector> {
+  late final String leftLabel = 'Left package';
+  late final String rightLabel = 'Right package';
+
+  late final String? leftPackage = EzConfig.get(leftPackageKey);
+  late final String? rightPackage = EzConfig.get(rightPackageKey);
+
+  late AppInfo leftApp = (leftPackage == null || leftPackage!.isEmpty)
+      ? nullApp
+      : widget.provider.getAppFromID(leftPackage!) ?? nullApp;
+  late AppInfo rightApp = (rightPackage == null || rightPackage!.isEmpty)
+      ? nullApp
+      : widget.provider.getAppFromID(rightPackage!) ?? nullApp;
+
+  @override
+  Widget build(BuildContext context) {
+    return EzRow(
+      mainAxisSize: MainAxisSize.min,
+      children: widget.isLefty
+          ? <Widget>[
+              EzText(leftLabel, style: widget.textTheme.bodyLarge),
+              EzMargin(),
+              EzDropdownMenu<AppInfo>(
+                widthEntries: <String>['Play Store'],
+                dropdownMenuEntries: widget.entries,
+                initialSelection: leftApp,
+                onSelected: (AppInfo? app) async {
+                  if (app == null || app == leftApp) return;
+
+                  await EzConfig.setString(leftPackageKey, app.package);
+                  setState(() => leftApp = app);
+                },
+              )
+            ]
+          : <Widget>[
+              EzText(rightLabel, style: widget.textTheme.bodyLarge),
+              EzMargin(),
+              EzDropdownMenu<AppInfo>(
+                widthEntries: <String>['Play Store'],
+                dropdownMenuEntries: widget.entries,
+                initialSelection: rightApp,
+                onSelected: (AppInfo? app) async {
+                  if (app == null || app == rightApp) return;
+
+                  await EzConfig.setString(rightPackageKey, app.package);
+                  setState(() => rightApp = app);
+                },
+              )
+            ],
     );
   }
 }
