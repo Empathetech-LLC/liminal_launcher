@@ -119,12 +119,17 @@ class WallpaperProvider extends ChangeNotifier {
   WallpaperProvider()
       : _useOS = (EzConfig.get(useOSWallpaperKey) ??
             EzConfig.getDefault(useOSWallpaperKey)) {
+    _initWallpaper();
+  }
+
+  Future<void> _initWallpaper() async {
     if (_useOS) {
-      _wallpaper = getWallpaper();
+      _wallpaper = await getWallpaper();
     } else {
       _wallpaper =
           '${EzConfig.get(darkBackgroundImageKey)}:${EzConfig.get(lightBackgroundImageKey)}';
     }
+    notifyListeners();
   }
 
   bool get useOS => _useOS;
