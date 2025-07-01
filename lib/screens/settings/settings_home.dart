@@ -14,6 +14,7 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class SettingsHomeScreen extends StatefulWidget {
+  // TODO: stateless
   const SettingsHomeScreen({super.key});
 
   @override
@@ -122,7 +123,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   },
                 )
               ],
-            ),
+            ), // TODO: private class
             spacer,
 
             // Right swipe
@@ -143,7 +144,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   },
                 )
               ],
-            ),
+            ), // TODO: private class
             separator,
 
             // Auto search
@@ -156,7 +157,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 await EzConfig.setBool(autoSearchKey, value);
                 setState(() => autoSearch = value);
               },
-            ),
+            ), // TODO: private class
             spacer,
 
             // Auto search
@@ -169,7 +170,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 await EzConfig.setBool(authToEditKey, value);
                 setState(() => authToEdit = value);
               },
-            ),
+            ), // TODO: private class
             divider,
 
             // GoTo layout settings

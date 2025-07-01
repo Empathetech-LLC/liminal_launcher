@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class LayoutSettingsScreen extends StatefulWidget {
+  // TODO: stateless
   const LayoutSettingsScreen({super.key});
 
   @override
@@ -98,7 +99,7 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
                 },
               ),
             ],
-          ),
+          ), // TODO: private class
           separator,
 
           // Home align
@@ -123,7 +124,7 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
                 homeText = selected.textAlign;
               });
             },
-          ),
+          ), // TODO: private class
           spacer,
 
           // Full list align
@@ -148,7 +149,7 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
                 fullText = selected.textAlign;
               });
             },
-          ),
+          ), // TODO: private class
         ],
         resetSpacer: divider,
       ),

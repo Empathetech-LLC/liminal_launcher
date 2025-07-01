@@ -72,7 +72,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                 await EzConfig.setBool(homeTimeKey, value);
                 setState(() => homeTime = value);
               },
-            ),
+            ), // TODO: private class
             spacer,
 
             // Date
@@ -85,7 +85,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                 await EzConfig.setBool(homeDateKey, value);
                 setState(() => homeDate = value);
               },
-            ),
+            ), // TODO: private class
             spacer,
 
             // Weather
@@ -98,7 +98,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                 await EzConfig.setBool(homeWeatherKey, value);
                 setState(() => homeWeather = value);
               },
-            ),
+            ), // TODO: private class
             divider,
 
             // AppTile //
@@ -172,7 +172,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                 setState(() {});
               },
             ),
-            separator,
+            separator, // TODO: preview
           ],
         ),
       ),
