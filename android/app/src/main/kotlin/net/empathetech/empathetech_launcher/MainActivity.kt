@@ -81,6 +81,31 @@ class MainActivity : FlutterFragmentActivity() {
     }
   }
 
+  private fun drawableToByteArray(drawable: Drawable?): ByteArray? {
+    if (drawable == null) return null
+    
+    if (drawable is BitmapDrawable) {
+      val bitmap = drawable.bitmap
+      val stream = ByteArrayOutputStream()
+      bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+      return stream.toByteArray()
+    }
+
+    val bitmap = Bitmap.createBitmap(
+      drawable.intrinsicWidth,
+      drawable.intrinsicHeight,
+      Bitmap.Config.ARGB_8888
+    )
+
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+
+    val stream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    return stream.toByteArray()
+  }
+
   private fun getInstalledApps(): List<Map<String, Any?>> {
     val pm: PackageManager = packageManager
 
@@ -110,47 +135,9 @@ class MainActivity : FlutterFragmentActivity() {
     return apps
   }
 
-  private fun drawableToByteArray(drawable: Drawable?): ByteArray? {
-    if (drawable == null) return null
-    
-    if (drawable is BitmapDrawable) {
-      val bitmap = drawable.bitmap
-      val stream = ByteArrayOutputStream()
-      bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-      return stream.toByteArray()
-    }
-
-    val bitmap = Bitmap.createBitmap(
-      drawable.intrinsicWidth,
-      drawable.intrinsicHeight,
-      Bitmap.Config.ARGB_8888
-    )
-
-    val canvas = Canvas(bitmap)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-
-    val stream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-    return stream.toByteArray()
-  }
-
   private fun getSystemWallpaper(): ByteArray? {
     val wallpaperManager = WallpaperManager.getInstance(applicationContext)
-    return try {
-      val wallpaperDrawable = wallpaperManager.drawable
-      if (wallpaperDrawable is BitmapDrawable) {
-        val bitmap = wallpaperDrawable.bitmap
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        stream.toByteArray()
-      } else {
-        null
-      }
-    } catch (e: Exception) {
-      e.printStackTrace()
-      null
-    }
+    return drawableToByteArray(wallpaperManager.drawable)
   }
 
   private fun launchApp(packageName: String) {
