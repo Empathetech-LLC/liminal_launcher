@@ -73,8 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> homeA2T() => homeApps
       .map((AppInfo app) => Padding(
             padding: EdgeInsets.only(bottom: spacing),
+            key: ValueKey<String>(app.keyLabel),
             child: AppTile(
-              key: ValueKey<String>(app.keyLabel),
               app: app,
               onHomeScreen: true,
               editing: editing,
@@ -190,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: homeAlign.crossAxis,
                       children: homeA2T(),
                     ),
+              const EzSpacer(),
             ],
           ),
         ),
