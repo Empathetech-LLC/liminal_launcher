@@ -9,6 +9,7 @@ import '../../widgets/export.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class DesignSettingsScreen extends StatefulWidget {
   const DesignSettingsScreen({super.key});
@@ -139,7 +140,19 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                 setState(() {});
               },
             ),
-            separator, // TODO: preview
+            separator,
+
+            // Preview
+            showIcon
+                ? EzTextIconButton(
+                    icon: EzIcon(PlatformIcons(context).settings),
+                    label: 'Preview',
+                    onPressed: doNothing,
+                  )
+                : const EzTextButton(
+                    text: 'Preview',
+                    onPressed: doNothing,
+                  )
           ],
         ),
       ),
