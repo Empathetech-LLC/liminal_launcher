@@ -48,6 +48,33 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
   bool showIcon = EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
 
+  // Define custom functions //
+
+  String label() {
+    const String base = 'App Preview';
+
+    switch (labelType) {
+      case LabelType.none:
+        return '';
+
+      case LabelType.initials:
+        return base
+            .split(' ')
+            .map((String word) => word.isNotEmpty ? word[0] : '')
+            .join()
+            .toUpperCase();
+
+      case LabelType.full:
+        return base;
+
+      case LabelType.wingding:
+        return base
+            .split('')
+            .map((String char) => wingdingMap[char] ?? char)
+            .join();
+    }
+  }
+
   //* Return the build *//
 
   @override
@@ -103,6 +130,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                   initialSelection: labelType,
                   onSelected: (LabelType? choice) async {
                     if (choice == null) return;
+
                     await EzConfig.setString(
                       labelTypeKey,
                       choice.configValue,
@@ -146,11 +174,11 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             showIcon
                 ? EzTextIconButton(
                     icon: EzIcon(PlatformIcons(context).settings),
-                    label: 'Preview',
+                    label: label(),
                     onPressed: doNothing,
                   )
-                : const EzTextButton(
-                    text: 'Preview',
+                : EzTextButton(
+                    text: label(),
                     onPressed: doNothing,
                   )
           ],
