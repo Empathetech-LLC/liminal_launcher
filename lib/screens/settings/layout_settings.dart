@@ -20,15 +20,8 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
-  static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
-
-  // Define the build data //
-
-  HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
-    EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey),
-  );
 
   // Define custom Widgets //
 
@@ -53,45 +46,16 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      EzLayoutSettings(
-        beforeLayout: <Widget>[const EzDominantHandSwitch()],
+      const EzLayoutSettings(
+        beforeLayout: <Widget>[EzDominantHandSwitch()],
         prefixSpacer: spacer,
         postfixSpacer: divider,
         afterLayout: <Widget>[
-          EzRow(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const EzText('Header order'),
-              rowSpacer,
-              EzDropdownMenu<HeaderOrder>(
-                widthEntries: <String>['Weather first'],
-                dropdownMenuEntries: <DropdownMenuEntry<HeaderOrder>>[
-                  const DropdownMenuEntry<HeaderOrder>(
-                    value: HeaderOrder.timeFirst,
-                    label: 'Time first',
-                  ),
-                  const DropdownMenuEntry<HeaderOrder>(
-                    value: HeaderOrder.weatherFirst,
-                    label: 'Weather first',
-                  ),
-                ],
-                enableSearch: false,
-                initialSelection: headerOrder,
-                onSelected: (HeaderOrder? choice) async {
-                  if (choice == null) return;
-                  await EzConfig.setString(
-                    headerOrderKey,
-                    choice.configValue,
-                  );
-                  setState(() => headerOrder = choice);
-                },
-              ),
-            ],
-          ), // TODO: private class
+          _HeaderDropdown(),
           separator,
 
           // Home align
-          const _SegmentedAlignmentButton(
+          _SegmentedAlignmentButton(
             label: 'Home list alignment',
             configKey: homeAlignmentKey,
             segments: alignmentSegments,
@@ -99,7 +63,7 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
           spacer,
 
           // Full list align
-          const _SegmentedAlignmentButton(
+          _SegmentedAlignmentButton(
             label: 'Full list alignment',
             configKey: fullListAlignmentKey,
             segments: alignmentSegments,
@@ -108,6 +72,53 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
         resetSpacer: divider,
       ),
       fab: EzBackFAB(context),
+    );
+  }
+}
+
+class _HeaderDropdown extends StatefulWidget {
+  const _HeaderDropdown();
+
+  @override
+  State<_HeaderDropdown> createState() => _HeaderDropdownState();
+}
+
+class _HeaderDropdownState extends State<_HeaderDropdown> {
+  late HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
+    EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return EzRow(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        const EzText('Header order'),
+        const EzSpacer(vertical: false),
+        EzDropdownMenu<HeaderOrder>(
+          widthEntries: <String>['Weather first'],
+          dropdownMenuEntries: <DropdownMenuEntry<HeaderOrder>>[
+            const DropdownMenuEntry<HeaderOrder>(
+              value: HeaderOrder.timeFirst,
+              label: 'Time first',
+            ),
+            const DropdownMenuEntry<HeaderOrder>(
+              value: HeaderOrder.weatherFirst,
+              label: 'Weather first',
+            ),
+          ],
+          enableSearch: false,
+          initialSelection: headerOrder,
+          onSelected: (HeaderOrder? choice) async {
+            if (choice == null) return;
+            await EzConfig.setString(
+              headerOrderKey,
+              choice.configValue,
+            );
+            setState(() => headerOrder = choice);
+          },
+        ),
+      ],
     );
   }
 }
