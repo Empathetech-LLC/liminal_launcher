@@ -146,4 +146,12 @@ class WallpaperProvider extends ChangeNotifier {
 
   bool get useOS => _useOS;
   dynamic get wallpaper => _wallpaper;
+
+  Future<void> setUseOS(bool choice) async {
+    if (choice == _useOS) return;
+
+    _useOS = choice;
+    await EzConfig.setBool(useOSWallpaperKey, choice);
+    notifyListeners();
+  }
 }
