@@ -80,6 +80,18 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
+  Future<void> reorderHomeApp(int oldIndex, int newIndex) async {
+    if (oldIndex == newIndex) return;
+
+    if (newIndex > oldIndex) newIndex -= 1;
+
+    final String package = _homePL.removeAt(oldIndex);
+    _homePL.insert(newIndex, package);
+
+    await EzConfig.setStringList(homePackagesKey, _homePL);
+    notifyListeners();
+  }
+
   Future<void> removeDeleted(String package) async {
     await showApp(package);
     await removeHomeApp(package);
