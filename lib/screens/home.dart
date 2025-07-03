@@ -24,11 +24,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // Gather the theme data //
 
-  static const EzSpacer spacer = EzSpacer();
   static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
 
-  final EdgeInsets modalPadding = EzInsets.col(EzConfig.get(spacingKey));
+  final double spacing = EzConfig.get(spacingKey);
+  late final EdgeInsets modalPadding = EzInsets.col(spacing);
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
 
@@ -70,18 +70,18 @@ class _HomeScreenState extends State<HomeScreen> {
       .toList();
 
   /// Home [AppInfo]s to [AppTile]s
-  List<Widget> homeA2T() => homeApps.expand((AppInfo app) {
-        return <Widget>[
-          AppTile(
-            key: ValueKey<String>(app.keyLabel),
-            app: app,
-            onHomeScreen: true,
-            editing: editing,
-            refreshHome: refreshHome,
-          ),
-          spacer, // TODO: probs can't do re-orderable with spacer... padding?
-        ];
-      }).toList();
+  List<Widget> homeA2T() => homeApps
+      .map((AppInfo app) => Padding(
+            padding: EdgeInsets.only(bottom: spacing),
+            child: AppTile(
+              key: ValueKey<String>(app.keyLabel),
+              app: app,
+              onHomeScreen: true,
+              editing: editing,
+              refreshHome: refreshHome,
+            ),
+          ))
+      .toList();
 
   void refreshHome() => setState(() => homeApps = homeP2A());
 
