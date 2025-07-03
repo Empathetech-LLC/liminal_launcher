@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
             editing: editing,
             refreshHome: refreshHome,
           ),
-          spacer,
+          spacer, // TODO: probs can't do re-orderable with spacer... padding?
         ];
       }).toList();
 
@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (homeWeather) {
       children.add(EzText(
-        'Weather', // TODO: Weather widget
+        'Weather',
         style: textTheme.headlineLarge,
       ));
     }
@@ -178,11 +178,18 @@ class _HomeScreenState extends State<HomeScreen> {
               separator,
 
               // App list
-              EzScrollView(
-                key: UniqueKey(),
-                crossAxisAlignment: homeAlign.crossAxis,
-                children: homeA2T(),
-              ),
+              editing
+                  ? Expanded(
+                      child: ReorderableListView(
+                      key: UniqueKey(),
+                      onReorder: provider.reorderHomeApp,
+                      children: homeA2T(),
+                    ))
+                  : EzScrollView(
+                      key: UniqueKey(),
+                      crossAxisAlignment: homeAlign.crossAxis,
+                      children: homeA2T(),
+                    ),
             ],
           ),
         ),
