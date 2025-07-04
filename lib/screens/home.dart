@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       key: UniqueKey(),
                       onReorder: (int oldIndex, int newIndex) async {
                         await provider.reorderHomeApp(oldIndex, newIndex);
-                        setState(() {});
+                        refreshHome();
                       },
                       children: homeA2T(),
                     ))
@@ -234,8 +234,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   showIcon: showIcon,
                                   onPressed: () async {
                                     await provider.addHomeApp(app.package);
-                                    setState(() {});
                                     setModalState(() {});
+                                    refreshHome();
                                   },
                                 ),
                               ))
