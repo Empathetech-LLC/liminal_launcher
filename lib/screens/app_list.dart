@@ -144,17 +144,19 @@ class _AppListScreenState extends State<AppListScreen> {
                   }
                   return false;
                 },
-                child: ListView.builder(
-                  physics: const ClampingScrollPhysics(),
-                  itemCount: appList.length,
-                  itemBuilder: (_, int index) => Padding(
-                    padding: EdgeInsets.symmetric(vertical: spacing / 2),
-                    key: ValueKey<String>(appList[index].keyLabel),
-                    child: AppTile(
-                      app: appList[index],
-                      onHomeScreen: false,
-                      editing: false,
-                      refreshHome: widget.refreshHome,
+                child: Expanded(
+                  child: ListView.builder(
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: appList.length,
+                    itemBuilder: (_, int index) => Padding(
+                      padding: EdgeInsets.symmetric(vertical: spacing / 2),
+                      key: ValueKey<String>(appList[index].keyLabel),
+                      child: AppTile(
+                        app: appList[index],
+                        onHomeScreen: false,
+                        editing: false,
+                        refreshHome: widget.refreshHome,
+                      ),
                     ),
                   ),
                 ),
