@@ -7,6 +7,7 @@ import '../../screens/export.dart';
 import '../../utils/export.dart';
 import '../../widgets/export.dart';
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -153,6 +154,58 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               label: el10n.isPageTitle,
             ),
             divider,
+
+            // Randomize
+            EzConfigRandomizer(
+              dialogContent:
+                  'Only affects appearance settings\n${el10n.gUndoWarn}',
+              onConfirm: () async {
+                await EzConfig.randomize(isDarkTheme(context), shiny: false);
+
+                final Random random = Random();
+                await EzConfig.setBool(homeTimeKey, random.nextBool());
+                await EzConfig.setBool(homeDateKey, random.nextBool());
+                await EzConfig.setBool(showIconKey, random.nextBool());
+
+                final bool headerOrder = random.nextBool();
+                await EzConfig.setString(
+                  headerOrderKey,
+                  ((headerOrder == true)
+                          ? HeaderOrder.timeFirst
+                          : HeaderOrder.weatherFirst)
+                      .configValue,
+                );
+
+                final int homeAlignRand = random.nextInt(3);
+                late final String homeAlignValue;
+                switch (homeAlignRand) {
+                  case 0:
+                    homeAlignValue = ListAlignment.start.configValue;
+                    break;
+                  case 2:
+                    homeAlignValue = ListAlignment.end.configValue;
+                    break;
+                  default:
+                    homeAlignValue = ListAlignment.center.configValue;
+                }
+                await EzConfig.setString(homeAlignmentKey, homeAlignValue);
+
+                final int listAlignRand = random.nextInt(3);
+                late final String listAlignValue;
+                switch (listAlignRand) {
+                  case 0:
+                    listAlignValue = ListAlignment.start.configValue;
+                    break;
+                  case 2:
+                    listAlignValue = ListAlignment.end.configValue;
+                    break;
+                  default:
+                    listAlignValue = ListAlignment.center.configValue;
+                }
+                await EzConfig.setString(fullListAlignmentKey, listAlignValue);
+              },
+            ),
+            spacer,
 
             // Reset
             const EzResetButton(skip: <String>{
