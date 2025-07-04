@@ -9,6 +9,7 @@ import '../widgets/export.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class AppListScreen extends StatefulWidget {
   final void Function()? refreshHome;
@@ -43,6 +44,8 @@ class _AppListScreenState extends State<AppListScreen> {
       EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey);
 
   bool atTop = true;
+  bool atBottom = false;
+  final ScrollController appScrollControl = ScrollController();
 
   // Return the build //
 
@@ -126,7 +129,7 @@ class _AppListScreenState extends State<AppListScreen> {
                 onNotification: (ScrollNotification notification) {
                   if (notification is OverscrollNotification &&
                       notification.overscroll < 0) {
-                    // Pop on overscroll (when already the top)
+                    // Pop on top overscroll
                     if (atTop) {
                       Navigator.of(context).pop();
                       return true;
@@ -138,14 +141,23 @@ class _AppListScreenState extends State<AppListScreen> {
                     if (atTop && notification.metrics.pixels > 0) {
                       setState(() => atTop = false);
                     }
+
+                    if (atBottom &&
+                        notification.metrics.pixels <
+                            notification.metrics.maxScrollExtent) {
+                      setState(() => atBottom = false);
+                    }
                   } else if (notification is ScrollEndNotification) {
-                    setState(() => atTop =
-                        (notification.metrics.pixels == 0) ? true : false);
+                    atTop = (notification.metrics.pixels == 0);
+                    atBottom = (notification.metrics.pixels ==
+                        notification.metrics.maxScrollExtent);
+                    setState(() {});
                   }
                   return false;
                 },
                 child: Expanded(
                   child: ListView.builder(
+                    controller: appScrollControl,
                     physics: const ClampingScrollPhysics(),
                     itemCount: appList.length,
                     itemBuilder: (_, int index) => Padding(
@@ -165,6 +177,45 @@ class _AppListScreenState extends State<AppListScreen> {
           ),
         ),
       ),
+      fab: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // Scroll to top
+          if (!atTop)
+            FloatingActionButton(
+              onPressed: () {
+                appScrollControl.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
+                );
+              },
+              child: EzIcon(PlatformIcons(context).upArrow),
+            ),
+
+          // Spacer (if needed)
+          if (!atTop && !atBottom) spacer,
+
+          // Scroll to bottom
+          if (!atBottom)
+            FloatingActionButton(
+              onPressed: () {
+                appScrollControl.animateTo(
+                  appScrollControl.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
+                );
+              },
+              child: EzIcon(PlatformIcons(context).downArrow),
+            ),
+        ],
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    appScrollControl.dispose();
+    super.dispose();
   }
 }
