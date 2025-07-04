@@ -8,6 +8,8 @@ import './export.dart';
 import 'package:flutter/material.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
+// Apps //
+
 class AppInfoProvider extends ChangeNotifier {
   final List<AppInfo> _apps;
   final Map<String, AppInfo> _appMap;
@@ -37,10 +39,15 @@ class AppInfoProvider extends ChangeNotifier {
   }
 
   List<AppInfo> get apps => _apps;
+
   List<String> get homePL => _homePL;
   Set<String> get homePS => _homePS;
+
   List<String> get hiddenPL => _hiddenPL;
   Set<String> get hiddenPS => _hiddenPS;
+
+  List<AppInfo> get appList =>
+      _apps.where((AppInfo app) => !_hiddenPS.contains(app.package)).toList();
 
   AppInfo? getAppFromID(String package) => _appMap[package];
 
@@ -80,6 +87,15 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
+  Future<void> removeDeleted(String package) async {
+    await showApp(package);
+    await removeHomeApp(package);
+    _apps.remove(_appMap[package]);
+    _appMap.remove(package);
+
+    notifyListeners();
+  }
+
   Future<void> reorderHomeApp(int oldIndex, int newIndex) async {
     if (oldIndex == newIndex) return;
 
@@ -89,15 +105,6 @@ class AppInfoProvider extends ChangeNotifier {
     _homePL.insert(newIndex, package);
 
     await EzConfig.setStringList(homePackagesKey, _homePL);
-    notifyListeners();
-  }
-
-  Future<void> removeDeleted(String package) async {
-    await showApp(package);
-    await removeHomeApp(package);
-    _apps.remove(_appMap[package]);
-    _appMap.remove(package);
-
     notifyListeners();
   }
 
@@ -123,6 +130,8 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+// Wallpaper //
 
 class WallpaperProvider extends ChangeNotifier {
   dynamic _wallpaper;
