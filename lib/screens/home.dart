@@ -24,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // Gather the theme data //
 
+  static const EzSpacer spacer = EzSpacer();
   static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
 
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Home [AppInfo]s to [AppTile]s
   List<Widget> homeA2T() => homeApps
       .map((AppInfo app) => Padding(
-            padding: EdgeInsets.only(bottom: spacing),
+            padding: EdgeInsets.symmetric(vertical: spacing / 2),
             key: ValueKey<String>(app.keyLabel),
             child: AppTile(
               app: app,
@@ -175,14 +176,17 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: homeAlign.crossAxis,
             children: <Widget>[
               header(),
-              separator,
+              spacer,
 
               // App list
               editing
                   ? Expanded(
                       child: ReorderableListView(
                       key: UniqueKey(),
-                      onReorder: provider.reorderHomeApp,
+                      onReorder: (int oldIndex, int newIndex) async {
+                        await provider.reorderHomeApp(oldIndex, newIndex);
+                        setState(() {});
+                      },
                       children: homeA2T(),
                     ))
                   : EzScrollView(
@@ -190,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: homeAlign.crossAxis,
                       children: homeA2T(),
                     ),
-              const EzSpacer(),
+              spacer,
             ],
           ),
         ),
