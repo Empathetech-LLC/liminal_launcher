@@ -78,32 +78,45 @@ class _AppListScreenState extends State<AppListScreen> {
                 mainAxisAlignment: listAlign.mainAxis,
                 children: <Widget>[
                   // Sort
-                  EzDropdownMenu<ListSort>(
-                    widthEntries: <String>['Publisher'],
-                    dropdownMenuEntries: const <DropdownMenuEntry<ListSort>>[
-                      DropdownMenuEntry<ListSort>(
-                        value: ListSort.name,
+                  MenuAnchor(
+                    builder: (_, MenuController controller, __) => EzIconButton(
+                      onPressed: () => controller.isOpen
+                          ? controller.close()
+                          : controller.open(),
+                      icon: const Icon(Icons.sort),
+                    ),
+                    menuChildren: <EzMenuButton>[
+                      EzMenuButton(
                         label: 'Name',
+                        textAlign: listAlign.textAlign,
+                        onPressed: () async {
+                          listSort = ListSort.name;
+
+                          await EzConfig.setString(
+                            appListSortKey,
+                            listSort.configValue,
+                          );
+                          provider.sort(listSort, ascList);
+
+                          setState(() {});
+                        },
                       ),
-                      DropdownMenuEntry<ListSort>(
-                        value: ListSort.publisher,
+                      EzMenuButton(
                         label: 'Publisher',
+                        textAlign: listAlign.textAlign,
+                        onPressed: () async {
+                          listSort = ListSort.publisher;
+
+                          await EzConfig.setString(
+                            appListSortKey,
+                            listSort.configValue,
+                          );
+                          provider.sort(listSort, ascList);
+
+                          setState(() {});
+                        },
                       ),
                     ],
-                    enableSearch: false,
-                    initialSelection: listSort,
-                    onSelected: (ListSort? choice) async {
-                      if (choice == null) return;
-                      listSort = choice;
-
-                      await EzConfig.setString(
-                        appListSortKey,
-                        listSort.configValue,
-                      );
-                      provider.sort(listSort, ascList);
-
-                      setState(() {});
-                    },
                   ),
                   const EzSpacer(vertical: false),
 
