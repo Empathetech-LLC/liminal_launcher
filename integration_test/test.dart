@@ -1,10 +1,10 @@
-/* empathetech_launcher
+/* liminal_launcher
  * Copyright (c) 2025 Empathetech LLC. All rights reserved.
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:empathetech_launcher/main.dart';
-import 'package:empathetech_launcher/utils/export.dart';
+import 'package:liminal_launcher/main.dart';
+import 'package:liminal_launcher/utils/export.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
