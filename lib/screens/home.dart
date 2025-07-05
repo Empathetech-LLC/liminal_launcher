@@ -178,12 +178,14 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         onHorizontalDragEnd: (DragEndDetails details) {
           if (details.primaryVelocity != null) {
-            late final String? package;
+            String? package;
 
-            if (details.primaryVelocity! < 0) {
+            if (details.primaryVelocity! < 0 && !editing) {
               package = EzConfig.get(leftPackageKey);
             } else if (details.primaryVelocity! > 0) {
-              package = EzConfig.get(rightPackageKey);
+              editing
+                  ? setState(() => editing = false)
+                  : package = EzConfig.get(rightPackageKey);
             }
 
             if (package != null && package.isNotEmpty) launchApp(package);
