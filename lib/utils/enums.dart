@@ -78,6 +78,17 @@ extension ListAlignmentConfig on ListAlignment {
     }
   }
 
+  Alignment get alignment {
+    switch (this) {
+      case ListAlignment.center:
+        return Alignment.center;
+      case ListAlignment.start:
+        return Alignment.centerLeft;
+      case ListAlignment.end:
+        return Alignment.centerRight;
+    }
+  }
+
   MainAxisAlignment get mainAxis {
     switch (this) {
       case ListAlignment.center:
