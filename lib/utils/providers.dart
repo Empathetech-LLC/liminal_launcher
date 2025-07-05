@@ -75,6 +75,13 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> addHomeFolder() async {
+    _homePL.add('Folder:empty');
+
+    await EzConfig.setStringList(homePackagesKey, _homePL);
+    notifyListeners();
+  }
+
   Future<bool> removeHomeApp(String package) async {
     if (!_homePS.contains(package)) return false;
 
