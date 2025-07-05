@@ -59,32 +59,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  /// Ordered list of home [AppInfo]s
-  late List<AppInfo> homeApps = homeP2A();
-
   // Define custom functions //
 
-  /// Home packages [String]s to [AppInfo]s
-  List<AppInfo> homeP2A() => provider.homePL
-      .map((String package) => provider.getAppFromID(package))
-      .whereType<AppInfo>() // Filter nulls
+  List<Widget> homeA2T() => provider.homePL
+      .map((String item) {
+        final List<String> packages = item.split(':');
+
+        if (packages.length > 1) {
+          return AppFolder(
+            packages: packages.sublist(1),
+            provider: provider,
+            alignment: homeAlign,
+            showIcon: showIcon,
+            editing: editing,
+            refreshHome: refreshHome,
+          );
+        }
+
+        final AppInfo? app = provider.getAppFromID(packages[0]);
+        if (app == null) return null;
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: spacing / 2),
+          key: ValueKey<String>(app.keyLabel),
+          child: AppTile(
+            app: app,
+            onHomeScreen: true,
+            editing: editing,
+            refreshHome: refreshHome,
+          ),
+        );
+      })
+      .whereType<Widget>()
       .toList();
 
-  /// Home [AppInfo]s to [AppTile]s
-  List<Widget> homeA2T() => homeApps
-      .map((AppInfo app) => Padding(
-            padding: EdgeInsets.symmetric(vertical: spacing / 2),
-            key: ValueKey<String>(app.keyLabel),
-            child: AppTile(
-              app: app,
-              onHomeScreen: true,
-              editing: editing,
-              refreshHome: refreshHome,
-            ),
-          ))
-      .toList();
-
-  void refreshHome() => setState(() => homeApps = homeP2A());
+  void refreshHome() => setState(() {});
 
   // Define custom Widgets //
 
