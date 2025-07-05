@@ -95,22 +95,22 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             spacer,
 
             // Weather
-            EzSwitchPair(
-              text: 'Home weather',
-              valueKey: homeWeatherKey,
-              canChange: (bool choice) async {
-                return choice
-                    ? await showPlatformDialog<bool>(
-                          context: context,
-                          builder: (_) => const EzAlertDialog(
-                            title: Text('API key'),
-                            content: Text('GIVE TO ME'),
-                          ),
-                        ) ??
-                        false
-                    : true;
-              },
-            ),
+            // EzSwitchPair(
+            //   text: 'Home weather',
+            //   valueKey: homeWeatherKey,
+            //   canChange: (bool choice) async {
+            //     return choice
+            //         ? await showPlatformDialog<bool>(
+            //               context: context,
+            //               builder: (_) => const EzAlertDialog(
+            //                 title: Text('API key'),
+            //                 content: Text('GIVE TO ME'),
+            //               ),
+            //             ) ??
+            //             false
+            //         : true;
+            //   },
+            // ),
             divider,
 
             // AppTile //

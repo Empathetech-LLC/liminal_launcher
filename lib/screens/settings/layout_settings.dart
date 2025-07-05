@@ -20,7 +20,6 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
-  static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
 
   // Define custom Widgets //
@@ -51,8 +50,8 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
         prefixSpacer: spacer,
         postfixSpacer: divider,
         afterLayout: <Widget>[
-          _HeaderDropdown(),
-          separator,
+          // _HeaderDropdown(),
+          // const EzSeparator(),
 
           // Home align
           _SegmentedAlignmentButton(

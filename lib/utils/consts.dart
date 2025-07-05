@@ -41,7 +41,7 @@ const String fullListAlignmentKey = 'full_list_alignment';
 // Design
 const String homeTimeKey = 'home_time';
 const String homeDateKey = 'home_date';
-const String homeWeatherKey = 'home_weather';
+// const String homeWeatherKey = 'home_weather';
 const String showIconKey = 'show_icon';
 const String labelTypeKey = 'label_type';
 const String extendTileKey = 'extend_tile';
@@ -73,7 +73,7 @@ final Map<String, Object> defaultConfig = <String, Object>{
   // Design
   homeTimeKey: true,
   homeDateKey: true,
-  homeWeatherKey: true,
+  // homeWeatherKey: true,
   showIconKey: false,
   labelTypeKey: LabelType.full.configValue,
   extendTileKey: false,

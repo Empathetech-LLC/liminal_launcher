@@ -95,7 +95,6 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
 
                 // await EzConfig.setBool(useOSWallpaperKey, choice);
                 // setState(() => useOS = choice);
-                // TODO: implement new idea(s)
               },
             ),
 

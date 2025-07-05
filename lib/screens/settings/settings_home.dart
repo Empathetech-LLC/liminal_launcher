@@ -167,14 +167,14 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 await EzConfig.setBool(homeDateKey, random.nextBool());
                 await EzConfig.setBool(showIconKey, random.nextBool());
 
-                final bool headerOrder = random.nextBool();
-                await EzConfig.setString(
-                  headerOrderKey,
-                  ((headerOrder == true)
-                          ? HeaderOrder.timeFirst
-                          : HeaderOrder.weatherFirst)
-                      .configValue,
-                );
+                // final bool headerOrder = random.nextBool();
+                // await EzConfig.setString(
+                //   headerOrderKey,
+                //   ((headerOrder == true)
+                //           ? HeaderOrder.timeFirst
+                //           : HeaderOrder.weatherFirst)
+                //       .configValue,
+                // );
 
                 final int homeAlignRand = random.nextInt(3);
                 late final String homeAlignValue;

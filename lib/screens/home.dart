@@ -43,8 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final bool homeDate =
       EzConfig.get(homeDateKey) ?? EzConfig.getDefault(homeDateKey);
 
-  final bool homeWeather =
-      EzConfig.get(homeWeatherKey) ?? EzConfig.getDefault(homeWeatherKey);
+  // final bool homeWeather =
+  //     EzConfig.get(homeWeatherKey) ?? EzConfig.getDefault(homeWeatherKey);
 
   final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
       EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey));
@@ -116,12 +116,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ));
     }
 
-    if (homeWeather) {
-      children.add(EzText(
-        'Weather',
-        style: textTheme.headlineLarge,
-      ));
-    }
+    // if (homeWeather) {
+    //   children.add(EzText(
+    //     'Weather',
+    //     style: textTheme.headlineLarge,
+    //   ));
+    // }
 
     if (children.length == 2) children.insert(1, rowSpacer);
 
