@@ -187,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (package != null && package.isNotEmpty) launchApp(package);
           }
         },
-        child: LiminalScreen(
+        child: EzScreen(
           child: Column(
             crossAxisAlignment: homeAlign.crossAxis,
             children: <Widget>[
@@ -222,7 +222,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             // Add folder
             if (provider.homePS.isNotEmpty) ...<Widget>[
-              AddFolderFAB(context, provider.addHomeFolder),
+              AddFolderFAB(context, () {
+                provider.addHomeFolder();
+                refreshHome();
+              }),
               separator,
             ],
 

@@ -41,7 +41,7 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      LiminalScreen(
+      EzScreen(
         child: EzScrollView(
           children: <Widget>[
             // Current theme reminder
@@ -93,8 +93,9 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
                   }
                 }
 
-                await EzConfig.setBool(useOSWallpaperKey, choice);
-                setState(() => useOS = choice);
+                // await EzConfig.setBool(useOSWallpaperKey, choice);
+                // setState(() => useOS = choice);
+                // TODO: implement new idea(s)
               },
             ),
 
@@ -109,7 +110,7 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
                 });
 
                 setState(() =>
-                    useOS = EzConfig.getDefault(useOSWallpaperKey) ?? true);
+                    useOS = EzConfig.getDefault(useOSWallpaperKey) ?? false);
               },
             ),
             separator,

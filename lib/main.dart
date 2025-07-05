@@ -145,15 +145,8 @@ class LiminalLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: <ChangeNotifierProvider<dynamic>>[
-        ChangeNotifierProvider<AppInfoProvider>(
-          create: (_) => AppInfoProvider(installedApps),
-        ),
-        ChangeNotifierProvider<WallpaperProvider>(
-          create: (_) => WallpaperProvider(),
-        ),
-      ],
+    return ChangeNotifierProvider<AppInfoProvider>(
+      create: (_) => AppInfoProvider(installedApps),
       child: EzAppProvider(
         app: PlatformApp.router(
           debugShowCheckedModeBanner: false,

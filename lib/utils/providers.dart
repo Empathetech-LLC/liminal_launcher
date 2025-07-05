@@ -8,8 +8,6 @@ import './export.dart';
 import 'package:flutter/material.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
-// Apps //
-
 class AppInfoProvider extends ChangeNotifier {
   final List<AppInfo> _apps;
   final Map<String, AppInfo> _appMap;
@@ -77,6 +75,7 @@ class AppInfoProvider extends ChangeNotifier {
 
   Future<void> addHomeFolder() async {
     _homePL.add('Folder:empty');
+    debugPrint(_homePL.toString());
 
     await EzConfig.setStringList(homePackagesKey, _homePL);
     notifyListeners();
@@ -134,40 +133,6 @@ class AppInfoProvider extends ChangeNotifier {
     _hiddenPS.remove(package);
 
     await EzConfig.setStringList(hiddenPackagesKey, _hiddenPL);
-    notifyListeners();
-  }
-}
-
-// Wallpaper //
-
-class WallpaperProvider extends ChangeNotifier {
-  dynamic _wallpaper;
-  bool _useOS;
-
-  WallpaperProvider()
-      : _useOS = (EzConfig.get(useOSWallpaperKey) ??
-            EzConfig.getDefault(useOSWallpaperKey)) {
-    _initWallpaper();
-  }
-
-  Future<void> _initWallpaper() async {
-    if (_useOS) {
-      _wallpaper = await getWallpaper();
-    } else {
-      _wallpaper =
-          '${EzConfig.get(darkBackgroundImageKey)}:${EzConfig.get(lightBackgroundImageKey)}';
-    }
-    notifyListeners();
-  }
-
-  bool get useOS => _useOS;
-  dynamic get wallpaper => _wallpaper;
-
-  Future<void> setUseOS(bool choice) async {
-    if (choice == _useOS) return;
-
-    _useOS = choice;
-    await EzConfig.setBool(useOSWallpaperKey, choice);
     notifyListeners();
   }
 }

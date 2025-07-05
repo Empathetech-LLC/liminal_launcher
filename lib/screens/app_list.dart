@@ -64,7 +64,7 @@ class _AppListScreenState extends State<AppListScreen> {
             }
           }
         },
-        child: LiminalScreen(
+        child: EzScreen(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
