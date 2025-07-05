@@ -80,17 +80,18 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
               physics: const ClampingScrollPhysics(),
               children: provider.hiddenPL.expand((String package) {
                 final AppInfo? app = provider.getAppFromID(package);
-                if (app == null) return <Widget>[];
 
-                return <Widget>[
-                  AppTile(
-                    key: ValueKey<String>(app.keyLabel),
-                    app: app,
-                    onHomeScreen: false,
-                    editing: editing,
-                  ),
-                  spacer,
-                ];
+                return (app == null)
+                    ? <Widget>[]
+                    : <Widget>[
+                        AppTile(
+                          key: ValueKey<String>(app.keyLabel),
+                          app: app,
+                          onHomeScreen: false,
+                          editing: editing,
+                        ),
+                        spacer,
+                      ];
               }).toList(),
             ),
           ),

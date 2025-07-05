@@ -31,7 +31,7 @@ class AppTile extends StatefulWidget {
 class _AppTileState extends State<AppTile> {
   // Gather the theme data //
 
-  static const EzSpacer spacer = EzSpacer();
+  static const EzSpacer rowSpacer = EzSpacer(vertical: false);
 
   final double iconSize = EzConfig.get(iconSizeKey);
   final double padding = EzConfig.get(paddingKey);
@@ -78,7 +78,7 @@ class _AppTileState extends State<AppTile> {
                     height: iconSize + padding,
                   ),
                 ),
-                spacer,
+                rowSpacer,
               ],
 
               // Add to home
@@ -93,7 +93,7 @@ class _AppTileState extends State<AppTile> {
                   },
                   icon: const Icon(Icons.add_to_home_screen),
                 ),
-                spacer,
+                rowSpacer,
               ],
 
               // Remove from home
@@ -108,7 +108,7 @@ class _AppTileState extends State<AppTile> {
                   },
                   icon: Icon(PlatformIcons(context).remove),
                 ),
-                spacer,
+                rowSpacer,
               ],
 
               // Show/hide
@@ -124,7 +124,7 @@ class _AppTileState extends State<AppTile> {
                     ? PlatformIcons(context).eyeSolid
                     : PlatformIcons(context).eyeSlash),
               ),
-              spacer,
+              rowSpacer,
 
               // Info
               EzIconButton(
@@ -134,7 +134,7 @@ class _AppTileState extends State<AppTile> {
 
               // Delete
               if (app.removable) ...<Widget>[
-                spacer,
+                rowSpacer,
                 EzIconButton(
                   onPressed: () async {
                     final bool deleted = await deleteApp(context, app);
@@ -151,14 +151,14 @@ class _AppTileState extends State<AppTile> {
               // Drag/Close
               ...(onHomeScreen)
                   ? <Widget>[
-                      spacer,
+                      rowSpacer,
                       EzIcon(
                         Icons.drag_handle,
                         color: Theme.of(context).colorScheme.outline,
                       ),
                     ]
                   : <Widget>[
-                      spacer,
+                      rowSpacer,
                       EzIconButton(
                         onPressed: () => setState(() => editing = false),
                         icon: const Icon(Icons.close),

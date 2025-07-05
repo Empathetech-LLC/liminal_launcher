@@ -18,7 +18,6 @@ class ImageSettingsScreen extends StatefulWidget {
 class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
   // Gather the theme data //
 
-  static const EzSpacer spacer = EzSpacer();
   static const EzSeparator separator = EzSeparator();
 
   final EzSpacer margin = EzMargin();
@@ -66,15 +65,14 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
                       updateTheme: Brightness.light,
                     ),
             ),
-            spacer,
+            separator,
 
             // Local reset all
-            separator,
-            EzResetButton(
-              dialogTitle: el10n.isResetAll(themeProfile),
-              onConfirm: () => EzConfig.removeKeys(imageKeys.keys.toSet()),
-            ),
-            separator,
+            // EzResetButton(
+            //   dialogTitle: el10n.isResetAll(themeProfile),
+            //   onConfirm: () => EzConfig.removeKeys(imageKeys.keys.toSet()),
+            // ),
+            // separator,
           ],
         ),
       ),

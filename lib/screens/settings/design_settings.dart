@@ -92,7 +92,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
             // Date
             const EzSwitchPair(text: 'Home date', valueKey: homeDateKey),
-            spacer,
+            // spacer,
 
             // Weather
             // EzSwitchPair(
