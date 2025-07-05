@@ -4,24 +4,79 @@
  */
 
 import '../utils/export.dart';
+import './export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class AppFolder extends StatefulWidget {
-  final List<AppInfo> apps;
+  final List<String> packages;
+  final AppInfoProvider provider;
+  final ListAlignment alignment;
+  final bool showIcon;
   final bool editing;
+  final void Function()? refreshHome;
 
-  const AppFolder({super.key, required this.apps, required this.editing});
+  const AppFolder({
+    super.key,
+    required this.packages,
+    required this.provider,
+    required this.alignment,
+    required this.showIcon,
+    required this.editing,
+    required this.refreshHome,
+  });
 
   @override
   State<AppFolder> createState() => _AppFolderState();
 }
 
 class _AppFolderState extends State<AppFolder> {
+  // Define the build data //
+
+  final EdgeInsets rowPadding = EzInsets.row(EzConfig.get(spacingKey));
+
+  bool open = false;
+  late bool editing = widget.editing;
+
+  // Define custom functions //
+
+  void toggleOpen() => setState(() => open = !open);
+
   // Return the build //
 
   @override
   Widget build(BuildContext context) {
-    return const Text("I'm a folder!");
+    return open
+        ? (widget.showIcon
+            ? EzTextIconButton(
+                icon: EzIcon(PlatformIcons(context).folder),
+                label: 'Folder',
+                onPressed: toggleOpen,
+              )
+            : EzTextButton(text: 'Folder', onPressed: toggleOpen))
+        : EzScrollView(
+            scrollDirection: Axis.horizontal,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: widget.alignment.mainAxis,
+            children: widget.packages
+                .map((String package) {
+                  final AppInfo? app = widget.provider.getAppFromID(package);
+                  if (app == null) return null;
+
+                  Padding(
+                    padding: rowPadding,
+                    child: AppTile(
+                      app: app,
+                      onHomeScreen: true,
+                      editing: editing,
+                      refreshHome: widget.refreshHome,
+                    ),
+                  );
+                })
+                .whereType<Widget>()
+                .toList(),
+          );
   }
 }
