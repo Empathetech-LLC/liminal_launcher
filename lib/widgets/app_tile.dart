@@ -81,6 +81,32 @@ class _AppTileState extends State<AppTile> {
                 rowSpacer,
               ],
 
+              // Rename
+              EzIconButton(
+                onPressed: () async {
+                  final String? newName = await showPlatformDialog<String?>(
+                    context: context,
+                    builder: (_) => EzAlertDialog(
+                      title: const Text(
+                        'Currently',
+                        textAlign: TextAlign.center,
+                      ),
+                      contents: <Widget>[
+                        Text(app.label, textAlign: TextAlign.center),
+                      ],
+                    ),
+                  );
+                  if (newName != null && newName.isNotEmpty) {
+                    final bool success =
+                        await provider.renameApp(app.package, newName);
+
+                    if (success) refreshHome?.call();
+                  }
+                },
+                icon: Icon(PlatformIcons(context).edit),
+              ),
+              rowSpacer,
+
               // Add to home
               if (!provider.hiddenPS.contains(app.package) &&
                   !onHomeScreen &&
