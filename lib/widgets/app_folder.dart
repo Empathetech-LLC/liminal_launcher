@@ -15,6 +15,7 @@ class AppFolder extends StatefulWidget {
   final AppInfoProvider provider;
   final ListAlignment alignment;
   final bool showIcon;
+  final LabelType labelType;
   final bool editing;
   final void Function()? refreshHome;
 
@@ -24,6 +25,7 @@ class AppFolder extends StatefulWidget {
     required this.provider,
     required this.alignment,
     required this.showIcon,
+    required this.labelType,
     required this.editing,
     required this.refreshHome,
   });
@@ -37,7 +39,10 @@ class _AppFolderState extends State<AppFolder> {
 
   static const EzSpacer rowSpacer = EzSpacer(vertical: false);
 
-  final EdgeInsets rowPadding = EzInsets.row(EzConfig.get(spacingKey));
+  final double spacing = EzConfig.get(spacingKey);
+
+  late final EdgeInsets rowPadding = EzInsets.row(spacing);
+  late final EdgeInsets modalPadding = EzInsets.col(spacing);
 
   bool open = false;
   late bool editing = widget.editing;
@@ -59,38 +64,51 @@ class _AppFolderState extends State<AppFolder> {
   @override
   Widget build(BuildContext context) {
     if (editing) {
-      return open
-          ? EzScrollView(
-              scrollDirection: Axis.horizontal,
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: widget.alignment.mainAxis,
-              children: widget.packages
-                      .map((String package) {
-                        final AppInfo? app =
-                            widget.provider.getAppFromID(package);
-                        if (app == null) return null;
-
-                        Padding(
-                          padding: rowPadding,
-                          child: AppTile(
-                            app: app,
-                            onHomeScreen: true,
-                            editing: editing,
-                            refreshHome: widget.refreshHome,
-                          ),
-                        );
-                      })
-                      .whereType<Widget>()
-                      .toList() +
-                  closeTail,
-            )
-          : (widget.showIcon
-              ? EzTextIconButton(
-                  icon: EzIcon(PlatformIcons(context).folder),
-                  label: 'Folder',
-                  onPressed: toggleOpen,
-                )
-              : EzTextButton(text: 'Folder', onPressed: toggleOpen));
+      return EzScrollView(
+        scrollDirection: Axis.horizontal,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: widget.alignment.mainAxis,
+        children: <Widget>[
+          const Text('Folder'),
+          rowSpacer,
+          EzIconButton(
+            icon: Icon(PlatformIcons(context).edit),
+            onPressed: () => showPlatformDialog(
+              context: context,
+              builder: (_) => StatefulBuilder(
+                builder: (_, StateSetter setModalState) {
+                  return EzScrollView(
+                    mainAxisSize: MainAxisSize.min,
+                    children: widget.provider.apps
+                        .where((AppInfo app) =>
+                            !widget.provider.hiddenPS.contains(app.package))
+                        .map((AppInfo app) => Padding(
+                              key: ValueKey<String>(app.keyLabel),
+                              padding: modalPadding,
+                              child: TileButton(
+                                app: app,
+                                type: widget.labelType,
+                                showIcon: widget.showIcon,
+                                onPressed: doNothing,
+                              ),
+                            ))
+                        .toList(),
+                  );
+                },
+              ),
+            ),
+          ),
+          rowSpacer,
+          EzIconButton(icon: Icon(PlatformIcons(context).eyeSlash)),
+          rowSpacer,
+          EzIconButton(icon: Icon(PlatformIcons(context).delete)),
+          rowSpacer,
+          EzIcon(
+            Icons.drag_handle,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+        ],
+      );
     }
 
     return open
