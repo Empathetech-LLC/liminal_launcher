@@ -35,6 +35,8 @@ class AppFolder extends StatefulWidget {
 class _AppFolderState extends State<AppFolder> {
   // Define the build data //
 
+  static const EzSpacer rowSpacer = EzSpacer(vertical: false);
+
   final EdgeInsets rowPadding = EzInsets.row(EzConfig.get(spacingKey));
 
   bool open = false;
@@ -46,37 +48,82 @@ class _AppFolderState extends State<AppFolder> {
 
   // Return the build //
 
+  late final List<Widget> closeTail = <Widget>[
+    rowSpacer,
+    EzIconButton(
+      icon: const Icon(Icons.close),
+      onPressed: toggleOpen,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    if (editing) {
+      return open
+          ? EzScrollView(
+              scrollDirection: Axis.horizontal,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: widget.alignment.mainAxis,
+              children: widget.packages
+                      .map((String package) {
+                        final AppInfo? app =
+                            widget.provider.getAppFromID(package);
+                        if (app == null) return null;
+
+                        Padding(
+                          padding: rowPadding,
+                          child: AppTile(
+                            app: app,
+                            onHomeScreen: true,
+                            editing: editing,
+                            refreshHome: widget.refreshHome,
+                          ),
+                        );
+                      })
+                      .whereType<Widget>()
+                      .toList() +
+                  closeTail,
+            )
+          : (widget.showIcon
+              ? EzTextIconButton(
+                  icon: EzIcon(PlatformIcons(context).folder),
+                  label: 'Folder',
+                  onPressed: toggleOpen,
+                )
+              : EzTextButton(text: 'Folder', onPressed: toggleOpen));
+    }
+
     return open
-        ? (widget.showIcon
+        ? EzScrollView(
+            scrollDirection: Axis.horizontal,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: widget.alignment.mainAxis,
+            children: widget.packages
+                    .map((String package) {
+                      final AppInfo? app =
+                          widget.provider.getAppFromID(package);
+                      if (app == null) return null;
+
+                      Padding(
+                        padding: rowPadding,
+                        child: AppTile(
+                          app: app,
+                          onHomeScreen: true,
+                          editing: editing,
+                          refreshHome: widget.refreshHome,
+                        ),
+                      );
+                    })
+                    .whereType<Widget>()
+                    .toList() +
+                closeTail,
+          )
+        : (widget.showIcon
             ? EzTextIconButton(
                 icon: EzIcon(PlatformIcons(context).folder),
                 label: 'Folder',
                 onPressed: toggleOpen,
               )
-            : EzTextButton(text: 'Folder', onPressed: toggleOpen))
-        : EzScrollView(
-            scrollDirection: Axis.horizontal,
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: widget.alignment.mainAxis,
-            children: widget.packages
-                .map((String package) {
-                  final AppInfo? app = widget.provider.getAppFromID(package);
-                  if (app == null) return null;
-
-                  Padding(
-                    padding: rowPadding,
-                    child: AppTile(
-                      app: app,
-                      onHomeScreen: true,
-                      editing: editing,
-                      refreshHome: widget.refreshHome,
-                    ),
-                  );
-                })
-                .whereType<Widget>()
-                .toList(),
-          );
+            : EzTextButton(text: 'Folder', onPressed: toggleOpen));
   }
 }
