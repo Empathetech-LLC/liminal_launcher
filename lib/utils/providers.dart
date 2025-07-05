@@ -9,14 +9,21 @@ import 'package:flutter/material.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
 class AppInfoProvider extends ChangeNotifier {
+  // App info
   final List<AppInfo> _apps;
   final Map<String, AppInfo> _appMap;
 
+  // Renamed
+  final Set<String> _renamedPS = Set<String>.from(
+      EzConfig.get(renamedAppsKey) ?? EzConfig.getDefault(renamedAppsKey));
+
+  // Home list
   final Set<String> _homePS = Set<String>.from(
       EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey));
   final List<String> _homePL =
       EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey);
 
+  // Hidden list
   final Set<String> _hiddenPS = Set<String>.from(
       EzConfig.get(hiddenPackagesKey) ??
           EzConfig.getDefault(hiddenPackagesKey));
@@ -28,12 +35,27 @@ class AppInfoProvider extends ChangeNotifier {
         _appMap = <String, AppInfo>{
           for (AppInfo app in apps) app.package: app,
         } {
+    // Sort the apps based on the user's preferences
     sort(
       AppListSortConfig.fromValue(
         EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
       ),
       EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey),
     );
+
+    // Gather renamed apps
+    if (_renamedPS.isNotEmpty) {
+      for (final String package in _renamedPS) {
+        final List<String> parts = package.split(':');
+        if (parts.length == 2) {
+          final String package = parts[0];
+          final AppInfo? app = _appMap[package];
+          if (app != null) {
+            app.rename = parts[1];
+          }
+        }
+      }
+    }
   }
 
   List<AppInfo> get apps => _apps;
@@ -60,6 +82,20 @@ class AppInfoProvider extends ChangeNotifier {
             ? a.package.compareTo(b.package)
             : b.package.compareTo(a.package));
     }
+    notifyListeners();
+  }
+
+  Future<void> renameApp(String package, String newLabel) async {
+    final AppInfo? app = _appMap[package];
+    if (app == null) return;
+
+    app.rename = newLabel;
+
+    // Update the renamed apps list
+    _renamedPS.removeWhere((String entry) => entry.startsWith('$package:'));
+    _renamedPS.add('$package:$newLabel');
+
+    await EzConfig.setStringList(renamedAppsKey, _renamedPS.toList());
     notifyListeners();
   }
 
