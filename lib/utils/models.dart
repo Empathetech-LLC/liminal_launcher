@@ -54,3 +54,17 @@ class AppInfo {
   @override
   String toString() => 'app_label: $label, app_package: $package';
 }
+
+const String _pattern = r"^[\w\s\-\.\&\(\)']+$";
+
+String? validateAppName(String? toCheck) {
+  if (toCheck == null || toCheck.trim().isEmpty) {
+    return 'App name cannot be empty';
+  }
+
+  final RegExp validNameRegExp = RegExp(_pattern);
+  if (!validNameRegExp.hasMatch(toCheck)) {
+    return 'Invalid app name; $_pattern';
+  }
+  return null;
+}
