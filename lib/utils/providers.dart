@@ -85,9 +85,9 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> renameApp(String package, String newLabel) async {
+  Future<bool> renameApp(String package, String newLabel) async {
     final AppInfo? app = _appMap[package];
-    if (app == null) return;
+    if (app == null || app.label == newLabel) return false;
 
     app.rename = newLabel;
 
@@ -97,6 +97,8 @@ class AppInfoProvider extends ChangeNotifier {
 
     await EzConfig.setStringList(renamedAppsKey, _renamedPS.toList());
     notifyListeners();
+
+    return true;
   }
 
   Future<void> addHomeApp(String package) async {
