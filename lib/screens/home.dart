@@ -79,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               provider: provider,
               alignment: homeAlign,
               showIcon: showIcon,
+              labelType: labelType,
               editing: editing,
               refreshHome: refreshHome,
             ),
