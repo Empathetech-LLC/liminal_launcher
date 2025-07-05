@@ -148,14 +148,22 @@ class _AppTileState extends State<AppTile> {
                 ),
               ],
 
-              // Close
-              if (!onHomeScreen) ...<Widget>[
-                spacer,
-                EzIconButton(
-                  onPressed: () => setState(() => editing = false),
-                  icon: const Icon(Icons.close),
-                ),
-              ]
+              // Drag/Close
+              ...(onHomeScreen)
+                  ? <Widget>[
+                      spacer,
+                      EzIcon(
+                        Icons.drag_handle,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                    ]
+                  : <Widget>[
+                      spacer,
+                      EzIconButton(
+                        onPressed: () => setState(() => editing = false),
+                        icon: const Icon(Icons.close),
+                      ),
+                    ]
             ],
           )
         : extend
