@@ -13,7 +13,7 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 const String appTitle = 'Liminal Launcher';
 
 /// [AppInfo] with package 'net.empathetech.liminal'
-const AppInfo self = AppInfo(
+final AppInfo self = AppInfo(
   label: 'Liminal Launcher',
   package: 'net.empathetech.liminal',
   removable: false,
@@ -26,6 +26,7 @@ const String homePackagesKey = 'home_packages';
 const String hiddenPackagesKey = 'hidden_packages';
 const String appListSortKey = 'app_list_sort';
 const String appListOrderKey = 'app_list_order';
+const String renamedAppsKey = 'renamed_apps';
 
 // Functionality
 const String leftPackageKey = 'left_package';
@@ -55,6 +56,7 @@ final Map<String, Object> defaultConfig = <String, Object>{
   hiddenPackagesKey: <String>[],
   appListSortKey: ListSort.name.configValue,
   appListOrderKey: true,
+  renamedAppsKey: <String>[],
 
   // Functionality
   leftPackageKey: '',
