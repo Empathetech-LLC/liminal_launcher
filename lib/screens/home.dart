@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
               refreshHome: refreshHome,
             ),
           );
-        }
+        } // UniqueKey so users can have multiple empty folder; use case: add a bunch, then organize them
 
         final AppInfo? app = provider.getAppFromID(packages[0]);
         if (app == null) return null;
@@ -198,7 +198,6 @@ class _HomeScreenState extends State<HomeScreen> {
               editing
                   ? Expanded(
                       child: ReorderableListView(
-                      key: UniqueKey(),
                       onReorder: (int oldIndex, int newIndex) async {
                         await provider.reorderHomeApp(oldIndex, newIndex);
                         refreshHome();
@@ -206,7 +205,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: homeA2T(),
                     ))
                   : EzScrollView(
-                      key: UniqueKey(),
                       crossAxisAlignment: homeAlign.crossAxis,
                       children: homeA2T(),
                     ),
