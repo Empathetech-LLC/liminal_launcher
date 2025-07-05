@@ -9,23 +9,23 @@ const String nullAppLabel = '---';
 
 /// Helpful for creating [AppInfo] lists
 /// [nullAppLabel], '', false
-const AppInfo nullApp = AppInfo(
+final AppInfo nullApp = AppInfo(
   label: nullAppLabel,
   package: '', // If you update this, update launchApp
   removable: false,
 );
 
 class AppInfo {
-  final String label;
+  String label;
   final String package;
-  final String keyLabel;
+  String keyLabel;
   final Uint8List? icon;
   final bool removable;
 
   /// [Object] to store app information
   /// Label, package, and icon
   /// [AppInfo]s with == packages are ==
-  const AppInfo({
+  AppInfo({
     required this.label,
     required this.package,
     this.icon,
@@ -38,6 +38,11 @@ class AppInfo {
         icon: map['icon'],
         removable: map['removable'] ?? false,
       );
+
+  set rename(String newLabel) {
+    label = newLabel;
+    keyLabel = '$newLabel:$package';
+  }
 
   @override
   bool operator ==(Object other) =>
