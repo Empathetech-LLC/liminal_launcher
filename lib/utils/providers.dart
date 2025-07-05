@@ -81,7 +81,10 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addToFolder(String package) async {}
+  Future<void> addToFolder({
+    required String folder,
+    required String package,
+  }) async {}
 
   Future<bool> removeHomeApp(String package) async {
     if (!_homePS.contains(package)) return false;
