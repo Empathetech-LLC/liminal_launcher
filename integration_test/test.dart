@@ -43,8 +43,8 @@ void main() async {
 
         // Load the app //
 
-        ezLog('Loading Empathetech Launcher');
-        await tester.pumpWidget(EmpathetechLauncher(apps));
+        ezLog('Loading Liminal Launcher');
+        await tester.pumpWidget(LiminalLauncher(apps));
         await tester.pumpAndSettle();
 
         // Randomize the settings //
@@ -66,8 +66,8 @@ void main() async {
       testWidgets('Test CountFAB', (WidgetTester tester) async {
         // Re-load the app //
 
-        ezLog('Loading Empathetech Launcher');
-        await tester.pumpWidget(EmpathetechLauncher(apps));
+        ezLog('Loading Liminal Launcher');
+        await tester.pumpWidget(LiminalLauncher(apps));
         await tester.pumpAndSettle();
       });
     },

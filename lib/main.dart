@@ -43,7 +43,7 @@ void main() async {
     themeMode: EzConfig.getThemeMode(),
     localizationsDelegates: <LocalizationsDelegate<dynamic>>[EzFeedbackLD()],
     localeOverride: EzConfig.getLocale(),
-    child: EmpathetechLauncher(await getApps()),
+    child: LiminalLauncher(await getApps()),
   ));
 }
 
@@ -138,10 +138,10 @@ final GoRouter router = GoRouter(
   ],
 );
 
-class EmpathetechLauncher extends StatelessWidget {
+class LiminalLauncher extends StatelessWidget {
   final List<AppInfo> installedApps;
 
-  const EmpathetechLauncher(this.installedApps, {super.key});
+  const LiminalLauncher(this.installedApps, {super.key});
 
   @override
   Widget build(BuildContext context) {

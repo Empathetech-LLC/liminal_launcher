@@ -1,4 +1,4 @@
-# Empathetech Launcher
+# Liminal Launcher
 
 An empathetic Flutter project.
 
@@ -69,7 +69,7 @@ Has been setup along with a basic runner script; `integration_test/run_int_tests
 
 ## <br>Credits
 
-Empathetech Launcher began with [Open UI](https://www.empathetech.net/#/products/open-ui)'s app generation service.
+Liminal Launcher began with [Open UI](https://www.empathetech.net/#/products/open-ui)'s app generation service.
 
 It is free and open source, maintained by [Empathetech LLC](https://www.empathetech.net/).
 

@@ -4,7 +4,7 @@ set -e
 
 ## Setup ##
 
-project_dir="/Users/mwaldron/repos/flutter/empathetech_launcher"
+project_dir="/Users/mwaldron/repos/flutter/liminal_launcher"
 device=""
 
 # Gather flag variables
