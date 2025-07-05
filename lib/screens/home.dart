@@ -29,6 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
   static const EzSeparator separator = EzSeparator();
 
   final double spacing = EzConfig.get(spacingKey);
+
+  late final EdgeInsets listPadding =
+      EdgeInsets.symmetric(vertical: spacing / 2);
   late final EdgeInsets modalPadding = EzInsets.col(spacing);
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
@@ -66,18 +69,23 @@ class _HomeScreenState extends State<HomeScreen> {
         final List<String> packages = item.split(':');
 
         if (packages.length > 1) {
-          return AppFolder(
-            packages: packages.sublist(1),
-            provider: provider,
-            alignment: homeAlign,
-            showIcon: showIcon,
-            editing: editing,
-            refreshHome: refreshHome,
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: spacing / 2),
+            key: UniqueKey(),
+            child: AppFolder(
+              packages: packages.sublist(1),
+              provider: provider,
+              alignment: homeAlign,
+              showIcon: showIcon,
+              editing: editing,
+              refreshHome: refreshHome,
+            ),
           );
         }
 
         final AppInfo? app = provider.getAppFromID(packages[0]);
         if (app == null) return null;
+
         return Padding(
           padding: EdgeInsets.symmetric(vertical: spacing / 2),
           key: ValueKey<String>(app.keyLabel),
@@ -214,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             // Add folder
             if (provider.homePS.isNotEmpty) ...<Widget>[
-              AddFolderFAB(context, doNothing),
+              AddFolderFAB(context, provider.addHomeFolder),
               separator,
             ],
 
