@@ -52,6 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
       EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
 
+  bool atBottom = false;
+
   final LabelType labelType = LabelTypeConfig.fromValue(
       EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey));
 
@@ -196,14 +198,39 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // App list
               editing
-                  ? Expanded(
-                      child: ReorderableListView(
-                      onReorder: (int oldIndex, int newIndex) async {
-                        await provider.reorderHomeApp(oldIndex, newIndex);
-                        refreshHome();
+                  ? NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification notification) {
+                        if (notification is OverscrollNotification &&
+                            notification.overscroll > 0) {
+                          // Pop on top overscroll
+                          if (atBottom) {
+                            context.goNamed(hiddenListPath);
+                            return true;
+                          } else {
+                            setState(() => atBottom = true);
+                            return true;
+                          }
+                        } else if (notification is ScrollUpdateNotification) {
+                          if (atBottom && notification.metrics.pixels < 0) {
+                            setState(() => atBottom = false);
+                          }
+                        } else if (notification is ScrollEndNotification) {
+                          atBottom = (notification.metrics.pixels ==
+                              notification.metrics.maxScrollExtent);
+                          setState(() {});
+                        }
+                        return false;
                       },
-                      children: homeA2T(),
-                    ))
+                      child: Expanded(
+                        child: ReorderableListView(
+                          onReorder: (int oldIndex, int newIndex) async {
+                            await provider.reorderHomeApp(oldIndex, newIndex);
+                            refreshHome();
+                          },
+                          children: homeA2T(),
+                        ),
+                      ),
+                    )
                   : EzScrollView(
                       crossAxisAlignment: homeAlign.crossAxis,
                       children: homeA2T(),
