@@ -157,10 +157,10 @@ class _AppTileState extends State<AppTile> {
                 onPressed: () => openSettings(app.package),
                 icon: Icon(PlatformIcons(context).info),
               ),
+              rowSpacer,
 
               // Delete
               if (app.removable) ...<Widget>[
-                rowSpacer,
                 EzIconButton(
                   onPressed: () async {
                     final bool deleted = await deleteApp(context, app);
@@ -172,24 +172,23 @@ class _AppTileState extends State<AppTile> {
                   },
                   icon: Icon(PlatformIcons(context).delete),
                 ),
+                rowSpacer,
               ],
 
-              // Drag/Close
-              ...(onHomeScreen)
-                  ? <Widget>[
-                      rowSpacer,
-                      EzIcon(
-                        Icons.drag_handle,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ]
-                  : <Widget>[
-                      rowSpacer,
-                      EzIconButton(
-                        onPressed: () => setState(() => editing = false),
-                        icon: const Icon(Icons.close),
-                      ),
-                    ]
+              // Close
+              EzIconButton(
+                onPressed: () => setState(() => editing = false),
+                icon: const Icon(Icons.close),
+              ),
+
+              // Drag handle
+              if (onHomeScreen) ...<Widget>[
+                rowSpacer,
+                EzIcon(
+                  Icons.drag_handle,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ],
             ],
           )
         : extend
