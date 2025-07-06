@@ -152,8 +152,8 @@ class _AppFolderState extends State<AppFolder> {
               isScrollControlled: true,
               builder: (_) => StatefulBuilder(
                 builder: (_, StateSetter setModalState) {
-                  final Set<String> inFolder =
-                      widget.packages.sublist(1).toSet();
+                  final List<String> folderPL = widget.packages.sublist(1);
+                  final Set<String> folderPS = folderPL.toSet();
 
                   void onRemove(String package) async {
                     final bool removed = await widget.provider.removeFromFolder(
@@ -162,7 +162,10 @@ class _AppFolderState extends State<AppFolder> {
                     );
 
                     if (removed) {
-                      setModalState(() => inFolder.remove(package));
+                      folderPL.remove(package);
+                      folderPS.remove(package);
+                      setModalState(() {});
+                      setState(() {});
                     }
                   }
 
@@ -173,16 +176,20 @@ class _AppFolderState extends State<AppFolder> {
                     );
 
                     if (added) {
-                      setModalState(() => inFolder.add(package));
+                      folderPL.add(package);
+                      folderPS.add(package);
+                      setModalState(() {});
+                      setState(() {});
                     }
                   }
 
                   return EzScrollView(
+                    key: ValueKey<int>(folderPS.length),
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: widget.alignment.crossAxis,
                     children: <Widget>[
                       // Remove
-                      ...widget.packages.sublist(1).map((String package) {
+                      ...folderPL.map((String package) {
                         final AppInfo? app =
                             widget.provider.getAppFromID(package);
                         if (app == null) return null;
@@ -202,7 +209,7 @@ class _AppFolderState extends State<AppFolder> {
                       // Add
                       ...widget.provider.apps
                           .where((AppInfo app) =>
-                              !inFolder.contains(app.package) &&
+                              !folderPS.contains(app.package) &&
                               !widget.provider.hiddenPS.contains(app.package))
                           .map((AppInfo app) {
                         return Padding(
