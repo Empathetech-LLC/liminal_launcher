@@ -112,17 +112,77 @@ class AppInfoProvider extends ChangeNotifier {
   }
 
   Future<void> addHomeFolder() async {
+    // Include ':empty' so a ':' split will still return a list
     _homePL.add('Folder:empty');
-    debugPrint(_homePL.toString());
 
     await EzConfig.setStringList(homePackagesKey, _homePL);
     notifyListeners();
   }
 
-  Future<void> addToFolder({
-    required String folder,
+  Future<bool> addToFolder({
+    required String fullName,
     required String package,
-  }) async {}
+  }) async {
+    final int index = _homePL.indexOf(fullName);
+    if (index == -1) return false;
+
+    _homePL[index] = '$fullName:$package';
+    _homePS.contains(package) ? _homePL.remove(package) : _homePS.add(package);
+
+    await EzConfig.setStringList(homePackagesKey, _homePL);
+    notifyListeners();
+
+    return true;
+  }
+
+  Future<bool> removeFromFolder({
+    required String fullName,
+    required String package,
+  }) async {
+    final int index = _homePL.indexOf(fullName);
+    if (index == -1) return false;
+
+    String newFullName = fullName.replaceFirst(':$package', '');
+    if (!homePL.contains(':')) {
+      // Include ':empty' so a ':' split will still return a list
+      newFullName += ':empty';
+    }
+    _homePL[index] = newFullName;
+    _homePL.add(package);
+
+    await EzConfig.setStringList(homePackagesKey, _homePL);
+    notifyListeners();
+
+    return true;
+  }
+
+  Future<bool> renameFolder(String fullName, String newLabel) async {
+    final int index = _homePL.indexOf(fullName);
+    if (index == -1) return false;
+
+    final List<String> parts = fullName.split(':');
+    if (parts[0] == newLabel) return false;
+
+    final String newFullName = '$newLabel:${parts.sublist(1).join(':')}';
+    _homePL[index] = newFullName;
+
+    await EzConfig.setStringList(homePackagesKey, _homePL);
+    notifyListeners();
+
+    return true;
+  }
+
+  Future<void> deleteFolder(String fullName) async {
+    final List<String> packages = fullName.split(':').sublist(1);
+    for (final String package in packages) {
+      _homePS.remove(package);
+    }
+
+    _homePL.remove(fullName);
+    await EzConfig.setStringList(homePackagesKey, _homePL);
+
+    notifyListeners();
+  }
 
   Future<bool> removeHomeApp(String package) async {
     if (!_homePS.contains(package)) return false;
