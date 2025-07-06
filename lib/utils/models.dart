@@ -45,14 +45,20 @@ class AppInfo {
   }
 
   @override
+  int get hashCode => keyLabel.hashCode;
+
+  @override
   bool operator ==(Object other) =>
-      other is AppInfo && package == other.package;
+      other is AppInfo && keyLabel == other.keyLabel;
 
   @override
-  int get hashCode => package.hashCode;
-
-  @override
-  String toString() => 'app_label: $label, app_package: $package';
+  String toString() => '''<AppInfo> {
+  label: $label,
+  package: $package
+  keyLabel: $keyLabel,
+  icon: ${icon == null ? 'null' : 'present'},
+  removable: $removable,
+}''';
 }
 
 const String _pattern = r"^[\w\s\-\.\&\(\)']+$";
