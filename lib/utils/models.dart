@@ -17,8 +17,8 @@ final AppInfo nullApp = AppInfo(
 
 class AppInfo {
   String label;
-  final String package;
-  String keyLabel;
+  final String _package;
+  String id;
   final Uint8List? icon;
   final bool removable;
 
@@ -27,10 +27,11 @@ class AppInfo {
   /// [AppInfo]s with == packages are ==
   AppInfo({
     required this.label,
-    required this.package,
+    required String package,
     this.icon,
     required this.removable,
-  }) : keyLabel = '$label:$package';
+  })  : _package = package,
+        id = '$package:$label';
 
   factory AppInfo.fromMap(Map<String, dynamic> map) => AppInfo(
         label: map['label'] ?? nullAppLabel,
@@ -41,21 +42,20 @@ class AppInfo {
 
   set rename(String newLabel) {
     label = newLabel;
-    keyLabel = '$newLabel:$package';
+    id = '$_package:$label';
   }
 
   @override
-  int get hashCode => keyLabel.hashCode;
+  int get hashCode => id.hashCode;
 
   @override
-  bool operator ==(Object other) =>
-      other is AppInfo && keyLabel == other.keyLabel;
+  bool operator ==(Object other) => other is AppInfo && id == other.id;
 
   @override
   String toString() => '''<AppInfo> {
   label: $label,
-  package: $package
-  keyLabel: $keyLabel,
+  package: $_package
+  id: $id,
   icon: ${icon == null ? 'null' : 'present'},
   removable: $removable,
 }''';
