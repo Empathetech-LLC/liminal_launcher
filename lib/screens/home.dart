@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.symmetric(vertical: spacing / 2),
             key: UniqueKey(),
             child: AppFolder(
-              packages: packages.sublist(1),
+              packages: packages,
               provider: provider,
               alignment: homeAlign,
               showIcon: showIcon,
