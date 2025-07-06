@@ -184,6 +184,7 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
+  /// Does not handle dupes; please handle before
   Future<bool> addToFolder({
     required String fullName,
     required String package,
@@ -191,7 +192,12 @@ class AppInfoProvider extends ChangeNotifier {
     final int index = _homePL.indexOf(fullName);
     if (index == -1) return false;
 
-    _homePL[index] = '$fullName:$package';
+    final List<String> parts = fullName.split(':');
+    if (parts.length == 2 && parts[1] == 'empty') {
+      _homePL[index] = parts[0];
+    }
+
+    _homePL[index] = '${_homePL[index]}:$package';
     _homePS.contains(package) ? _homePL.remove(package) : _homePS.add(package);
 
     await EzConfig.setStringList(homePackagesKey, _homePL);
@@ -263,7 +269,6 @@ class AppInfoProvider extends ChangeNotifier {
 
     app.rename = newLabel;
 
-    // Update the renamed apps list
     _renamedPS.removeWhere((String entry) => entry.startsWith('$package:'));
     _renamedPS.add('$package:$newLabel');
 
