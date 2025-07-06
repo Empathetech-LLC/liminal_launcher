@@ -35,7 +35,7 @@ class AppFolder extends StatefulWidget {
 }
 
 class _AppFolderState extends State<AppFolder> {
-  // Define the build data //
+  // Gather the theme data //
 
   static const EzSpacer rowSpacer = EzSpacer(vertical: false);
 
@@ -44,6 +44,11 @@ class _AppFolderState extends State<AppFolder> {
   late final EdgeInsets rowPadding = EzInsets.row(spacing);
   late final EdgeInsets modalPadding = EzInsets.col(spacing);
 
+  late final EFUILang el10n = ezL10n(context);
+  late final TextTheme textTheme = Theme.of(context).textTheme;
+
+  // Define the build data //
+
   bool open = false;
   late bool editing = widget.editing;
 
@@ -51,7 +56,7 @@ class _AppFolderState extends State<AppFolder> {
 
   void toggleOpen() => setState(() => open = !open);
 
-  // Return the build //
+  // Define custom Widgets //
 
   late final List<Widget> closeTail = <Widget>[
     rowSpacer,
@@ -61,6 +66,8 @@ class _AppFolderState extends State<AppFolder> {
     ),
   ];
 
+  // Return the build //
+
   @override
   Widget build(BuildContext context) {
     if (editing) {
@@ -69,40 +76,196 @@ class _AppFolderState extends State<AppFolder> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: widget.alignment.mainAxis,
         children: <Widget>[
-          const Text('Folder'),
+          // Name
+          GestureDetector(
+            onTap: () => showPlatformDialog(
+                context: context,
+                builder: (BuildContext dialogContext) {
+                  final TextEditingController renameController =
+                      TextEditingController();
+
+                  void onConfirm() async {
+                    closeKeyboard(dialogContext);
+
+                    final String name = renameController.text.trim();
+                    if (validateAppName(name) != null) return null;
+
+                    final bool success = await widget.provider
+                        .renameFolder(widget.packages.join(':'), name);
+
+                    if (success) {
+                      if (dialogContext.mounted) {
+                        Navigator.of(dialogContext).pop(name);
+                      }
+                      widget.refreshHome?.call();
+                    }
+                  }
+
+                  void onDeny() {
+                    closeKeyboard(dialogContext);
+                    Navigator.of(dialogContext).pop();
+                  }
+
+                  late final List<Widget> materialActions;
+                  late final List<Widget> cupertinoActions;
+
+                  (materialActions, cupertinoActions) = ezActionPairs(
+                    context: context,
+                    confirmMsg: el10n.gApply,
+                    onConfirm: onConfirm,
+                    confirmIsDestructive: true,
+                    denyMsg: el10n.gCancel,
+                    onDeny: onDeny,
+                  );
+
+                  return EzAlertDialog(
+                    title: Text(
+                      "Rename folder '${widget.packages[0]}'?",
+                      textAlign: TextAlign.center,
+                    ),
+                    content: Form(
+                      child: TextFormField(
+                        controller: renameController,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        autofillHints: const <String>[AutofillHints.name],
+                        autovalidateMode: AutovalidateMode.onUnfocus,
+                        validator: validateAppName,
+                      ),
+                    ),
+                    materialActions: materialActions,
+                    cupertinoActions: cupertinoActions,
+                    needsClose: false,
+                  );
+                }),
+            child: Text(widget.packages[0], style: textTheme.bodyLarge),
+          ),
           rowSpacer,
+
+          // Edit apps
           EzIconButton(
             icon: Icon(PlatformIcons(context).edit),
-            onPressed: () => showPlatformDialog(
+            onPressed: () => showModalBottomSheet(
               context: context,
+              useSafeArea: true,
+              isScrollControlled: true,
               builder: (_) => StatefulBuilder(
                 builder: (_, StateSetter setModalState) {
-                  return EzScrollView(
+                  final Set<String> inFolder =
+                      widget.packages.sublist(1).toSet();
+
+                  void onRemove(String package) async {
+                    final bool removed = await widget.provider.removeFromFolder(
+                      fullName: widget.packages.join(':'),
+                      package: package,
+                    );
+
+                    if (removed) {
+                      setModalState(() => inFolder.remove(package));
+                    }
+                  }
+
+                  void onAdd(String package) async {
+                    final bool added = await widget.provider.addToFolder(
+                      fullName: widget.packages.join(':'),
+                      package: package,
+                    );
+
+                    if (added) {
+                      setModalState(() => inFolder.add(package));
+                    }
+                  }
+
+                  return Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: widget.provider.apps
-                        .where((AppInfo app) =>
-                            !widget.provider.hiddenPS.contains(app.package))
-                        .map((AppInfo app) => Padding(
-                              key: ValueKey<String>(app.keyLabel),
-                              padding: modalPadding,
-                              child: TileButton(
-                                app: app,
-                                type: widget.labelType,
-                                showIcon: widget.showIcon,
-                                onPressed: doNothing,
-                              ),
-                            ))
-                        .toList(),
+                    children: <Widget>[
+                      // Remove
+                      EzScrollView(
+                        mainAxisSize: MainAxisSize.min,
+                        children: widget.packages
+                            .sublist(1)
+                            .map((String package) {
+                              final AppInfo? app =
+                                  widget.provider.getAppFromID(package);
+                              if (app == null) return null;
+
+                              return Padding(
+                                key: ValueKey<String>(app.keyLabel),
+                                padding: modalPadding,
+                                child: EzRow(
+                                  children: <Widget>[
+                                    // App tile
+                                    TileButton(
+                                      app: app,
+                                      type: widget.labelType,
+                                      showIcon: widget.showIcon,
+                                      onPressed: () => onRemove(app.package),
+                                    ),
+                                    rowSpacer,
+
+                                    // Remove button
+                                    EzIconButton(
+                                      icon: Icon(PlatformIcons(context).delete),
+                                      onPressed: () => onRemove(app.package),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            })
+                            .whereType<Widget>()
+                            .toList(),
+                      ),
+                      const EzDivider(),
+
+                      // Add
+                      EzScrollView(
+                        mainAxisSize: MainAxisSize.min,
+                        children: widget.provider.apps
+                            .where((AppInfo app) =>
+                                !widget.provider.hiddenPS.contains(app.package))
+                            .map((AppInfo app) {
+                          return Padding(
+                            key: ValueKey<String>(app.keyLabel),
+                            padding: modalPadding,
+                            child: EzRow(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                // App tile
+                                TileButton(
+                                  app: app,
+                                  type: widget.labelType,
+                                  showIcon: widget.showIcon,
+                                  onPressed: () => onAdd(app.package),
+                                ),
+                                rowSpacer,
+
+                                // Add button
+                                EzIconButton(
+                                  icon: Icon(PlatformIcons(context).add),
+                                  onPressed: () => onAdd(app.package),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   );
                 },
               ),
             ),
           ),
           rowSpacer,
-          EzIconButton(icon: Icon(PlatformIcons(context).eyeSlash)),
+
+          // Delete folder
+          EzIconButton(
+            icon: Icon(PlatformIcons(context).delete),
+            onPressed: () =>
+                widget.provider.deleteFolder(widget.packages.join(':')),
+          ),
           rowSpacer,
-          EzIconButton(icon: Icon(PlatformIcons(context).delete)),
-          rowSpacer,
+
+          // Drag handle
           EzIcon(
             Icons.drag_handle,
             color: Theme.of(context).colorScheme.outline,
@@ -117,6 +280,7 @@ class _AppFolderState extends State<AppFolder> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: widget.alignment.mainAxis,
             children: widget.packages
+                    .sublist(1)
                     .map((String package) {
                       final AppInfo? app =
                           widget.provider.getAppFromID(package);
@@ -139,9 +303,9 @@ class _AppFolderState extends State<AppFolder> {
         : (widget.showIcon
             ? EzTextIconButton(
                 icon: EzIcon(PlatformIcons(context).folder),
-                label: 'Folder',
+                label: widget.packages[0],
                 onPressed: toggleOpen,
               )
-            : EzTextButton(text: 'Folder', onPressed: toggleOpen));
+            : EzTextButton(text: widget.packages[0], onPressed: toggleOpen));
   }
 }
