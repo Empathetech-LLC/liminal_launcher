@@ -22,11 +22,11 @@ final AppInfo self = AppInfo(
 // EzConfig //
 
 // BTS
-const String homePackagesKey = 'home_packages';
-const String hiddenPackagesKey = 'hidden_packages';
+const String homeIDsKey = 'home_packages';
+const String hiddenIDsKey = 'hidden_packages';
 const String appListSortKey = 'app_list_sort';
 const String appListOrderKey = 'app_list_order';
-const String renamedAppsKey = 'renamed_apps';
+const String renamedIDsKey = 'renamed_apps';
 
 // Functionality
 const String leftPackageKey = 'left_package';
@@ -52,11 +52,11 @@ final Map<String, Object> defaultConfig = <String, Object>{
   ...mobileEmpathConfig,
 
   // BTS
-  homePackagesKey: <String>[],
-  hiddenPackagesKey: <String>[],
+  homeIDsKey: <String>[],
+  hiddenIDsKey: <String>[],
   appListSortKey: ListSort.name.configValue,
   appListOrderKey: true,
-  renamedAppsKey: <String>[],
+  renamedIDsKey: <String>[],
 
   // Functionality
   leftPackageKey: '',
