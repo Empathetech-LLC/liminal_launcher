@@ -252,7 +252,7 @@ class _AppFolderState extends State<AppFolder> {
                           widget.provider.getAppFromID(package);
                       if (app == null) return null;
 
-                      Padding(
+                      return Padding(
                         padding: rowPadding,
                         child: AppTile(
                           app: app,
