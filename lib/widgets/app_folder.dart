@@ -176,79 +176,45 @@ class _AppFolderState extends State<AppFolder> {
                     }
                   }
 
-                  return Column(
+                  return EzScrollView(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: widget.alignment.crossAxis,
                     children: <Widget>[
                       // Remove
-                      EzScrollView(
-                        mainAxisSize: MainAxisSize.min,
-                        children: widget.packages
-                            .sublist(1)
-                            .map((String package) {
-                              final AppInfo? app =
-                                  widget.provider.getAppFromID(package);
-                              if (app == null) return null;
+                      ...widget.packages.sublist(1).map((String package) {
+                        final AppInfo? app =
+                            widget.provider.getAppFromID(package);
+                        if (app == null) return null;
 
-                              return Padding(
-                                key: ValueKey<String>(app.keyLabel),
-                                padding: modalPadding,
-                                child: EzRow(
-                                  children: <Widget>[
-                                    // App tile
-                                    TileButton(
-                                      app: app,
-                                      type: widget.labelType,
-                                      showIcon: widget.showIcon,
-                                      onPressed: () => onRemove(app.package),
-                                    ),
-                                    rowSpacer,
-
-                                    // Remove button
-                                    EzIconButton(
-                                      icon: Icon(PlatformIcons(context).delete),
-                                      onPressed: () => onRemove(app.package),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            })
-                            .whereType<Widget>()
-                            .toList(),
-                      ),
-                      const EzDivider(),
-
-                      // Add
-                      EzScrollView(
-                        mainAxisSize: MainAxisSize.min,
-                        children: widget.provider.apps
-                            .where((AppInfo app) =>
-                                !widget.provider.hiddenPS.contains(app.package))
-                            .map((AppInfo app) {
-                          return Padding(
+                        return Padding(
                             key: ValueKey<String>(app.keyLabel),
                             padding: modalPadding,
-                            child: EzRow(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                // App tile
-                                TileButton(
-                                  app: app,
-                                  type: widget.labelType,
-                                  showIcon: widget.showIcon,
-                                  onPressed: () => onAdd(app.package),
-                                ),
-                                rowSpacer,
+                            child: TileButton(
+                              app: app,
+                              type: widget.labelType,
+                              showIcon: widget.showIcon,
+                              onPressed: () => onRemove(app.package),
+                            ));
+                      }).whereType<Widget>(),
+                      EzDivider(height: spacing),
 
-                                // Add button
-                                EzIconButton(
-                                  icon: Icon(PlatformIcons(context).add),
-                                  onPressed: () => onAdd(app.package),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                      // Add
+                      ...widget.provider.apps
+                          .where((AppInfo app) =>
+                              !inFolder.contains(app.package) &&
+                              !widget.provider.hiddenPS.contains(app.package))
+                          .map((AppInfo app) {
+                        return Padding(
+                          key: ValueKey<String>(app.keyLabel),
+                          padding: modalPadding,
+                          child: TileButton(
+                            app: app,
+                            type: widget.labelType,
+                            showIcon: widget.showIcon,
+                            onPressed: () => onAdd(app.package),
+                          ),
+                        );
+                      }),
                     ],
                   );
                 },
