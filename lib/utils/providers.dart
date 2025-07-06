@@ -90,13 +90,17 @@ class AppInfoProvider extends ChangeNotifier {
         _appEventChannel.receiveBroadcastStream().listen((dynamic event) {
       if (event is Map<dynamic, dynamic>) {
         final String eventType = event['eventType'] as String;
-        final String packageName = event['packageName'] as String;
 
         switch (eventType) {
           case 'installed':
-            _handleAppInstalled(packageName);
+            final Map<String, dynamic>? appInfoMap =
+                event['appInfo'] as Map<String, dynamic>?;
+
+            if (appInfoMap != null) _handleAppInstalled(appInfoMap);
             break;
           case 'uninstalled':
+            final String packageName = event['packageName'] as String;
+
             _handleAppUninstalled(packageName);
             break;
         }
@@ -116,9 +120,11 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _handleAppInstalled(String packageName) async {
-    _apps.add(AppInfo.fromMap(map));
-    _appMap[packageName] = AppInfo.fromMap(map);
+  Future<void> _handleAppInstalled(Map<String, dynamic> appInfoMap) async {
+    final AppInfo installed = AppInfo.fromMap(appInfoMap);
+
+    _apps.add(installed);
+    _appMap[installed.package] = installed;
 
     sort(
       AppListSortConfig.fromValue(
@@ -128,9 +134,9 @@ class AppInfoProvider extends ChangeNotifier {
     );
 
     if (EzConfig.get(autoAddToHomeKey) == true &&
-        !_homePS.contains(packageName)) {
-      _homePL.add(packageName);
-      _homePS.add(packageName);
+        !_homePS.contains(installed.package)) {
+      _homePL.add(installed.package);
+      _homePS.add(installed.package);
       await EzConfig.setStringList(homePackagesKey, _homePL);
     }
 
