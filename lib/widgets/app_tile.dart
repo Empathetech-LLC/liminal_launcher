@@ -52,7 +52,6 @@ class _AppTileState extends State<AppTile> {
   );
 
   late bool editing = widget.editing;
-  late final TextEditingController renameController = TextEditingController();
   late final void Function()? refreshHome = widget.refreshHome;
 
   // Define custom functions //
@@ -89,6 +88,9 @@ class _AppTileState extends State<AppTile> {
                 onPressed: () => showPlatformDialog(
                     context: context,
                     builder: (BuildContext dialogContext) {
+                      final TextEditingController renameController =
+                          TextEditingController();
+
                       void onConfirm() async {
                         closeKeyboard(dialogContext);
 
@@ -99,10 +101,10 @@ class _AppTileState extends State<AppTile> {
                             await provider.renameApp(app.package, name);
 
                         if (success) {
-                          refreshHome?.call();
                           if (dialogContext.mounted) {
                             Navigator.of(dialogContext).pop(name);
                           }
+                          refreshHome?.call();
                         }
                       }
 
@@ -238,12 +240,6 @@ class _AppTileState extends State<AppTile> {
             onPressed: activateTile,
             onLongPress: holdTile,
           );
-  }
-
-  @override
-  void dispose() {
-    renameController.dispose();
-    super.dispose();
   }
 }
 
