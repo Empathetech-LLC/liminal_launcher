@@ -185,7 +185,8 @@ class AppEventReceiver(private val eventSink: EventSink?) : BroadcastReceiver() 
     }
   }
 
-  private fun getAppDetails(context: Context, packageName: String): Map<String, Any?>? {
+  private fun getAppDetails(context: Context?, packageName: String): Map<String, Any?>? {
+    if (context == null) return null
     val packageManager = context.packageManager
 
     try {
