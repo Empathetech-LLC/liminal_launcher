@@ -26,7 +26,7 @@ import io.flutter.plugin.common.MethodChannel
 
 import java.io.ByteArrayOutputStream
 
-// Main //
+//* Main *//
 
 class MainActivity : FlutterFragmentActivity() {
   private val METHOD_CHANNEL: String = "net.empathetech.liminal/query"
@@ -37,7 +37,8 @@ class MainActivity : FlutterFragmentActivity() {
   override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
 
-    // MethodChannel (calls from Flutter to Android)
+    // MethodChannel (calls from Flutter to Android) config //
+
     MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL).setMethodCallHandler { call, result ->
       when (call.method) {
         "getApps" -> {
@@ -100,36 +101,13 @@ class MainActivity : FlutterFragmentActivity() {
       }
     }
 
-    // EventChannel (events from Android to Flutter)
+    // EventChannel (events from Android to Flutter) config //
+
     appEventStreamHandler = AppEventStreamHandler(applicationContext)
     EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENT_CHANNEL).setStreamHandler(appEventStreamHandler)
   }
 
-  private fun drawableToByteArray(drawable: Drawable?): ByteArray? {
-    if (drawable == null) return null
-    
-    if (drawable is BitmapDrawable) {
-      val bitmap: Bitmap = drawable.bitmap
-      val stream = ByteArrayOutputStream()
-
-      bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-      return stream.toByteArray()
-    }
-
-    val bitmap = Bitmap.createBitmap(
-      drawable.intrinsicWidth,
-      drawable.intrinsicHeight,
-      Bitmap.Config.ARGB_8888
-    )
-
-    val canvas = Canvas(bitmap)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-
-    val stream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-    return stream.toByteArray()
-  }
+  // Main helpers //
 
   private fun getInstalledApps(): List<Map<String, Any?>> {
     val getIntent = Intent(Intent.ACTION_MAIN, null)
@@ -182,6 +160,9 @@ class MainActivity : FlutterFragmentActivity() {
   }
 }
 
+//* Events *//
+// Receiver //
+
 class AppEventReceiver(private val eventSink: EventSink?) : BroadcastReceiver() {
   override fun onReceive(context: Context?, intent: Intent?) {
     if (intent == null) return
@@ -192,7 +173,10 @@ class AppEventReceiver(private val eventSink: EventSink?) : BroadcastReceiver() 
     when (intent.action) {
       Intent.ACTION_PACKAGE_ADDED -> {
         val isUpdate = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
-        if (!isUpdate) eventSink?.success(mapOf("eventType" to "installed", "packageName" to packageName))
+        if (!isUpdate) {
+          val appDetails = getAppDetails(context, packageName)
+          if (appDetails != null) eventSink?.success(mapOf("eventType" to "installed", "appInfo" to appDetails))
+        }
       }
       Intent.ACTION_PACKAGE_REMOVED -> {
         val isUpdate = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
@@ -200,7 +184,30 @@ class AppEventReceiver(private val eventSink: EventSink?) : BroadcastReceiver() 
       }
     }
   }
+
+  private fun getAppDetails(context: Context, packageName: String): Map<String, Any?>? {
+    val packageManager = context.packageManager
+
+    try {
+      val appInfo: ApplicationInfo = packageManager.getApplicationInfo(packageName, 0)
+      val app = mutableMapOf<String, Any?>()
+
+      app["label"] = packageManager.getApplicationLabel(appInfo).toString()
+      app["package"] = appInfo.packageName
+      app["icon"] = drawableToByteArray(packageManager.getApplicationIcon(appInfo))
+
+      val isSystemApp: Boolean = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+      app["removable"] = !isSystemApp
+
+      return app
+    } catch (e: PackageManager.NameNotFoundException) {
+      Log.e("AppDetails", "App with package $packageName not found.", e)
+      return null
+    }
+  }
 }
+
+// Stream handler //
 
 class AppEventStreamHandler(private val context: Context) : EventChannel.StreamHandler {
   private var appEventReceiver: AppEventReceiver? = null
@@ -223,4 +230,32 @@ class AppEventStreamHandler(private val context: Context) : EventChannel.StreamH
       appEventReceiver = null
     }
   }
+}
+
+//* Shared *//
+
+private fun drawableToByteArray(drawable: Drawable?): ByteArray? {
+  if (drawable == null) return null
+  
+  if (drawable is BitmapDrawable) {
+    val bitmap: Bitmap = drawable.bitmap
+    val stream = ByteArrayOutputStream()
+
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    return stream.toByteArray()
+  }
+
+  val bitmap = Bitmap.createBitmap(
+    drawable.intrinsicWidth,
+    drawable.intrinsicHeight,
+    Bitmap.Config.ARGB_8888
+  )
+
+  val canvas = Canvas(bitmap)
+  drawable.setBounds(0, 0, canvas.width, canvas.height)
+  drawable.draw(canvas)
+
+  val stream = ByteArrayOutputStream()
+  bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+  return stream.toByteArray()
 }
