@@ -180,7 +180,10 @@ class AppEventReceiver(private val eventSink: EventSink?) : BroadcastReceiver() 
       }
       Intent.ACTION_PACKAGE_REMOVED -> {
         val isUpdate = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
-        if (!isUpdate) eventSink?.success(mapOf("eventType" to "uninstalled", "packageName" to packageName))
+        if (!isUpdate) {
+          val appDetails = getAppDetails(context, packageName)
+          if (appDetails != null) eventSink?.success(mapOf("eventType" to "uninstalled", "appInfo" to appDetails))
+        }
       }
     }
   }
