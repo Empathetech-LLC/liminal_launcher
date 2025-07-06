@@ -1,7 +1,10 @@
 package net.empathetech.liminal
 
 import android.app.WallpaperManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -17,16 +20,25 @@ import androidx.annotation.NonNull
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.MethodChannel
 
 import java.io.ByteArrayOutputStream
 
+// Main //
+
 class MainActivity : FlutterFragmentActivity() {
-  private val CHANNEL: String = "net.empathetech.liminal/query"
+  private val METHOD_CHANNEL: String = "net.empathetech.liminal/query"
+  private val EVENT_CHANNEL: String = "net.empathetech.liminal/app_events"
+
+  private var appEventStreamHandler: AppEventStreamHandler? = null
 
   override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
-    MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+
+    // MethodChannel (calls from Flutter to Android)
+    MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL).setMethodCallHandler { call, result ->
       when (call.method) {
         "getApps" -> {
           try{
@@ -87,6 +99,10 @@ class MainActivity : FlutterFragmentActivity() {
         else -> result.notImplemented() 
       }
     }
+
+    // EventChannel (events from Android to Flutter)
+    appEventStreamHandler = AppEventStreamHandler(applicationContext)
+    EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENT_CHANNEL).setStreamHandler(appEventStreamHandler)
   }
 
   private fun drawableToByteArray(drawable: Drawable?): ByteArray? {
@@ -163,5 +179,48 @@ class MainActivity : FlutterFragmentActivity() {
     deleteIntent.data = Uri.fromParts("package", packageName, null)
     deleteIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     startActivity(deleteIntent)
+  }
+}
+
+class AppEventReceiver(private val eventSink: EventSink?) : BroadcastReceiver() {
+  override fun onReceive(context: Context?, intent: Intent?) {
+    if (intent == null) return
+
+    val packageName = intent.data?.schemeSpecificPart
+    if (packageName == null) return
+
+    when (intent.action) {
+      Intent.ACTION_PACKAGE_ADDED -> {
+        val isUpdate = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
+        if (!isUpdate) eventSink?.success(mapOf("eventType" to "installed", "packageName" to packageName))
+      }
+      Intent.ACTION_PACKAGE_REMOVED -> {
+        val isUpdate = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
+        if (!isUpdate) eventSink?.success(mapOf("eventType" to "uninstalled", "packageName" to packageName))
+      }
+    }
+  }
+}
+
+class AppEventStreamHandler(private val context: Context) : EventChannel.StreamHandler {
+  private var appEventReceiver: AppEventReceiver? = null
+
+  override fun onListen(arguments: Any?, events: EventSink?) {
+    if (events == null) return
+
+    appEventReceiver = AppEventReceiver(events)
+    val intentFilter = IntentFilter().apply {
+      addAction(Intent.ACTION_PACKAGE_ADDED)
+      addAction(Intent.ACTION_PACKAGE_REMOVED)
+      addDataScheme("package")
+    }
+    context.registerReceiver(appEventReceiver, intentFilter)
+  }
+
+  override fun onCancel(arguments: Any?) {
+    if (appEventReceiver != null) {
+      context.unregisterReceiver(appEventReceiver)
+      appEventReceiver = null
+    }
   }
 }
