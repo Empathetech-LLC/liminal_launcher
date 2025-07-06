@@ -36,20 +36,23 @@ class _AppTileState extends State<AppTile> {
   final double iconSize = EzConfig.get(iconSizeKey);
   final double padding = EzConfig.get(paddingKey);
 
-  // Gather the build data //
+  late final EFUILang el10n = ezL10n(context);
+
+  // Define the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
   late final AppInfo app = widget.app;
+
+  late final bool onHomeScreen = widget.onHomeScreen;
 
   final bool showIcon =
       EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
   final LabelType labelType = LabelTypeConfig.fromValue(
     EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey),
   );
-  late final bool extend = EzConfig.get(extendTileKey);
 
-  late final bool onHomeScreen = widget.onHomeScreen;
   late bool editing = widget.editing;
+  late final TextEditingController renameController = TextEditingController();
   late final void Function()? refreshHome = widget.refreshHome;
 
   // Define custom functions //
@@ -83,26 +86,63 @@ class _AppTileState extends State<AppTile> {
 
               // Rename
               EzIconButton(
-                onPressed: () async {
-                  final String? newName = await showPlatformDialog<String?>(
+                onPressed: () => showPlatformDialog(
                     context: context,
-                    builder: (_) => EzAlertDialog(
-                      title: const Text(
-                        'Currently',
-                        textAlign: TextAlign.center,
-                      ),
-                      contents: <Widget>[
-                        Text(app.label, textAlign: TextAlign.center),
-                      ],
-                    ),
-                  );
-                  if (newName != null && newName.isNotEmpty) {
-                    final bool success =
-                        await provider.renameApp(app.package, newName);
+                    builder: (BuildContext dialogContext) {
+                      void onConfirm() async {
+                        closeKeyboard(dialogContext);
 
-                    if (success) refreshHome?.call();
-                  }
-                },
+                        final String name = renameController.text.trim();
+                        if (validateAppName(name) != null) return null;
+
+                        final bool success =
+                            await provider.renameApp(app.package, name);
+
+                        if (success) {
+                          refreshHome?.call();
+                          if (dialogContext.mounted) {
+                            Navigator.of(dialogContext).pop(name);
+                          }
+                        }
+                      }
+
+                      void onDeny() {
+                        closeKeyboard(dialogContext);
+                        Navigator.of(dialogContext).pop();
+                      }
+
+                      late final List<Widget> materialActions;
+                      late final List<Widget> cupertinoActions;
+
+                      (materialActions, cupertinoActions) = ezActionPairs(
+                        context: context,
+                        confirmMsg: el10n.gApply,
+                        onConfirm: onConfirm,
+                        confirmIsDestructive: true,
+                        denyMsg: el10n.gCancel,
+                        onDeny: onDeny,
+                      );
+
+                      return EzAlertDialog(
+                        title: Text(
+                          'Rename ${app.label}?',
+                          textAlign: TextAlign.center,
+                        ),
+                        content: Form(
+                          child: TextFormField(
+                            controller: renameController,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            autofillHints: const <String>[AutofillHints.name],
+                            autovalidateMode: AutovalidateMode.onUnfocus,
+                            validator: validateAppName,
+                          ),
+                        ),
+                        materialActions: materialActions,
+                        cupertinoActions: cupertinoActions,
+                        needsClose: false,
+                      );
+                    }),
                 icon: Icon(PlatformIcons(context).edit),
               ),
               rowSpacer,
@@ -191,28 +231,19 @@ class _AppTileState extends State<AppTile> {
               ],
             ],
           )
-        : extend
-            ? SizedBox(
-                width: double.infinity,
-                child: GestureDetector(
-                  onTap: activateTile,
-                  onLongPress: holdTile,
-                  child: TileButton(
-                    app: widget.app,
-                    type: labelType,
-                    showIcon: showIcon,
-                    onPressed: activateTile,
-                    onLongPress: holdTile,
-                  ),
-                ),
-              )
-            : TileButton(
-                app: widget.app,
-                type: labelType,
-                showIcon: showIcon,
-                onPressed: activateTile,
-                onLongPress: holdTile,
-              );
+        : TileButton(
+            app: widget.app,
+            type: labelType,
+            showIcon: showIcon,
+            onPressed: activateTile,
+            onLongPress: holdTile,
+          );
+  }
+
+  @override
+  void dispose() {
+    renameController.dispose();
+    super.dispose();
   }
 }
 
