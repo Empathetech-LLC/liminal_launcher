@@ -216,8 +216,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
 
             // Reset
             const EzResetButton(skip: <String>{
-              homePackagesKey,
-              hiddenPackagesKey,
+              homeIDsKey,
+              hiddenIDsKey,
               leftPackageKey,
               rightPackageKey,
               authToEditKey,
