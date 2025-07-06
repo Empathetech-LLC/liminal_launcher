@@ -113,6 +113,13 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
 
             // Auto search
             const EzSwitchPair(text: 'Auth to edit', valueKey: authToEditKey),
+            spacer,
+
+            // Auto add to home
+            const EzSwitchPair(
+              text: 'Add new apps to home',
+              valueKey: autoAddToHomeKey,
+            ),
             divider,
 
             // GoTo layout settings
