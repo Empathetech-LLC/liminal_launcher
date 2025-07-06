@@ -41,7 +41,8 @@ class _AppFolderState extends State<AppFolder> {
 
   final double spacing = EzConfig.get(spacingKey);
 
-  late final EdgeInsets rowPadding = EzInsets.row(spacing);
+  late final EdgeInsets rowPadding =
+      EdgeInsets.symmetric(horizontal: spacing / 2);
   late final EdgeInsets modalPadding = EzInsets.col(spacing);
 
   late final EFUILang el10n = ezL10n(context);
@@ -59,7 +60,7 @@ class _AppFolderState extends State<AppFolder> {
   // Define custom Widgets //
 
   late final List<Widget> closeTail = <Widget>[
-    rowSpacer,
+    EzSpacer(space: spacing / 2, vertical: false),
     EzIconButton(
       icon: const Icon(Icons.close),
       onPressed: toggleOpen,
