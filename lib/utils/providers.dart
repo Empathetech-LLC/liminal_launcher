@@ -23,36 +23,34 @@ class AppInfoProvider extends ChangeNotifier {
   StreamSubscription<dynamic>? _appEventSubscription;
 
   // Renamed
-  final Set<String> _renamedPS = Set<String>.from(
-      EzConfig.get(renamedAppsKey) ?? EzConfig.getDefault(renamedAppsKey));
+  final Set<String> _renamedSet = Set<String>.from(
+      EzConfig.get(renamedIDsKey) ?? EzConfig.getDefault(renamedIDsKey));
 
   // Home list
-  final Set<String> _homePS = Set<String>.from(
-      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey));
-  final List<String> _homePL =
-      EzConfig.get(homePackagesKey) ?? EzConfig.getDefault(homePackagesKey);
+  final Set<String> _homeSet = Set<String>.from(
+      EzConfig.get(homeIDsKey) ?? EzConfig.getDefault(homeIDsKey));
+  final List<String> _homeList =
+      EzConfig.get(homeIDsKey) ?? EzConfig.getDefault(homeIDsKey);
 
   // Hidden list
-  final Set<String> _hiddenPS = Set<String>.from(
-      EzConfig.get(hiddenPackagesKey) ??
-          EzConfig.getDefault(hiddenPackagesKey));
-  final List<String> _hiddenPL =
-      EzConfig.get(hiddenPackagesKey) ?? EzConfig.getDefault(hiddenPackagesKey);
+  final Set<String> _hiddenSet = Set<String>.from(
+      EzConfig.get(hiddenIDsKey) ?? EzConfig.getDefault(hiddenIDsKey));
+  final List<String> _hiddenList =
+      EzConfig.get(hiddenIDsKey) ?? EzConfig.getDefault(hiddenIDsKey);
 
   AppInfoProvider(List<AppInfo> apps)
       : _apps = apps,
         _appMap = <String, AppInfo>{
-          for (AppInfo app in apps) app.package: app,
+          for (AppInfo app in apps) app.id: app,
         } {
     // Gather renamed apps
-    if (_renamedPS.isNotEmpty) {
-      for (final String package in _renamedPS) {
-        final List<String> parts = package.split(':');
-        if (parts.length == 2) {
-          final String package = parts[0];
-          final AppInfo? app = _appMap[package];
+    if (_renamedSet.isNotEmpty) {
+      for (final String csv in _renamedSet) {
+        final List<String> parts = csv.split(':');
+        if (parts.length == 3) {
+          final AppInfo? app = _appMap['${parts[0]}:${parts[1]}'];
           if (app != null) {
-            app.rename = parts[1];
+            app.rename = parts[2];
           }
         }
       }
@@ -73,17 +71,18 @@ class AppInfoProvider extends ChangeNotifier {
   // Get //
 
   List<AppInfo> get apps => _apps;
+  Map<String, AppInfo> get appMap => _appMap;
 
-  List<String> get homePL => _homePL;
-  Set<String> get homePS => _homePS;
+  Set<String> get renamed => _renamedSet;
 
-  List<String> get hiddenPL => _hiddenPL;
-  Set<String> get hiddenPS => _hiddenPS;
+  List<String> get homeList => _homeList;
+  Set<String> get homeSet => _homeSet;
+
+  List<String> get hiddenAppList => _hiddenList;
+  Set<String> get hiddenAppSet => _hiddenSet;
 
   List<AppInfo> get appList =>
-      _apps.where((AppInfo app) => !_hiddenPS.contains(app.package)).toList();
-
-  AppInfo? getAppFromID(String package) => _appMap[package];
+      _apps.where((AppInfo app) => !_hiddenSet.contains(app.id)).toList();
 
   void _listenToAppEvents() {
     _appEventSubscription =
@@ -99,9 +98,13 @@ class AppInfoProvider extends ChangeNotifier {
             if (appInfoMap != null) _handleAppInstalled(appInfoMap);
             break;
           case 'uninstalled':
-            final String packageName = event['packageName'] as String;
+            final Map<String, dynamic>? appInfoMap =
+                event['appInfo'] as Map<String, dynamic>?;
 
-            _handleAppUninstalled(packageName);
+            if (appInfoMap != null) {
+              final AppInfo uninstalled = AppInfo.fromMap(appInfoMap);
+              removeDeleted(id: uninstalled.id);
+            }
             break;
         }
       }
@@ -114,9 +117,9 @@ class AppInfoProvider extends ChangeNotifier {
 
   Future<void> addHomeFolder() async {
     // Include ':empty' so a ':' split will still return a list
-    _homePL.add('Folder:empty');
+    _homeList.add('Folder');
 
-    await EzConfig.setStringList(homePackagesKey, _homePL);
+    await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
   }
 
@@ -124,7 +127,7 @@ class AppInfoProvider extends ChangeNotifier {
     final AppInfo installed = AppInfo.fromMap(appInfoMap);
 
     _apps.add(installed);
-    _appMap[installed.package] = installed;
+    _appMap[installed.id] = installed;
 
     sort(
       AppListSortConfig.fromValue(
@@ -134,17 +137,14 @@ class AppInfoProvider extends ChangeNotifier {
     );
 
     if (EzConfig.get(autoAddToHomeKey) == true &&
-        !_homePS.contains(installed.package)) {
-      _homePL.add(installed.package);
-      _homePS.add(installed.package);
-      await EzConfig.setStringList(homePackagesKey, _homePL);
+        !_homeSet.contains(installed.id)) {
+      _homeList.add(installed.id);
+      _homeSet.add(installed.id);
+      await EzConfig.setStringList(homeIDsKey, _homeList);
     }
 
     notifyListeners();
   }
-
-  Future<void> _handleAppUninstalled(String packageName) =>
-      removeDeleted(packageName);
 
   // Put //
 
@@ -152,33 +152,35 @@ class AppInfoProvider extends ChangeNotifier {
     switch (sort) {
       case ListSort.name:
         _apps.sort((AppInfo a, AppInfo b) =>
-            (asc) ? a.label.compareTo(b.label) : b.label.compareTo(a.label));
+            (asc) ? a.name.compareTo(b.name) : b.name.compareTo(a.name));
 
       case ListSort.publisher:
         _apps.sort((AppInfo a, AppInfo b) => (asc)
-            ? a.package.compareTo(b.package)
-            : b.package.compareTo(a.package));
+            ? a.publisher.compareTo(b.publisher)
+            : b.publisher.compareTo(a.publisher));
     }
     notifyListeners();
   }
 
-  Future<void> addHomeApp(String package) async {
-    if (_homePS.contains(package)) return;
+  Future<bool> addHomeApp({required String id}) async {
+    if (_homeSet.contains(id)) return false;
 
-    _homePL.add(package);
-    _homePS.add(package);
+    _homeList.add(id);
+    _homeSet.add(id);
 
-    await EzConfig.setStringList(homePackagesKey, _homePL);
+    await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
+
+    return true;
   }
 
-  Future<bool> removeHomeApp(String package) async {
-    if (!_homePS.contains(package)) return false;
+  Future<bool> removeHomeApp({required String id}) async {
+    if (!_homeSet.contains(id)) return false;
 
-    _homePL.remove(package);
-    _homePS.remove(package);
+    _homeList.remove(id);
+    _homeSet.remove(id);
 
-    await EzConfig.setStringList(homePackagesKey, _homePL);
+    await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
 
     return true;
@@ -187,20 +189,15 @@ class AppInfoProvider extends ChangeNotifier {
   /// Does not handle dupes; please handle before
   Future<bool> addToFolder({
     required String fullName,
-    required String package,
+    required String id,
   }) async {
-    final int index = _homePL.indexOf(fullName);
+    final int index = _homeList.indexOf(fullName);
     if (index == -1) return false;
 
-    final List<String> parts = fullName.split(':');
-    if (parts.length == 2 && parts[1] == 'empty') {
-      _homePL[index] = parts[0];
-    }
+    _homeList[index] = '${_homeList[index]}:$id';
+    _homeSet.contains(id) ? _homeList.remove(id) : _homeSet.add(id);
 
-    _homePL[index] = '${_homePL[index]}:$package';
-    _homePS.contains(package) ? _homePL.remove(package) : _homePS.add(package);
-
-    await EzConfig.setStringList(homePackagesKey, _homePL);
+    await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
 
     return true;
@@ -208,20 +205,16 @@ class AppInfoProvider extends ChangeNotifier {
 
   Future<bool> removeFromFolder({
     required String fullName,
-    required String package,
+    required String id,
   }) async {
-    final int index = _homePL.indexOf(fullName);
+    final int index = _homeList.indexOf(fullName);
     if (index == -1) return false;
 
-    String newFullName = fullName.replaceFirst(':$package', '');
-    if (!homePL.contains(':')) {
-      // Include ':empty' so a ':' split will still return a list
-      newFullName += ':empty';
-    }
-    _homePL[index] = newFullName;
-    _homePL.add(package);
+    final String newFullName = fullName.replaceFirst(':$id', '');
+    _homeList[index] = newFullName;
+    _homeList.add(id);
 
-    await EzConfig.setStringList(homePackagesKey, _homePL);
+    await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
 
     return true;
@@ -229,66 +222,80 @@ class AppInfoProvider extends ChangeNotifier {
 
   // Patch //
 
-  Future<void> hideApp(String package) async {
-    if (_hiddenPS.contains(package)) return;
+  Future<bool> hideApp({required String id}) async {
+    if (_hiddenSet.contains(id)) return false;
 
-    _hiddenPL.add(package);
-    _hiddenPS.add(package);
+    _hiddenList.add(id);
+    _hiddenSet.add(id);
 
-    await EzConfig.setStringList(hiddenPackagesKey, _hiddenPL);
+    await EzConfig.setStringList(hiddenIDsKey, _hiddenList);
 
-    final bool notified = await removeHomeApp(package);
+    final bool notified = await removeHomeApp(id: id);
     if (!notified) notifyListeners();
+
+    return true;
   }
 
-  Future<void> showApp(String package) async {
-    if (!_hiddenPS.contains(package)) return;
+  Future<bool> showApp({required String id}) async {
+    if (!_hiddenSet.contains(id)) return false;
 
-    _hiddenPL.remove(package);
-    _hiddenPS.remove(package);
+    _hiddenList.remove(id);
+    _hiddenSet.remove(id);
 
-    await EzConfig.setStringList(hiddenPackagesKey, _hiddenPL);
-    notifyListeners();
-  }
-
-  Future<void> reorderHomeApp(int oldIndex, int newIndex) async {
-    if (oldIndex == newIndex) return;
-
-    if (newIndex > oldIndex) newIndex -= 1;
-
-    final String package = _homePL.removeAt(oldIndex);
-    _homePL.insert(newIndex, package);
-
-    await EzConfig.setStringList(homePackagesKey, _homePL);
-    notifyListeners();
-  }
-
-  Future<bool> renameApp(String package, String newLabel) async {
-    final AppInfo? app = _appMap[package];
-    if (app == null || app.label == newLabel) return false;
-
-    app.rename = newLabel;
-
-    _renamedPS.removeWhere((String entry) => entry.startsWith('$package:'));
-    _renamedPS.add('$package:$newLabel');
-
-    await EzConfig.setStringList(renamedAppsKey, _renamedPS.toList());
+    await EzConfig.setStringList(hiddenIDsKey, _hiddenList);
     notifyListeners();
 
     return true;
   }
 
-  Future<bool> renameFolder(String fullName, String newLabel) async {
-    final int index = _homePL.indexOf(fullName);
-    if (index == -1) return false;
+  Future<bool> reorderHomeApp({
+    required int oldIndex,
+    required int newIndex,
+  }) async {
+    if (oldIndex == newIndex) return false;
 
+    if (newIndex > oldIndex) newIndex -= 1;
+
+    final String id = _homeList.removeAt(oldIndex);
+    _homeList.insert(newIndex, id);
+
+    await EzConfig.setStringList(homeIDsKey, _homeList);
+    notifyListeners();
+
+    return true;
+  }
+
+  Future<bool> renameApp({
+    required String id,
+    required String newName,
+  }) async {
+    final AppInfo? app = _appMap[id];
+    if (app == null || app.name == newName) return false;
+
+    app.rename = newName;
+
+    _renamedSet.removeWhere((String entry) => entry.startsWith('$id:'));
+    _renamedSet.add('$id:$newName');
+
+    await EzConfig.setStringList(renamedIDsKey, _renamedSet.toList());
+    notifyListeners();
+
+    return true;
+  }
+
+  Future<bool> renameFolder({
+    required int homeIndex,
+    required String newName,
+  }) async {
+    final String fullName = _homeList[homeIndex];
     final List<String> parts = fullName.split(':');
-    if (parts[0] == newLabel) return false;
+    if (parts[0] == newName) return false;
 
-    final String newFullName = '$newLabel:${parts.sublist(1).join(':')}';
-    _homePL[index] = newFullName;
+    final String newFullName =
+        (parts.length > 1) ? '$newName:${parts.sublist(1).join(':')}' : newName;
+    _homeList[homeIndex] = newFullName;
 
-    await EzConfig.setStringList(homePackagesKey, _homePL);
+    await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
 
     return true;
@@ -296,23 +303,23 @@ class AppInfoProvider extends ChangeNotifier {
 
   // Delete //
 
-  Future<void> removeDeleted(String package) async {
-    await showApp(package);
-    await removeHomeApp(package);
-    _apps.remove(_appMap[package]);
-    _appMap.remove(package);
+  Future<void> removeDeleted({required String id}) async {
+    await showApp(id: id);
+    await removeHomeApp(id: id);
+    _apps.remove(_appMap[id]);
+    _appMap.remove(id);
 
     notifyListeners();
   }
 
-  Future<void> deleteFolder(String fullName) async {
+  Future<void> deleteFolder({required String fullName}) async {
     final List<String> packages = fullName.split(':').sublist(1);
     for (final String package in packages) {
-      _homePS.remove(package);
+      _homeSet.remove(package);
     }
 
-    _homePL.remove(fullName);
-    await EzConfig.setStringList(homePackagesKey, _homePL);
+    _homeList.remove(fullName);
+    await EzConfig.setStringList(homeIDsKey, _homeList);
 
     notifyListeners();
   }
