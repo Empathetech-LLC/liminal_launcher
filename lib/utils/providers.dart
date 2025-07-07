@@ -119,7 +119,7 @@ class AppInfoProvider extends ChangeNotifier {
   // Post //
 
   Future<void> addHomeFolder() async {
-    _homeList.add('Folder');
+    _homeList.add('Folder${folderSplit}empty');
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
@@ -211,6 +211,10 @@ class AppInfoProvider extends ChangeNotifier {
       '',
     );
     _homeList.add(id);
+
+    if (!_homeList[index].contains(folderSplit)) {
+      _homeList[index] = '${_homeList[index]}${folderSplit}empty';
+    }
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
