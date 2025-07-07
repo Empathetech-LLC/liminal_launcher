@@ -6,6 +6,7 @@
 import 'package:flutter/services.dart';
 
 const String nullAppLabel = '---';
+const String idSplit = ':';
 
 /// Helpful for creating [AppInfo] lists
 /// [nullAppLabel], '', false
@@ -34,7 +35,7 @@ class AppInfo {
   })  : _label = label,
         name = label,
         _package = package,
-        id = '$package:$label';
+        id = package + idSplit + label;
 
   factory AppInfo.fromMap(Map<String, dynamic> map) => AppInfo(
         label: map['label'] ?? nullAppLabel,
@@ -43,7 +44,7 @@ class AppInfo {
         removable: map['removable'] ?? false,
       );
 
-  String get publisher => _package;
+  String get package => _package;
 
   set rename(String newName) => name = newName;
 

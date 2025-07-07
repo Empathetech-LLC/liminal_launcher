@@ -11,7 +11,9 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class AppFolder extends StatefulWidget {
-  final List<String> packages;
+  final int index;
+  final String name;
+  final List<String> ids;
   final AppInfoProvider provider;
   final ListAlignment alignment;
   final bool showIcon;
@@ -21,7 +23,9 @@ class AppFolder extends StatefulWidget {
 
   const AppFolder({
     super.key,
-    required this.packages,
+    required this.index,
+    required this.name,
+    required this.ids,
     required this.provider,
     required this.alignment,
     required this.showIcon,
@@ -89,10 +93,12 @@ class _AppFolderState extends State<AppFolder> {
                     closeKeyboard(dialogContext);
 
                     final String name = renameController.text.trim();
-                    if (validateAppName(name) != null) return null;
+                    if (validateRename(name) != null) return null;
 
-                    final bool success = await widget.provider
-                        .renameFolder(widget.packages.join(':'), name);
+                    final bool success = await widget.provider.renameFolder(
+                      index: widget.index,
+                      newName: name,
+                    );
 
                     if (success) {
                       if (dialogContext.mounted) {
@@ -121,7 +127,7 @@ class _AppFolderState extends State<AppFolder> {
 
                   return EzAlertDialog(
                     title: Text(
-                      "Rename folder '${widget.packages[0]}'?",
+                      "Rename folder '${widget.name}'?",
                       textAlign: TextAlign.center,
                     ),
                     content: Form(
@@ -131,7 +137,7 @@ class _AppFolderState extends State<AppFolder> {
                         maxLines: 1,
                         autofillHints: const <String>[AutofillHints.name],
                         autovalidateMode: AutovalidateMode.onUnfocus,
-                        validator: validateAppName,
+                        validator: validateRename,
                       ),
                     ),
                     materialActions: materialActions,
@@ -139,7 +145,7 @@ class _AppFolderState extends State<AppFolder> {
                     needsClose: false,
                   );
                 }),
-            child: Text(widget.packages[0], style: textTheme.bodyLarge),
+            child: Text(widget.name, style: textTheme.bodyLarge),
           ),
           rowSpacer,
 
@@ -152,56 +158,55 @@ class _AppFolderState extends State<AppFolder> {
               isScrollControlled: true,
               builder: (_) => StatefulBuilder(
                 builder: (_, StateSetter setModalState) {
-                  final List<String> folderPL = widget.packages.sublist(1);
-                  final Set<String> folderPS = folderPL.toSet();
+                  final List<String> folderList = widget.ids;
+                  final Set<String> folderSet = folderList.toSet();
 
-                  void onRemove(String package) async {
+                  void onRemove(String id) async {
                     final bool removed = await widget.provider.removeFromFolder(
-                      fullName: widget.packages.join(':'),
-                      package: package,
+                      index: widget.index,
+                      id: id,
                     );
 
                     if (removed) {
-                      folderPL.remove(package);
-                      folderPS.remove(package);
+                      folderList.remove(id);
+                      folderSet.remove(id);
                       setModalState(() {});
                       setState(() {});
                     }
                   }
 
-                  void onAdd(String package) async {
+                  void onAdd(String id) async {
                     final bool added = await widget.provider.addToFolder(
-                      fullName: widget.packages.join(':'),
-                      package: package,
+                      index: widget.index,
+                      id: id,
                     );
 
                     if (added) {
-                      folderPL.add(package);
-                      folderPS.add(package);
+                      folderList.add(id);
+                      folderSet.add(id);
                       setModalState(() {});
                       setState(() {});
                     }
                   }
 
                   return EzScrollView(
-                    key: ValueKey<int>(folderPS.length),
+                    key: ValueKey<int>(folderSet.length),
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: widget.alignment.crossAxis,
                     children: <Widget>[
                       // Remove
-                      ...folderPL.map((String package) {
-                        final AppInfo? app =
-                            widget.provider.getAppFromID(package);
+                      ...folderList.map((String id) {
+                        final AppInfo? app = widget.provider.appMap[id];
                         if (app == null) return null;
 
                         return Padding(
-                            key: ValueKey<String>(app.keyLabel),
+                            key: ValueKey<String>(app.id),
                             padding: modalPadding,
                             child: TileButton(
                               app: app,
                               type: widget.labelType,
                               showIcon: widget.showIcon,
-                              onPressed: () => onRemove(app.package),
+                              onPressed: () => onRemove(app.id),
                             ));
                       }).whereType<Widget>(),
                       EzDivider(height: spacing),
@@ -209,17 +214,17 @@ class _AppFolderState extends State<AppFolder> {
                       // Add
                       ...widget.provider.apps
                           .where((AppInfo app) =>
-                              !folderPS.contains(app.package) &&
-                              !widget.provider.hiddenPS.contains(app.package))
+                              !folderSet.contains(app.id) &&
+                              !widget.provider.hiddenSet.contains(app.id))
                           .map((AppInfo app) {
                         return Padding(
-                          key: ValueKey<String>(app.keyLabel),
+                          key: ValueKey<String>(app.id),
                           padding: modalPadding,
                           child: TileButton(
                             app: app,
                             type: widget.labelType,
                             showIcon: widget.showIcon,
-                            onPressed: () => onAdd(app.package),
+                            onPressed: () => onAdd(app.id),
                           ),
                         );
                       }),
@@ -234,8 +239,9 @@ class _AppFolderState extends State<AppFolder> {
           // Delete folder
           EzIconButton(
             icon: Icon(PlatformIcons(context).delete),
-            onPressed: () =>
-                widget.provider.deleteFolder(widget.packages.join(':')),
+            onPressed: () => widget.provider.deleteFolder(
+                fullName:
+                    widget.name + folderSplit + widget.ids.join(folderSplit)),
           ),
           rowSpacer,
 
@@ -253,11 +259,9 @@ class _AppFolderState extends State<AppFolder> {
             scrollDirection: Axis.horizontal,
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: widget.alignment.mainAxis,
-            children: widget.packages
-                    .sublist(1)
-                    .map((String package) {
-                      final AppInfo? app =
-                          widget.provider.getAppFromID(package);
+            children: widget.ids
+                    .map((String id) {
+                      final AppInfo? app = widget.provider.appMap[id];
                       if (app == null) return null;
 
                       return Padding(
@@ -277,9 +281,9 @@ class _AppFolderState extends State<AppFolder> {
         : (widget.showIcon
             ? EzTextIconButton(
                 icon: EzIcon(PlatformIcons(context).folder),
-                label: widget.packages[0],
+                label: widget.name,
                 onPressed: toggleOpen,
               )
-            : EzTextButton(text: widget.packages[0], onPressed: toggleOpen));
+            : EzTextButton(text: widget.name, onPressed: toggleOpen));
   }
 }

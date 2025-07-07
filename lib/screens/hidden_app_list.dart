@@ -78,14 +78,14 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: listAlign.crossAxis,
               physics: const ClampingScrollPhysics(),
-              children: provider.hiddenPL.expand((String package) {
-                final AppInfo? app = provider.getAppFromID(package);
+              children: provider.hiddenList.expand((String id) {
+                final AppInfo? app = provider.appMap[id];
 
                 return (app == null)
                     ? <Widget>[]
                     : <Widget>[
                         AppTile(
-                          key: ValueKey<String>(app.keyLabel),
+                          key: ValueKey<String>(app.id),
                           app: app,
                           onHomeScreen: false,
                           editing: editing,

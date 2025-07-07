@@ -66,42 +66,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Define custom functions //
 
-  List<Widget> homeA2T() => provider.homePL
-      .map((String item) {
-        final List<String> packages = item.split(':');
+  List<Widget> homeA2T() {
+    final List<Widget> tileList = <Widget>[];
 
-        if (packages.length > 1) {
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: spacing / 2),
-            key: UniqueKey(),
-            child: AppFolder(
-              packages: packages,
-              provider: provider,
-              alignment: homeAlign,
-              showIcon: showIcon,
-              labelType: labelType,
-              editing: editing,
-              refreshHome: refreshHome,
-            ),
-          );
-        } // UniqueKey so users can have multiple empty folder; use case: add a bunch, then organize them
+    for (int index = 0; index < provider.homeList.length; index++) {
+      final String item = provider.homeList[index];
+      final List<String> parts = item.split(folderSplit);
 
-        final AppInfo? app = provider.getAppFromID(packages[0]);
-        if (app == null) return null;
-
-        return Padding(
+      if (parts.length > 1) {
+        tileList.add(Padding(
           padding: EdgeInsets.symmetric(vertical: spacing / 2),
-          key: ValueKey<String>(app.keyLabel),
+          key: ValueKey<String>('$index:${parts[0]}'),
+          child: AppFolder(
+            index: index,
+            name: parts[0],
+            ids: parts.sublist(1),
+            provider: provider,
+            alignment: homeAlign,
+            showIcon: showIcon,
+            labelType: labelType,
+            editing: editing,
+            refreshHome: refreshHome,
+          ),
+        ));
+      } else {
+        final AppInfo app = provider.appMap[parts[0]] ?? nullApp;
+        tileList.add(Padding(
+          padding: EdgeInsets.symmetric(vertical: spacing / 2),
+          key: ValueKey<String>(app.id),
           child: AppTile(
             app: app,
             onHomeScreen: true,
             editing: editing,
             refreshHome: refreshHome,
           ),
-        );
-      })
-      .whereType<Widget>()
-      .toList();
+        ));
+      }
+    }
+
+    return tileList;
+  }
 
   void refreshHome() => setState(() {});
 
@@ -227,7 +231,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Expanded(
                         child: ReorderableListView(
                           onReorder: (int oldIndex, int newIndex) async {
-                            await provider.reorderHomeApp(oldIndex, newIndex);
+                            await provider.reorderHomeItem(
+                              oldIndex: oldIndex,
+                              newIndex: newIndex,
+                            );
                             refreshHome();
                           },
                           children: homeA2T(),
@@ -249,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             // Add folder
-            if (provider.homePS.isNotEmpty) ...<Widget>[
+            if (provider.homeSet.isNotEmpty) ...<Widget>[
               AddFolderFAB(context, () {
                 provider.addHomeFolder();
                 refreshHome();
@@ -270,17 +277,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: provider.apps
                           .where((AppInfo app) =>
-                              !provider.homePS.contains(app.package) &&
-                              !provider.hiddenPS.contains(app.package))
+                              !provider.homeSet.contains(app.id) &&
+                              !provider.hiddenSet.contains(app.id))
                           .map((AppInfo app) => Padding(
                                 padding: modalPadding,
                                 child: TileButton(
-                                  key: ValueKey<String>(app.keyLabel),
+                                  key: ValueKey<String>(app.id),
                                   app: app,
                                   type: labelType,
                                   showIcon: showIcon,
                                   onPressed: () async {
-                                    await provider.addHomeApp(app.package);
+                                    await provider.addHomeApp(id: app.id);
                                     setModalState(() {});
                                     refreshHome();
                                   },

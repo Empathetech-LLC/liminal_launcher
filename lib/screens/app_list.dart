@@ -175,7 +175,7 @@ class _AppListScreenState extends State<AppListScreen> {
                     itemCount: appList.length,
                     itemBuilder: (_, int index) => Padding(
                       padding: EdgeInsets.symmetric(vertical: spacing / 2),
-                      key: ValueKey<String>(appList[index].keyLabel),
+                      key: ValueKey<String>(appList[index].id),
                       child: AppTile(
                         app: appList[index],
                         onHomeScreen: false,

@@ -75,7 +75,7 @@ class _AppTileState extends State<AppTile> {
                   onTap: activateTile,
                   child: Image.memory(
                     app.icon!,
-                    semanticLabel: app.label,
+                    semanticLabel: app.name,
                     width: iconSize + padding,
                     height: iconSize + padding,
                   ),
@@ -95,10 +95,10 @@ class _AppTileState extends State<AppTile> {
                         closeKeyboard(dialogContext);
 
                         final String name = renameController.text.trim();
-                        if (validateAppName(name) != null) return null;
+                        if (validateRename(name) != null) return null;
 
                         final bool success =
-                            await provider.renameApp(app.package, name);
+                            await provider.renameApp(id: app.id, newName: name);
 
                         if (success) {
                           if (dialogContext.mounted) {
@@ -127,7 +127,7 @@ class _AppTileState extends State<AppTile> {
 
                       return EzAlertDialog(
                         title: Text(
-                          'Rename ${app.label}?',
+                          'Rename ${app.name}?',
                           textAlign: TextAlign.center,
                         ),
                         content: Form(
@@ -137,7 +137,7 @@ class _AppTileState extends State<AppTile> {
                             maxLines: 1,
                             autofillHints: const <String>[AutofillHints.name],
                             autovalidateMode: AutovalidateMode.onUnfocus,
-                            validator: validateAppName,
+                            validator: validateRename,
                           ),
                         ),
                         materialActions: materialActions,
@@ -150,12 +150,12 @@ class _AppTileState extends State<AppTile> {
               rowSpacer,
 
               // Add to home
-              if (!provider.hiddenPS.contains(app.package) &&
+              if (!provider.hiddenSet.contains(app.id) &&
                   !onHomeScreen &&
-                  !provider.homePS.contains(app.package)) ...<Widget>[
+                  !provider.homeSet.contains(app.id)) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    await provider.addHomeApp(app.package);
+                    await provider.addHomeApp(id: app.id);
                     setState(() => editing = false);
                     refreshHome?.call();
                   },
@@ -165,12 +165,12 @@ class _AppTileState extends State<AppTile> {
               ],
 
               // Remove from home
-              if (!provider.hiddenPS.contains(app.package) &&
+              if (!provider.hiddenSet.contains(app.id) &&
                   onHomeScreen &&
-                  provider.homePS.contains(app.package)) ...<Widget>[
+                  provider.homeSet.contains(app.id)) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    await provider.removeHomeApp(app.package);
+                    await provider.removeHomeApp(id: app.id);
                     setState(() => editing = false);
                     refreshHome?.call();
                   },
@@ -182,13 +182,13 @@ class _AppTileState extends State<AppTile> {
               // Show/hide
               EzIconButton(
                 onPressed: () async {
-                  provider.hiddenPS.contains(app.package)
-                      ? await provider.showApp(app.package)
-                      : await provider.hideApp(app.package);
+                  provider.hiddenSet.contains(app.id)
+                      ? await provider.showApp(id: app.id)
+                      : await provider.hideApp(id: app.id);
                   setState(() => editing = false);
                   refreshHome?.call();
                 },
-                icon: Icon(provider.hiddenPS.contains(app.package)
+                icon: Icon(provider.hiddenSet.contains(app.id)
                     ? PlatformIcons(context).eyeSolid
                     : PlatformIcons(context).eyeSlash),
               ),
@@ -207,7 +207,7 @@ class _AppTileState extends State<AppTile> {
                   onPressed: () async {
                     final bool deleted = await deleteApp(context, app);
                     if (deleted) {
-                      await provider.removeDeleted(app.package);
+                      await provider.removeDeleted(id: app.id);
                       setState(() => editing = false);
                       refreshHome?.call();
                     }
@@ -267,12 +267,12 @@ class TileButton extends StatelessWidget {
     late final Widget iconImage = (app.icon == null)
         ? Icon(
             Icons.question_mark,
-            semanticLabel: app.label,
+            semanticLabel: app.name,
             size: iconSize + padding,
           )
         : Image.memory(
             app.icon!,
-            semanticLabel: app.label,
+            semanticLabel: app.name,
             width: iconSize + padding,
             height: iconSize + padding,
           );
@@ -280,7 +280,7 @@ class TileButton extends StatelessWidget {
     if (type == LabelType.none) {
       return EzIconButton(
         icon: iconImage,
-        tooltip: app.label,
+        tooltip: app.name,
         onPressed: onPressed,
         onLongPress: onLongPress,
       );
@@ -293,17 +293,17 @@ class TileButton extends StatelessWidget {
         label = '';
         break;
       case LabelType.initials:
-        label = app.label
+        label = app.name
             .split(' ')
             .map((String word) => word.isNotEmpty ? word[0] : '')
             .join()
             .toUpperCase();
         break;
       case LabelType.full:
-        label = app.label;
+        label = app.name;
         break;
       case LabelType.wingding:
-        label = app.label
+        label = app.name
             .split('')
             .map((String char) => wingdingMap[char] ?? char)
             .join();

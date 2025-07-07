@@ -47,7 +47,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
       <AppInfo>[nullApp, ...provider.apps]
           .map((AppInfo app) => DropdownMenuEntry<AppInfo>(
                 value: app,
-                label: app.label,
+                label: app.name,
                 style: menuButtonStyle,
               ))
           .toList();
@@ -257,10 +257,10 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
 
   late AppInfo leftApp = (leftPackage == null || leftPackage!.isEmpty)
       ? nullApp
-      : widget.provider.getAppFromID(leftPackage!) ?? nullApp;
+      : widget.provider.appMap[leftPackage!] ?? nullApp;
   late AppInfo rightApp = (rightPackage == null || rightPackage!.isEmpty)
       ? nullApp
-      : widget.provider.getAppFromID(rightPackage!) ?? nullApp;
+      : widget.provider.appMap[rightPackage!] ?? nullApp;
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +277,7 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                 onSelected: (AppInfo? app) async {
                   if (app == null || app == leftApp) return;
 
-                  await EzConfig.setString(leftPackageKey, app.package);
+                  await EzConfig.setString(leftPackageKey, app.id);
                   setState(() => leftApp = app);
                 },
               )
@@ -292,7 +292,7 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                 onSelected: (AppInfo? app) async {
                   if (app == null || app == rightApp) return;
 
-                  await EzConfig.setString(rightPackageKey, app.package);
+                  await EzConfig.setString(rightPackageKey, app.id);
                   setState(() => rightApp = app);
                 },
               )

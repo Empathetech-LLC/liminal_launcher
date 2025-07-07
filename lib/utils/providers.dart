@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
+/// ','
+const String folderSplit = ',';
+
 class AppInfoProvider extends ChangeNotifier {
   // Construct //
 
@@ -46,9 +49,9 @@ class AppInfoProvider extends ChangeNotifier {
     // Gather renamed apps
     if (_renamedSet.isNotEmpty) {
       for (final String csv in _renamedSet) {
-        final List<String> parts = csv.split(':');
+        final List<String> parts = csv.split(idSplit);
         if (parts.length == 3) {
-          final AppInfo? app = _appMap['${parts[0]}:${parts[1]}'];
+          final AppInfo? app = _appMap[parts[0] + idSplit + parts[1]];
           if (app != null) {
             app.rename = parts[2];
           }
@@ -78,8 +81,8 @@ class AppInfoProvider extends ChangeNotifier {
   List<String> get homeList => _homeList;
   Set<String> get homeSet => _homeSet;
 
-  List<String> get hiddenAppList => _hiddenList;
-  Set<String> get hiddenAppSet => _hiddenSet;
+  List<String> get hiddenList => _hiddenList;
+  Set<String> get hiddenSet => _hiddenSet;
 
   List<AppInfo> get appList =>
       _apps.where((AppInfo app) => !_hiddenSet.contains(app.id)).toList();
@@ -116,7 +119,6 @@ class AppInfoProvider extends ChangeNotifier {
   // Post //
 
   Future<void> addHomeFolder() async {
-    // Include ':empty' so a ':' split will still return a list
     _homeList.add('Folder');
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
@@ -156,8 +158,8 @@ class AppInfoProvider extends ChangeNotifier {
 
       case ListSort.publisher:
         _apps.sort((AppInfo a, AppInfo b) => (asc)
-            ? a.publisher.compareTo(b.publisher)
-            : b.publisher.compareTo(a.publisher));
+            ? a.package.compareTo(b.package)
+            : b.package.compareTo(a.package));
     }
     notifyListeners();
   }
@@ -188,13 +190,10 @@ class AppInfoProvider extends ChangeNotifier {
 
   /// Does not handle dupes; please handle before
   Future<bool> addToFolder({
-    required String fullName,
+    required int index,
     required String id,
   }) async {
-    final int index = _homeList.indexOf(fullName);
-    if (index == -1) return false;
-
-    _homeList[index] = '${_homeList[index]}:$id';
+    _homeList[index] = homeList[index] + folderSplit + id;
     _homeSet.contains(id) ? _homeList.remove(id) : _homeSet.add(id);
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
@@ -204,14 +203,13 @@ class AppInfoProvider extends ChangeNotifier {
   }
 
   Future<bool> removeFromFolder({
-    required String fullName,
+    required int index,
     required String id,
   }) async {
-    final int index = _homeList.indexOf(fullName);
-    if (index == -1) return false;
-
-    final String newFullName = fullName.replaceFirst(':$id', '');
-    _homeList[index] = newFullName;
+    _homeList[index] = _homeList[index].replaceFirst(
+      folderSplit + id,
+      '',
+    );
     _homeList.add(id);
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
@@ -248,23 +246,6 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> reorderHomeApp({
-    required int oldIndex,
-    required int newIndex,
-  }) async {
-    if (oldIndex == newIndex) return false;
-
-    if (newIndex > oldIndex) newIndex -= 1;
-
-    final String id = _homeList.removeAt(oldIndex);
-    _homeList.insert(newIndex, id);
-
-    await EzConfig.setStringList(homeIDsKey, _homeList);
-    notifyListeners();
-
-    return true;
-  }
-
   Future<bool> renameApp({
     required String id,
     required String newName,
@@ -274,8 +255,8 @@ class AppInfoProvider extends ChangeNotifier {
 
     app.rename = newName;
 
-    _renamedSet.removeWhere((String entry) => entry.startsWith('$id:'));
-    _renamedSet.add('$id:$newName');
+    _renamedSet.removeWhere((String entry) => entry.startsWith(id));
+    _renamedSet.add(id + idSplit + newName);
 
     await EzConfig.setStringList(renamedIDsKey, _renamedSet.toList());
     notifyListeners();
@@ -284,16 +265,34 @@ class AppInfoProvider extends ChangeNotifier {
   }
 
   Future<bool> renameFolder({
-    required int homeIndex,
+    required int index,
     required String newName,
   }) async {
-    final String fullName = _homeList[homeIndex];
-    final List<String> parts = fullName.split(':');
+    final String fullName = _homeList[index];
+    final List<String> parts = fullName.split(folderSplit);
     if (parts[0] == newName) return false;
 
-    final String newFullName =
-        (parts.length > 1) ? '$newName:${parts.sublist(1).join(':')}' : newName;
-    _homeList[homeIndex] = newFullName;
+    final String newFullName = (parts.length > 1)
+        ? newName + folderSplit + parts.join(folderSplit)
+        : newName;
+    _homeList[index] = newFullName;
+
+    await EzConfig.setStringList(homeIDsKey, _homeList);
+    notifyListeners();
+
+    return true;
+  }
+
+  Future<bool> reorderHomeItem({
+    required int oldIndex,
+    required int newIndex,
+  }) async {
+    if (oldIndex == newIndex) return false;
+
+    if (newIndex > oldIndex) newIndex -= 1;
+
+    final String id = _homeList.removeAt(oldIndex);
+    _homeList.insert(newIndex, id);
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
@@ -313,9 +312,9 @@ class AppInfoProvider extends ChangeNotifier {
   }
 
   Future<void> deleteFolder({required String fullName}) async {
-    final List<String> packages = fullName.split(':').sublist(1);
-    for (final String package in packages) {
-      _homeSet.remove(package);
+    final List<String> ids = fullName.split(':').sublist(1);
+    for (final String id in ids) {
+      _homeSet.remove(id);
     }
 
     _homeList.remove(fullName);
