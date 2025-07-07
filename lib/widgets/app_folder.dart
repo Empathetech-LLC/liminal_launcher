@@ -166,27 +166,31 @@ class _AppFolderState extends State<AppFolder> {
                     final bool removed = await widget.provider.removeFromFolder(
                       index: index,
                       id: id,
-                    ); // TODO: update index
+                    );
 
                     if (removed) {
                       folderList.remove(id);
                       folderSet.remove(id);
-                      setModalState(() {});
+
+                      widget.refreshHome?.call();
                       setState(() {});
+                      setModalState(() {});
                     }
                   }
 
                   void onAdd(String id) async {
-                    final bool added = await widget.provider.addToFolder(
+                    final int? indexMod = await widget.provider.addToFolder(
                       index: index,
                       id: id,
-                    ); // TODO: update index
+                    );
 
-                    if (added) {
+                    if (indexMod != null) {
                       folderList.add(id);
                       folderSet.add(id);
+
+                      widget.refreshHome?.call();
+                      setState(() => index += indexMod);
                       setModalState(() {});
-                      setState(() {});
                     }
                   }
 
