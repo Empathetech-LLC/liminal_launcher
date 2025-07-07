@@ -16,7 +16,8 @@ final AppInfo nullApp = AppInfo(
 );
 
 class AppInfo {
-  String label;
+  final String _label;
+  String name;
   final String _package;
   String id;
   final Uint8List? icon;
@@ -26,24 +27,25 @@ class AppInfo {
   /// Label, package, and icon
   /// [AppInfo]s with == packages are ==
   AppInfo({
-    required this.label,
+    required String label,
     required String package,
     this.icon,
     required this.removable,
-  })  : _package = package,
+  })  : _label = label,
+        name = label,
+        _package = package,
         id = '$package:$label';
 
   factory AppInfo.fromMap(Map<String, dynamic> map) => AppInfo(
         label: map['label'] ?? nullAppLabel,
-        package: map['package'] ?? '',
+        package: map['package'] ?? '', // Ditto (above)
         icon: map['icon'],
         removable: map['removable'] ?? false,
       );
 
-  set rename(String newLabel) {
-    label = newLabel;
-    id = '$_package:$label';
-  }
+  String get publisher => _package;
+
+  set rename(String newName) => name = newName;
 
   @override
   int get hashCode => id.hashCode;
@@ -53,7 +55,8 @@ class AppInfo {
 
   @override
   String toString() => '''<AppInfo> {
-  label: $label,
+  label: $_label,
+  name: $name,
   package: $_package
   id: $id,
   icon: ${icon == null ? 'null' : 'present'},
@@ -63,14 +66,11 @@ class AppInfo {
 
 const String _pattern = r"^[\w\s\-\.\&\(\)']+$";
 
-String? validateAppName(String? toCheck) {
-  if (toCheck == null || toCheck.trim().isEmpty) {
-    return 'App name cannot be empty';
-  }
+String? validateRename(String? newName) {
+  if (newName == null || newName.trim().isEmpty) return 'Cannot be empty';
 
   final RegExp validNameRegExp = RegExp(_pattern);
-  if (!validNameRegExp.hasMatch(toCheck)) {
-    return 'Invalid app name; $_pattern';
-  }
+  if (!validNameRegExp.hasMatch(newName)) return 'Invalid; $_pattern';
+
   return null;
 }
