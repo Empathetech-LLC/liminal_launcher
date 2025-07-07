@@ -12,7 +12,7 @@ const String idSplit = ':';
 /// [nullAppLabel], '', false
 final AppInfo nullApp = AppInfo(
   label: nullAppLabel,
-  package: '', // If you update this, update launchApp
+  package: '', // If you change this, match launchApp
   removable: false,
 );
 
