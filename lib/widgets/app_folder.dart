@@ -54,8 +54,12 @@ class _AppFolderState extends State<AppFolder> {
 
   // Define the build data //
 
+  late final List<String> folderList = widget.ids;
+  late final Set<String> folderSet = folderList.toSet();
+
   bool open = false;
   late bool editing = widget.editing;
+  late int index = widget.index;
 
   // Define custom functions //
 
@@ -96,7 +100,7 @@ class _AppFolderState extends State<AppFolder> {
                     if (validateRename(name) != null) return null;
 
                     final bool success = await widget.provider.renameFolder(
-                      index: widget.index,
+                      index: index,
                       newName: name,
                     );
 
@@ -158,14 +162,11 @@ class _AppFolderState extends State<AppFolder> {
               isScrollControlled: true,
               builder: (_) => StatefulBuilder(
                 builder: (_, StateSetter setModalState) {
-                  final List<String> folderList = widget.ids;
-                  final Set<String> folderSet = folderList.toSet();
-
                   void onRemove(String id) async {
                     final bool removed = await widget.provider.removeFromFolder(
-                      index: widget.index,
+                      index: index,
                       id: id,
-                    );
+                    ); // TODO: update index
 
                     if (removed) {
                       folderList.remove(id);
@@ -177,9 +178,9 @@ class _AppFolderState extends State<AppFolder> {
 
                   void onAdd(String id) async {
                     final bool added = await widget.provider.addToFolder(
-                      index: widget.index,
+                      index: index,
                       id: id,
-                    );
+                    ); // TODO: update index
 
                     if (added) {
                       folderList.add(id);
@@ -241,7 +242,7 @@ class _AppFolderState extends State<AppFolder> {
             icon: Icon(PlatformIcons(context).delete),
             onPressed: () => widget.provider.deleteFolder(
                 fullName:
-                    widget.name + folderSplit + widget.ids.join(folderSplit)),
+                    widget.name + folderSplit + folderList.join(folderSplit)),
           ),
           rowSpacer,
 
@@ -259,7 +260,7 @@ class _AppFolderState extends State<AppFolder> {
             scrollDirection: Axis.horizontal,
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: widget.alignment.mainAxis,
-            children: widget.ids
+            children: folderList
                     .map((String id) {
                       final AppInfo? app = widget.provider.appMap[id];
                       if (app == null) return null;
