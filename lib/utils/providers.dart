@@ -189,17 +189,26 @@ class AppInfoProvider extends ChangeNotifier {
   }
 
   /// Does not handle dupes; please handle before
-  Future<bool> addToFolder({
+  Future<int?> addToFolder({
     required int index,
     required String id,
   }) async {
+    int toReturn = 0;
     _homeList[index] = homeList[index] + folderSplit + id;
-    _homeSet.contains(id) ? _homeList.remove(id) : _homeSet.add(id);
+
+    if (_homeSet.contains(id)) {
+      final int appIndex = _homeList.indexOf(id);
+      _homeList.removeAt(appIndex);
+
+      if (appIndex < index) toReturn = -1;
+    } else {
+      _homeSet.add(id);
+    }
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
 
-    return true;
+    return toReturn;
   }
 
   Future<bool> removeFromFolder({
