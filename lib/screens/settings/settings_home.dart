@@ -34,7 +34,6 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
     padding: EzInsets.wrap(EzConfig.get(paddingKey)),
   );
 
-  late final Lang l10n = Lang.of(context)!;
   late final EFUILang el10n = ezL10n(context);
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
@@ -51,6 +50,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 style: menuButtonStyle,
               ))
           .toList();
+
+  bool resetAll = false;
 
   // Define custom functions //
 
@@ -215,13 +216,65 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
             spacer,
 
             // Reset
-            const EzResetButton(skip: <String>{
-              homeIDsKey,
-              hiddenIDsKey,
-              leftPackageKey,
-              rightPackageKey,
-              authToEditKey,
-            }),
+            EzElevatedIconButton(
+              onPressed: () => showPlatformDialog(
+                context: context,
+                builder: (_) => StatefulBuilder(builder: (
+                  BuildContext dialogContext,
+                  StateSetter dialogState,
+                ) {
+                  late final Set<String> skip = <String>{
+                    homeIDsKey,
+                    hiddenIDsKey,
+                    leftPackageKey,
+                    rightPackageKey,
+                    authToEditKey,
+                  };
+
+                  late final List<Widget> materialActions;
+                  late final List<Widget> cupertinoActions;
+
+                  (materialActions, cupertinoActions) = ezActionPairs(
+                    context: context,
+                    onConfirm: () {
+                      EzConfig.reset(skip: resetAll ? <String>{} : skip);
+                      Navigator.of(dialogContext).pop();
+                    },
+                    confirmIsDestructive: true,
+                    onDeny: () => Navigator.of(dialogContext).pop(),
+                  );
+
+                  return EzAlertDialog(
+                    key: ValueKey<bool>(resetAll),
+                    title: const Text(
+                      'Reset all appearance settings?',
+                      textAlign: TextAlign.center,
+                    ),
+                    contents: <Widget>[
+                      EzSwitchPair(
+                        text: 'Or, ALL settings',
+                        value: resetAll,
+                        onChanged: (bool? choice) {
+                          resetAll = (choice == null) ? false : choice;
+                          setState(() {});
+                          dialogState(() {});
+                        },
+                      ),
+                      spacer,
+                      Text(
+                        el10n.gUndoWarn,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    materialActions: materialActions,
+                    cupertinoActions: cupertinoActions,
+                    needsClose: false,
+                  );
+                }),
+              ),
+              icon: EzIcon(PlatformIcons(context).refresh),
+              label: el10n.gResetAll,
+            ),
             separator,
           ],
         ),
