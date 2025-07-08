@@ -20,7 +20,10 @@ class HiddenAppListScreen extends StatefulWidget {
 class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
   // Gather the theme data //
 
-  static const EzSpacer spacer = EzSpacer();
+  final double spacing = EzConfig.get(spacingKey);
+
+  late final EdgeInsets listPadding =
+      EdgeInsets.symmetric(vertical: spacing / 2);
 
   // Define the build data //
 
@@ -32,7 +35,6 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
   );
 
   bool atTop = true;
-  bool editing = false;
 
   // Return the build //
 
@@ -50,7 +52,6 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
           }
         },
         child: EzScreen(
-          // Pop on overscroll
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
               if (notification is OverscrollNotification &&
@@ -78,21 +79,24 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: listAlign.crossAxis,
               physics: const ClampingScrollPhysics(),
-              children: provider.hiddenList.expand((String id) {
-                final AppInfo? app = provider.appMap[id];
+              children: provider.hiddenList
+                  .map((String id) {
+                    final AppInfo? app = provider.appMap[id];
 
-                return (app == null)
-                    ? <Widget>[]
-                    : <Widget>[
-                        AppTile(
-                          key: ValueKey<String>(app.id),
-                          app: app,
-                          onHomeScreen: false,
-                          editing: editing,
-                        ),
-                        spacer,
-                      ];
-              }).toList(),
+                    return (app == null)
+                        ? null
+                        : Padding(
+                            key: ValueKey<String>(app.id),
+                            padding: listPadding,
+                            child: AppTile(
+                              app: app,
+                              onHomeScreen: false,
+                              editing: false,
+                            ),
+                          );
+                  })
+                  .whereType<Widget>()
+                  .toList(),
             ),
           ),
         ),
