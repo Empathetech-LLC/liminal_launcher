@@ -12,7 +12,11 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class AppTile extends StatefulWidget {
   final AppInfo app;
-  final bool onHomeScreen;
+
+  /// true for home list, null for home folder, false for false
+  /// Quantum computing
+  final bool? onHomeScreen;
+
   final bool editing;
   final void Function()? refreshHome;
 
@@ -41,9 +45,6 @@ class _AppTileState extends State<AppTile> {
   // Define the build data //
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
-  late final AppInfo app = widget.app;
-
-  late final bool onHomeScreen = widget.onHomeScreen;
 
   final bool showIcon =
       EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
@@ -52,7 +53,6 @@ class _AppTileState extends State<AppTile> {
   );
 
   late bool editing = widget.editing;
-  late final void Function()? refreshHome = widget.refreshHome;
 
   // Define custom functions //
 
@@ -70,12 +70,12 @@ class _AppTileState extends State<AppTile> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               // App icon
-              if (app.icon != null) ...<Widget>[
+              if (widget.app.icon != null) ...<Widget>[
                 GestureDetector(
                   onTap: activateTile,
                   child: Image.memory(
-                    app.icon!,
-                    semanticLabel: app.name,
+                    widget.app.icon!,
+                    semanticLabel: widget.app.name,
                     width: iconSize + padding,
                     height: iconSize + padding,
                   ),
@@ -98,13 +98,13 @@ class _AppTileState extends State<AppTile> {
                         if (validateRename(name) != null) return null;
 
                         final bool success =
-                            await provider.renameApp(id: app.id, newName: name);
+                            await provider.renameApp(name, id: widget.app.id);
 
                         if (success) {
                           if (dialogContext.mounted) {
                             Navigator.of(dialogContext).pop(name);
                           }
-                          refreshHome?.call();
+                          widget.refreshHome?.call();
                         }
                       }
 
@@ -127,7 +127,7 @@ class _AppTileState extends State<AppTile> {
 
                       return EzAlertDialog(
                         title: Text(
-                          'Rename ${app.name}?',
+                          'Rename ${widget.app.name}?',
                           textAlign: TextAlign.center,
                         ),
                         content: Form(
@@ -150,14 +150,13 @@ class _AppTileState extends State<AppTile> {
               rowSpacer,
 
               // Add to home
-              if (!provider.hiddenSet.contains(app.id) &&
-                  !onHomeScreen &&
-                  !provider.homeSet.contains(app.id)) ...<Widget>[
+              if (!provider.hiddenSet.contains(widget.app.id) &&
+                  !provider.homeSet.contains(widget.app.id)) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    await provider.addHomeApp(id: app.id);
+                    await provider.addHomeApp(widget.app.id);
                     setState(() => editing = false);
-                    refreshHome?.call();
+                    widget.refreshHome?.call();
                   },
                   icon: const Icon(Icons.add_to_home_screen),
                 ),
@@ -165,14 +164,12 @@ class _AppTileState extends State<AppTile> {
               ],
 
               // Remove from home
-              if (!provider.hiddenSet.contains(app.id) &&
-                  onHomeScreen &&
-                  provider.homeSet.contains(app.id)) ...<Widget>[
+              if (widget.onHomeScreen == true) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    await provider.removeHomeApp(id: app.id);
+                    await provider.removeHomeApp(widget.app.id);
                     setState(() => editing = false);
-                    refreshHome?.call();
+                    widget.refreshHome?.call();
                   },
                   icon: Icon(PlatformIcons(context).remove),
                 ),
@@ -182,13 +179,13 @@ class _AppTileState extends State<AppTile> {
               // Show/hide
               EzIconButton(
                 onPressed: () async {
-                  provider.hiddenSet.contains(app.id)
-                      ? await provider.showApp(id: app.id)
-                      : await provider.hideApp(id: app.id);
+                  provider.hiddenSet.contains(widget.app.id)
+                      ? await provider.showApp(widget.app.id)
+                      : await provider.hideApp(widget.app.id);
                   setState(() => editing = false);
-                  refreshHome?.call();
+                  widget.refreshHome?.call();
                 },
-                icon: Icon(provider.hiddenSet.contains(app.id)
+                icon: Icon(provider.hiddenSet.contains(widget.app.id)
                     ? PlatformIcons(context).eyeSolid
                     : PlatformIcons(context).eyeSlash),
               ),
@@ -196,20 +193,20 @@ class _AppTileState extends State<AppTile> {
 
               // Info
               EzIconButton(
-                onPressed: () => openSettings(app.package),
+                onPressed: () => openSettings(widget.app.package),
                 icon: Icon(PlatformIcons(context).info),
               ),
               rowSpacer,
 
               // Delete
-              if (app.removable) ...<Widget>[
+              if (widget.app.removable) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    final bool deleted = await deleteApp(context, app);
+                    final bool deleted = await deleteApp(context, widget.app);
                     if (deleted) {
-                      await provider.removeDeleted(id: app.id);
+                      await provider.removeDeleted(widget.app.id);
                       setState(() => editing = false);
-                      refreshHome?.call();
+                      widget.refreshHome?.call();
                     }
                   },
                   icon: Icon(PlatformIcons(context).delete),
@@ -224,7 +221,7 @@ class _AppTileState extends State<AppTile> {
               ),
 
               // Drag handle
-              if (onHomeScreen) ...<Widget>[
+              if (widget.onHomeScreen == true) ...<Widget>[
                 rowSpacer,
                 EzIcon(
                   Icons.drag_handle,
