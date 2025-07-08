@@ -7,6 +7,7 @@ import '../utils/export.dart';
 import './export.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
@@ -14,7 +15,6 @@ class AppFolder extends StatefulWidget {
   final int index;
   final String name;
   final List<String> ids;
-  final AppInfoProvider provider;
   final ListAlignment alignment;
   final bool showIcon;
   final LabelType labelType;
@@ -26,7 +26,6 @@ class AppFolder extends StatefulWidget {
     required this.index,
     required this.name,
     required this.ids,
-    required this.provider,
     required this.alignment,
     required this.showIcon,
     required this.labelType,
@@ -54,6 +53,8 @@ class _AppFolderState extends State<AppFolder> {
 
   // Define the build data //
 
+  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+
   late final List<String> folderList = widget.ids;
   late final Set<String> folderSet = folderList.toSet();
 
@@ -69,10 +70,7 @@ class _AppFolderState extends State<AppFolder> {
 
   late final List<Widget> closeTail = <Widget>[
     EzSpacer(space: spacing / 2, vertical: false),
-    EzIconButton(
-      icon: const Icon(Icons.close),
-      onPressed: toggleOpen,
-    ),
+    EzIconButton(icon: const Icon(Icons.close), onPressed: toggleOpen),
   ];
 
   // Return the build //
@@ -99,10 +97,8 @@ class _AppFolderState extends State<AppFolder> {
                     final String name = renameController.text.trim();
                     if (validateRename(name) != null) return null;
 
-                    final bool success = await widget.provider.renameFolder(
-                      index: index,
-                      newName: name,
-                    );
+                    final bool success =
+                        await provider.renameFolder(name, index: index);
 
                     if (success) {
                       if (dialogContext.mounted) {
@@ -163,10 +159,8 @@ class _AppFolderState extends State<AppFolder> {
               builder: (_) => StatefulBuilder(
                 builder: (_, StateSetter setModalState) {
                   void onRemove(String id) async {
-                    final bool removed = await widget.provider.removeFromFolder(
-                      index: index,
-                      id: id,
-                    );
+                    final bool removed =
+                        await provider.removeFromFolder(id, index: index);
 
                     if (removed) {
                       folderList.remove(id);
@@ -179,10 +173,8 @@ class _AppFolderState extends State<AppFolder> {
                   }
 
                   void onAdd(String id) async {
-                    final int? indexMod = await widget.provider.addToFolder(
-                      index: index,
-                      id: id,
-                    );
+                    final int? indexMod =
+                        await provider.addToFolder(id, index: index);
 
                     if (indexMod != null) {
                       folderList.add(id);
@@ -201,7 +193,7 @@ class _AppFolderState extends State<AppFolder> {
                     children: <Widget>[
                       // Remove
                       ...folderList.map((String id) {
-                        final AppInfo? app = widget.provider.appMap[id];
+                        final AppInfo? app = provider.appMap[id];
                         if (app == null) return null;
 
                         return Padding(
@@ -217,10 +209,10 @@ class _AppFolderState extends State<AppFolder> {
                       EzDivider(height: spacing),
 
                       // Add
-                      ...widget.provider.apps
+                      ...provider.apps
                           .where((AppInfo app) =>
                               !folderSet.contains(app.id) &&
-                              !widget.provider.hiddenSet.contains(app.id))
+                              !provider.hiddenSet.contains(app.id))
                           .map((AppInfo app) {
                         return Padding(
                           key: ValueKey<String>(app.id),
@@ -244,9 +236,8 @@ class _AppFolderState extends State<AppFolder> {
           // Delete folder
           EzIconButton(
             icon: Icon(PlatformIcons(context).delete),
-            onPressed: () => widget.provider.deleteFolder(
-                fullName:
-                    widget.name + folderSplit + folderList.join(folderSplit)),
+            onPressed: () => provider.deleteFolder(
+                <String>[widget.name, ...folderList].join(folderSplit)),
           ),
           rowSpacer,
 
@@ -266,14 +257,14 @@ class _AppFolderState extends State<AppFolder> {
             mainAxisAlignment: widget.alignment.mainAxis,
             children: folderList
                     .map((String id) {
-                      final AppInfo? app = widget.provider.appMap[id];
+                      final AppInfo? app = provider.appMap[id];
                       if (app == null) return null;
 
                       return Padding(
                         padding: rowPadding,
                         child: AppTile(
                           app: app,
-                          onHomeScreen: true,
+                          onHomeScreen: null,
                           editing: editing,
                           refreshHome: widget.refreshHome,
                         ),
