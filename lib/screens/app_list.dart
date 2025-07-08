@@ -39,19 +39,29 @@ class _AppListScreenState extends State<AppListScreen> {
   ListSort listSort = AppListSortConfig.fromValue(
     EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
   );
-
   bool ascList =
       EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey);
 
   bool atTop = true;
   bool atBottom = false;
+
   final ScrollController appScrollControl = ScrollController();
+  final ScrollController searchScrollControl = ScrollController();
+
+  final TextEditingController searchController = TextEditingController();
+  final bool autoSearch =
+      EzConfig.get(autoSearchKey) ?? EzConfig.getDefault(autoSearchKey);
 
   // Return the build //
 
   @override
   Widget build(BuildContext context) {
     final List<AppInfo> appList = provider.appList;
+    final List<AppInfo> searchList = provider.appList
+        .where((AppInfo app) => app.name
+            .toLowerCase()
+            .contains(searchController.text.toLowerCase()))
+        .toList();
 
     return LiminalScaffold(
       GestureDetector(
@@ -133,6 +143,8 @@ class _AppListScreenState extends State<AppListScreen> {
                       setState(() {});
                     },
                   ),
+
+                  // Search
                 ],
               ),
               spacer,
@@ -169,21 +181,39 @@ class _AppListScreenState extends State<AppListScreen> {
                   return false;
                 },
                 child: Expanded(
-                  child: ListView.builder(
-                    controller: appScrollControl,
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: appList.length,
-                    itemBuilder: (_, int index) => Padding(
-                      padding: EdgeInsets.symmetric(vertical: spacing / 2),
-                      key: ValueKey<String>(appList[index].id),
-                      child: AppTile(
-                        app: appList[index],
-                        onHomeScreen: false,
-                        editing: false,
-                        refreshHome: widget.refreshHome,
-                      ),
-                    ),
-                  ),
+                  child: searchController.text.isNotEmpty
+                      ? ListView.builder(
+                          controller: searchScrollControl,
+                          physics: const ClampingScrollPhysics(),
+                          itemCount: searchList.length,
+                          itemBuilder: (_, int index) => Padding(
+                            padding:
+                                EdgeInsets.symmetric(vertical: spacing / 2),
+                            key: ValueKey<String>(searchList[index].id),
+                            child: AppTile(
+                              app: searchList[index],
+                              onHomeScreen: false,
+                              editing: false,
+                              refreshHome: widget.refreshHome,
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          controller: appScrollControl,
+                          physics: const ClampingScrollPhysics(),
+                          itemCount: appList.length,
+                          itemBuilder: (_, int index) => Padding(
+                            padding:
+                                EdgeInsets.symmetric(vertical: spacing / 2),
+                            key: ValueKey<String>(appList[index].id),
+                            child: AppTile(
+                              app: appList[index],
+                              onHomeScreen: false,
+                              editing: false,
+                              refreshHome: widget.refreshHome,
+                            ),
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -229,6 +259,7 @@ class _AppListScreenState extends State<AppListScreen> {
   @override
   void dispose() {
     appScrollControl.dispose();
+    searchController.dispose();
     super.dispose();
   }
 }
