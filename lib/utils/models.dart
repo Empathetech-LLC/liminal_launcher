@@ -5,7 +5,10 @@
 
 import 'package:flutter/services.dart';
 
+/// '---'
 const String nullAppLabel = '---';
+
+/// ';'
 const String idSplit = ':';
 
 /// Helpful for creating [AppInfo] lists
