@@ -35,7 +35,7 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      LiminalScreen(
+      EzScreen(
         child: EzScrollView(
           children: <Widget>[
             // Current theme reminder
