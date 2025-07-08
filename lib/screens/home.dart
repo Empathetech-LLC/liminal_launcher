@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               notification.metrics.maxScrollExtent);
                           setState(() {});
                         }
-                        return false;
+                        return false; // Let other notifications propagate
                       },
                       child: Expanded(
                         child: ReorderableListView(
