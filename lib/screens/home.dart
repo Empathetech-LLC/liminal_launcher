@@ -46,13 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
   // final bool homeWeather =
   //     EzConfig.get(homeWeatherKey) ?? EzConfig.getDefault(homeWeatherKey);
 
-  final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
-      EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey));
+  // final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
+  //     EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey));
+
+  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
       EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
-
-  bool atBottom = false;
 
   final LabelType labelType = LabelTypeConfig.fromValue(
       EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey));
@@ -61,8 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
 
   bool editing = false;
-
-  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+  bool atBottom = false;
 
   // Define custom functions //
 
@@ -81,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
             index: index,
             name: parts[0],
             ids: parts.sublist(1),
-            provider: provider,
             alignment: homeAlign,
             showIcon: showIcon,
             labelType: labelType,
@@ -134,9 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Row(
       mainAxisAlignment: homeAlign.mainAxis,
-      children: headerOrder == HeaderOrder.timeFirst
-          ? children
-          : children.reversed.toList(),
+      children: children, // headerOrder == HeaderOrder.timeFirst
+      // ? children
+      // : children.reversed.toList(),
     );
   }
 
@@ -183,17 +181,17 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         onHorizontalDragEnd: (DragEndDetails details) {
           if (details.primaryVelocity != null) {
-            String? package;
+            AppInfo? toLaunch;
 
             if (details.primaryVelocity! < 0 && !editing) {
-              package = EzConfig.get(leftPackageKey);
+              toLaunch = provider.appMap[EzConfig.get(leftAppKey)];
             } else if (details.primaryVelocity! > 0) {
               editing
                   ? setState(() => editing = false)
-                  : package = EzConfig.get(rightPackageKey);
+                  : toLaunch = provider.appMap[EzConfig.get(rightAppKey)];
             }
 
-            if (package != null && package.isNotEmpty) launchApp(package);
+            if (toLaunch != null) launchApp(toLaunch.package);
           }
         },
         child: EzScreen(
@@ -209,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onNotification: (ScrollNotification notification) {
                         if (notification is OverscrollNotification &&
                             notification.overscroll > 0) {
-                          // Pop on top overscroll
+                          // Navigate on bottom overscroll
                           if (atBottom) {
                             context.goNamed(hiddenListPath);
                             return true;
@@ -287,9 +285,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   type: labelType,
                                   showIcon: showIcon,
                                   onPressed: () async {
-                                    await provider.addHomeApp(id: app.id);
-                                    setModalState(() {});
+                                    await provider.addHomeApp(app.id);
                                     refreshHome();
+                                    setModalState(() {});
                                   },
                                 ),
                               ))
