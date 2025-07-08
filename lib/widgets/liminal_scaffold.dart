@@ -3,6 +3,8 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'package:efui_bios/efui_bios.dart';
+
 import 'package:flutter/material.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
@@ -25,6 +27,30 @@ class LiminalScaffold extends StatelessWidget {
               ? FloatingActionButtonLocation.startFloat
               : FloatingActionButtonLocation.endFloat,
           resizeToAvoidBottomInset: false,
+        ),
+      );
+}
+
+class LiminalScreen extends StatelessWidget {
+  final Widget child;
+
+  /// EzScreen with a pinch detector for [Feedback]
+  const LiminalScreen({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) => EzScreen(
+        child: GestureDetector(
+          onScaleUpdate: (ScaleUpdateDetails details) {
+            if (details.scale < 1.0) {
+              ezFeedback(
+                parentContext: context,
+                l10n: ezL10n(context),
+                supportEmail: empathSupport,
+                appName: 'Liminal',
+              );
+            }
+          },
+          child: child,
         ),
       );
 }
