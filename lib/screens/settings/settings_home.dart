@@ -63,6 +63,14 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         ),
       );
 
+  Future<dynamic> update() => showPlatformDialog(
+        context: context,
+        builder: (_) => const EzAlertDialog(
+          title: Text('Tips', textAlign: TextAlign.center),
+          content: Text('&& tricks', textAlign: TextAlign.center),
+        ),
+      );
+
   // Return the build //
 
   @override
@@ -72,12 +80,15 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         child: EzScrollView(
           children: <Widget>[
             Stack(
+              // Core
               children: <Widget>[
                 GestureDetector(
                   onLongPress: showTips,
                   child: const EzWarning(
                       'Most appearance settings take full effect on restart.\n\nHave fun!'),
                 ),
+
+                // Tips
                 Positioned(
                   top: 0,
                   right: 0,
@@ -86,6 +97,9 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                     onPressed: showTips,
                   ),
                 ),
+
+                // Updater (if relevant)
+                const Positioned(top: 0, left: 0, child: EzUpdater()),
               ],
             ),
             separator,
