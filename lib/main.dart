@@ -9,7 +9,6 @@ import './utils/export.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:feedback/feedback.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
@@ -17,13 +16,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 
 void main() async {
-  // Setup the app //
-
   WidgetsFlutterBinding.ensureInitialized();
 
   await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-
-  // Initialize EzConfig //
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -34,17 +29,7 @@ void main() async {
     assetPaths: <String>{},
   );
 
-  // Run the app //
-  // With a feedback wrapper
-
-  runApp(BetterFeedback(
-    theme: empathFeedbackLight,
-    darkTheme: empathFeedbackDark,
-    themeMode: EzConfig.getThemeMode(),
-    localizationsDelegates: <LocalizationsDelegate<dynamic>>[EzFeedbackLD()],
-    localeOverride: EzConfig.getLocale(),
-    child: LiminalLauncher(await getApps()),
-  ));
+  runApp(LiminalLauncher(await getApps()));
 }
 
 /// Initialize a path based router for web-enabled apps
