@@ -14,7 +14,7 @@ const String appTitle = 'Liminal Launcher';
 
 /// [AppInfo] with package 'net.empathetech.liminal'
 final AppInfo self = AppInfo(
-  label: 'Liminal Launcher',
+  label: appTitle,
   package: 'net.empathetech.liminal',
   removable: false,
 );
