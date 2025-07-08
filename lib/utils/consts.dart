@@ -29,14 +29,14 @@ const String appListOrderKey = 'app_list_order';
 const String renamedIDsKey = 'renamed_apps';
 
 // Functionality
-const String leftPackageKey = 'left_package';
-const String rightPackageKey = 'right_package';
+const String leftAppKey = 'left_app';
+const String rightAppKey = 'right_app';
 const String autoSearchKey = 'auto_search';
 const String authToEditKey = 'auth_to_edit';
 const String autoAddToHomeKey = 'auto_add_to_home';
 
 // Layout
-const String headerOrderKey = 'header_order';
+// const String headerOrderKey = 'header_order';
 const String homeAlignmentKey = 'home_alignment';
 const String fullListAlignmentKey = 'full_list_alignment';
 
@@ -59,14 +59,14 @@ final Map<String, Object> defaultConfig = <String, Object>{
   renamedIDsKey: <String>[],
 
   // Functionality
-  leftPackageKey: '',
-  rightPackageKey: '',
+  leftAppKey: '',
+  rightAppKey: '',
   autoSearchKey: false,
   authToEditKey: false,
   autoAddToHomeKey: false,
 
   // Layout
-  headerOrderKey: HeaderOrder.timeFirst.configValue,
+  // headerOrderKey: HeaderOrder.timeFirst.configValue,
   homeAlignmentKey: ListAlignment.center.configValue,
   fullListAlignmentKey: ListAlignment.center.configValue,
 
