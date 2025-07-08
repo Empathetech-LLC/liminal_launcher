@@ -49,7 +49,7 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
             }
           }
         },
-        child: EzScreen(
+        child: LiminalScreen(
           // Pop on overscroll
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {

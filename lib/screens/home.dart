@@ -196,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (package != null && package.isNotEmpty) launchApp(package);
           }
         },
-        child: EzScreen(
+        child: LiminalScreen(
           child: Column(
             crossAxisAlignment: homeAlign.crossAxis,
             children: <Widget>[

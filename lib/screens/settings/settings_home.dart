@@ -68,7 +68,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      EzScreen(
+      LiminalScreen(
         child: EzScrollView(
           children: <Widget>[
             Stack(
