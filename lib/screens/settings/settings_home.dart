@@ -240,8 +240,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                   late final Set<String> skip = <String>{
                     homeIDsKey,
                     hiddenIDsKey,
-                    leftPackageKey,
-                    rightPackageKey,
+                    leftAppKey,
+                    rightAppKey,
                     authToEditKey,
                   };
 
@@ -319,15 +319,15 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
   late final String leftLabel = 'Left package';
   late final String rightLabel = 'Right package';
 
-  late final String? leftPackage = EzConfig.get(leftPackageKey);
-  late final String? rightPackage = EzConfig.get(rightPackageKey);
+  late final String? leftID = EzConfig.get(leftAppKey);
+  late final String? rightID = EzConfig.get(rightAppKey);
 
-  late AppInfo leftApp = (leftPackage == null || leftPackage!.isEmpty)
+  late AppInfo leftApp = (leftID == null || leftID!.isEmpty)
       ? nullApp
-      : widget.provider.appMap[leftPackage!] ?? nullApp;
-  late AppInfo rightApp = (rightPackage == null || rightPackage!.isEmpty)
+      : widget.provider.appMap[leftID!] ?? nullApp;
+  late AppInfo rightApp = (rightID == null || rightID!.isEmpty)
       ? nullApp
-      : widget.provider.appMap[rightPackage!] ?? nullApp;
+      : widget.provider.appMap[rightID!] ?? nullApp;
 
   @override
   Widget build(BuildContext context) {
@@ -344,7 +344,7 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                 onSelected: (AppInfo? app) async {
                   if (app == null || app == leftApp) return;
 
-                  await EzConfig.setString(leftPackageKey, app.id);
+                  await EzConfig.setString(leftAppKey, app.id);
                   setState(() => leftApp = app);
                 },
               )
@@ -359,7 +359,7 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                 onSelected: (AppInfo? app) async {
                   if (app == null || app == rightApp) return;
 
-                  await EzConfig.setString(rightPackageKey, app.id);
+                  await EzConfig.setString(rightAppKey, app.id);
                   setState(() => rightApp = app);
                 },
               )
