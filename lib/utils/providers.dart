@@ -59,7 +59,7 @@ class AppInfoProvider extends ChangeNotifier {
       }
     }
 
-    // Sort the apps based on the user's preferences
+    // Sort based on the user's preferences
     sort(
       AppListSortConfig.fromValue(
         EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
@@ -67,25 +67,9 @@ class AppInfoProvider extends ChangeNotifier {
       EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey),
     );
 
-    // Listen for events
+    // Listen //
     _listenToAppEvents();
   }
-
-  // Get //
-
-  List<AppInfo> get apps => _apps;
-  Map<String, AppInfo> get appMap => _appMap;
-
-  Set<String> get renamed => _renamedSet;
-
-  List<String> get homeList => _homeList;
-  Set<String> get homeSet => _homeSet;
-
-  List<String> get hiddenList => _hiddenList;
-  Set<String> get hiddenSet => _hiddenSet;
-
-  List<AppInfo> get appList =>
-      _apps.where((AppInfo app) => !_hiddenSet.contains(app.id)).toList();
 
   void _listenToAppEvents() {
     _appEventSubscription =
@@ -106,7 +90,7 @@ class AppInfoProvider extends ChangeNotifier {
 
             if (appInfoMap != null) {
               final AppInfo uninstalled = AppInfo.fromMap(appInfoMap);
-              removeDeleted(id: uninstalled.id);
+              removeDeleted(uninstalled.id);
             }
             break;
         }
@@ -114,15 +98,6 @@ class AppInfoProvider extends ChangeNotifier {
     }, onError: (dynamic error) {
       ezLog('Error listening to app events: $error');
     });
-  }
-
-  // Post //
-
-  Future<void> addHomeFolder() async {
-    _homeList.add('Folder${folderSplit}empty');
-
-    await EzConfig.setStringList(homeIDsKey, _homeList);
-    notifyListeners();
   }
 
   Future<void> _handleAppInstalled(Map<String, dynamic> appInfoMap) async {
@@ -148,6 +123,28 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Get //
+
+  List<AppInfo> get apps => _apps;
+  Map<String, AppInfo> get appMap => _appMap;
+
+  Set<String> get renamed => _renamedSet;
+
+  List<String> get homeList => _homeList;
+  Set<String> get homeSet => _homeSet;
+
+  List<String> get hiddenList => _hiddenList;
+  Set<String> get hiddenSet => _hiddenSet;
+
+  // Post //
+
+  Future<void> addHomeFolder() async {
+    _homeList.add('Folder${folderSplit}empty');
+
+    await EzConfig.setStringList(homeIDsKey, _homeList);
+    notifyListeners();
+  }
+
   // Put //
 
   void sort(ListSort sort, bool asc) {
@@ -164,7 +161,7 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addHomeApp({required String id}) async {
+  Future<bool> addHomeApp(String id) async {
     if (_homeSet.contains(id)) return false;
 
     _homeList.add(id);
@@ -176,7 +173,7 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> removeHomeApp({required String id}) async {
+  Future<bool> removeHomeApp(String id) async {
     if (!_homeSet.contains(id)) return false;
 
     _homeList.remove(id);
@@ -188,11 +185,7 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
-  /// Does not handle dupes; please handle before
-  Future<int?> addToFolder({
-    required int index,
-    required String id,
-  }) async {
+  Future<int?> addToFolder(String id, {required int index}) async {
     int toReturn = 0;
     _homeList[index] = homeList[index] + folderSplit + id;
 
@@ -211,10 +204,7 @@ class AppInfoProvider extends ChangeNotifier {
     return toReturn;
   }
 
-  Future<bool> removeFromFolder({
-    required int index,
-    required String id,
-  }) async {
+  Future<bool> removeFromFolder(String id, {required int index}) async {
     _homeList[index] = _homeList[index].replaceFirst(
       folderSplit + id,
       '',
@@ -233,7 +223,7 @@ class AppInfoProvider extends ChangeNotifier {
 
   // Patch //
 
-  Future<bool> hideApp({required String id}) async {
+  Future<bool> hideApp(String id) async {
     if (_hiddenSet.contains(id)) return false;
 
     _hiddenList.add(id);
@@ -241,13 +231,13 @@ class AppInfoProvider extends ChangeNotifier {
 
     await EzConfig.setStringList(hiddenIDsKey, _hiddenList);
 
-    final bool notified = await removeHomeApp(id: id);
+    final bool notified = await removeHomeApp(id);
     if (!notified) notifyListeners();
 
     return true;
   }
 
-  Future<bool> showApp({required String id}) async {
+  Future<bool> showApp(String id) async {
     if (!_hiddenSet.contains(id)) return false;
 
     _hiddenList.remove(id);
@@ -259,10 +249,7 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> renameApp({
-    required String id,
-    required String newName,
-  }) async {
+  Future<bool> renameApp(String newName, {required String id}) async {
     final AppInfo? app = _appMap[id];
     if (app == null || app.name == newName) return false;
 
@@ -277,16 +264,13 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> renameFolder({
-    required int index,
-    required String newName,
-  }) async {
+  Future<bool> renameFolder(String newName, {required int index}) async {
     final String fullName = _homeList[index];
     final List<String> parts = fullName.split(folderSplit);
     if (parts[0] == newName) return false;
 
     final String newFullName = (parts.length > 1)
-        ? newName + folderSplit + parts.join(folderSplit)
+        ? <String>[newName, ...parts].join(folderSplit)
         : newName;
     _homeList[index] = newFullName;
 
@@ -315,16 +299,17 @@ class AppInfoProvider extends ChangeNotifier {
 
   // Delete //
 
-  Future<void> removeDeleted({required String id}) async {
-    await showApp(id: id);
-    await removeHomeApp(id: id);
+  Future<void> removeDeleted(String id) async {
+    await showApp(id);
+    await removeHomeApp(id);
+    // Remove rename? Make it an option? Leave it?
     _apps.remove(_appMap[id]);
     _appMap.remove(id);
 
     notifyListeners();
   }
 
-  Future<void> deleteFolder({required String fullName}) async {
+  Future<void> deleteFolder(String fullName) async {
     final List<String> ids = fullName.split(':').sublist(1);
     for (final String id in ids) {
       _homeSet.remove(id);
