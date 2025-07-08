@@ -266,7 +266,7 @@ class _AppFolderState extends State<AppFolder> {
                           app: app,
                           onHomeScreen: null,
                           editing: editing,
-                          refreshHome: widget.refreshHome,
+                          refresh: widget.refreshHome,
                         ),
                       );
                     })

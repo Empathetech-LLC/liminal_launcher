@@ -18,14 +18,14 @@ class AppTile extends StatefulWidget {
   final bool? onHomeScreen;
 
   final bool editing;
-  final void Function()? refreshHome;
+  final void Function()? refresh;
 
   const AppTile({
     super.key,
     required this.app,
     required this.onHomeScreen,
     required this.editing,
-    this.refreshHome,
+    this.refresh,
   });
 
   @override
@@ -104,7 +104,7 @@ class _AppTileState extends State<AppTile> {
                           if (dialogContext.mounted) {
                             Navigator.of(dialogContext).pop(name);
                           }
-                          widget.refreshHome?.call();
+                          widget.refresh?.call();
                         }
                       }
 
@@ -156,7 +156,7 @@ class _AppTileState extends State<AppTile> {
                   onPressed: () async {
                     await provider.addHomeApp(widget.app.id);
                     setState(() => editing = false);
-                    widget.refreshHome?.call();
+                    widget.refresh?.call();
                   },
                   icon: const Icon(Icons.add_to_home_screen),
                 ),
@@ -169,7 +169,7 @@ class _AppTileState extends State<AppTile> {
                   onPressed: () async {
                     await provider.removeHomeApp(widget.app.id);
                     setState(() => editing = false);
-                    widget.refreshHome?.call();
+                    widget.refresh?.call();
                   },
                   icon: Icon(PlatformIcons(context).remove),
                 ),
@@ -183,7 +183,7 @@ class _AppTileState extends State<AppTile> {
                       ? await provider.showApp(widget.app.id)
                       : await provider.hideApp(widget.app.id);
                   setState(() => editing = false);
-                  widget.refreshHome?.call();
+                  widget.refresh?.call();
                 },
                 icon: Icon(provider.hiddenSet.contains(widget.app.id)
                     ? PlatformIcons(context).eyeSolid
@@ -206,7 +206,7 @@ class _AppTileState extends State<AppTile> {
                     if (deleted) {
                       await provider.removeDeleted(widget.app.id);
                       setState(() => editing = false);
-                      widget.refreshHome?.call();
+                      widget.refresh?.call();
                     }
                   },
                   icon: Icon(PlatformIcons(context).delete),

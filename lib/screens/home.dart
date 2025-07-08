@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             app: app,
             onHomeScreen: true,
             editing: editing,
-            refreshHome: refreshHome,
+            refresh: refreshHome,
           ),
         ));
       }
