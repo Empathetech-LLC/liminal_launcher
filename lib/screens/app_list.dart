@@ -157,6 +157,7 @@ class _AppListScreenState extends State<AppListScreen> {
                       setState(() {});
                     },
                   ),
+                  rowSpacer,
 
                   // Search
                   AnimatedContainer(
@@ -180,7 +181,8 @@ class _AppListScreenState extends State<AppListScreen> {
                             }
                           },
                         ),
-                        if (searching)
+                        if (searching) ...<Widget>[
+                          EzMargin(vertical: false),
                           Expanded(
                             child: TextField(
                               controller: searchControl,
@@ -194,6 +196,7 @@ class _AppListScreenState extends State<AppListScreen> {
                                   () => searchList = searchApps(appList)),
                             ),
                           ),
+                        ],
                       ],
                     ),
                   ),
