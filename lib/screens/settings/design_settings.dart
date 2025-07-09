@@ -43,17 +43,47 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  LabelType labelType = LabelTypeConfig.fromValue(
-      EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey));
+  bool homeIcon = EzConfig.get(homeIconKey) ?? EzConfig.getDefault(homeIconKey);
+  LabelType listLabelType = LabelTypeConfig.fromValue(
+      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
 
-  bool showIcon = EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
+  bool folderIcon =
+      EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey);
+  LabelType folderLabelType = LabelTypeConfig.fromValue(
+      EzConfig.get(folderLabelTypeKey) ??
+          EzConfig.getDefault(folderLabelTypeKey));
 
   // Define custom functions //
 
-  String label() {
-    const String base = 'App Preview';
+  String listLabel() {
+    const String base = 'List App';
 
-    switch (labelType) {
+    switch (listLabelType) {
+      case LabelType.none:
+        return '';
+
+      case LabelType.initials:
+        return base
+            .split(' ')
+            .map((String word) => word.isNotEmpty ? word[0] : '')
+            .join()
+            .toUpperCase();
+
+      case LabelType.full:
+        return base;
+
+      case LabelType.wingding:
+        return base
+            .split('')
+            .map((String char) => wingdingMap[char] ?? char)
+            .join();
+    }
+  }
+
+  String folderLabel() {
+    const String base = 'Folder App';
+
+    switch (folderLabelType) {
       case LabelType.none:
         return '';
 
@@ -80,7 +110,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      EzScreen(
+      LiminalScreen(
         child: EzScrollView(
           children: <Widget>[
             if (spacing > margin) EzSpacer(space: spacing - margin),
@@ -113,7 +143,20 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             // ),
             divider,
 
-            // AppTile //
+            // List AppTile //
+
+            // Preview
+            homeIcon
+                ? EzTextIconButton(
+                    icon: EzIcon(PlatformIcons(context).settings),
+                    label: listLabel(),
+                    onPressed: doNothing,
+                  )
+                : EzTextButton(
+                    text: listLabel(),
+                    onPressed: doNothing,
+                  ),
+            spacer,
 
             // Label type
             EzRow(
@@ -142,19 +185,19 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                     ),
                   ],
                   enableSearch: false,
-                  initialSelection: labelType,
+                  initialSelection: listLabelType,
                   onSelected: (LabelType? choice) async {
                     if (choice == null) return;
 
                     await EzConfig.setString(
-                      labelTypeKey,
+                      listLabelTypeKey,
                       choice.configValue,
                     );
-                    labelType = choice;
+                    listLabelType = choice;
 
-                    if (labelType == LabelType.none) {
-                      await EzConfig.setBool(showIconKey, true);
-                      showIcon = true;
+                    if (listLabelType == LabelType.none) {
+                      await EzConfig.setBool(homeIconKey, true);
+                      homeIcon = true;
                     }
 
                     setState(() {});
@@ -162,40 +205,112 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                 ),
               ],
             ),
-            spacer,
+            rowSpacer,
 
             // Show icon
             EzSwitchPair(
               text: 'Show icon',
-              valueKey: showIconKey,
+              valueKey: homeIconKey,
               onChangedCallback: (bool? value) async {
                 if (value == null) return;
 
-                showIcon = value;
-                if (value == false && labelType == LabelType.none) {
+                homeIcon = value;
+                if (value == false && listLabelType == LabelType.none) {
                   await EzConfig.setString(
-                    labelTypeKey,
+                    listLabelTypeKey,
                     LabelType.full.configValue,
                   );
-                  labelType = LabelType.full;
+                  listLabelType = LabelType.full;
+                }
+
+                setState(() {});
+              },
+            ),
+            divider,
+
+            // Folder AppTile //
+            // Preview
+            folderIcon
+                ? EzTextIconButton(
+                    icon: EzIcon(PlatformIcons(context).settings),
+                    label: folderLabel(),
+                    onPressed: doNothing,
+                  )
+                : EzTextButton(
+                    text: folderLabel(),
+                    onPressed: doNothing,
+                  ),
+            spacer,
+
+            // Label type
+            EzRow(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const EzText('Label type'),
+                rowSpacer,
+                EzDropdownMenu<LabelType>(
+                  widthEntries: <String>['Full name'],
+                  dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
+                    const DropdownMenuEntry<LabelType>(
+                      value: LabelType.none,
+                      label: 'None',
+                    ),
+                    const DropdownMenuEntry<LabelType>(
+                      value: LabelType.initials,
+                      label: 'Initials',
+                    ),
+                    const DropdownMenuEntry<LabelType>(
+                      value: LabelType.full,
+                      label: 'Full name',
+                    ),
+                    const DropdownMenuEntry<LabelType>(
+                      value: LabelType.wingding,
+                      label: 'Wingding',
+                    ),
+                  ],
+                  enableSearch: false,
+                  initialSelection: folderLabelType,
+                  onSelected: (LabelType? choice) async {
+                    if (choice == null) return;
+
+                    await EzConfig.setString(
+                      folderLabelTypeKey,
+                      choice.configValue,
+                    );
+                    folderLabelType = choice;
+
+                    if (folderLabelType == LabelType.none) {
+                      await EzConfig.setBool(folderIconKey, true);
+                      folderIcon = true;
+                    }
+
+                    setState(() {});
+                  },
+                ),
+              ],
+            ),
+            rowSpacer,
+
+            // Show icon
+            EzSwitchPair(
+              text: 'Show icon',
+              valueKey: folderIconKey,
+              onChangedCallback: (bool? value) async {
+                if (value == null) return;
+
+                folderIcon = value;
+                if (value == false && folderLabelType == LabelType.none) {
+                  await EzConfig.setString(
+                    folderLabelTypeKey,
+                    LabelType.full.configValue,
+                  );
+                  folderLabelType = LabelType.full;
                 }
 
                 setState(() {});
               },
             ),
             separator,
-
-            // Preview
-            showIcon
-                ? EzTextIconButton(
-                    icon: EzIcon(PlatformIcons(context).settings),
-                    label: label(),
-                    onPressed: doNothing,
-                  )
-                : EzTextButton(
-                    text: label(),
-                    onPressed: doNothing,
-                  )
           ],
         ),
       ),
