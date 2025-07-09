@@ -8,27 +8,27 @@ import 'package:flutter/material.dart';
 
 // BTS settings //
 
-enum ListSort { name, publisher }
+enum AppSort { name, publisher }
 
 const String _name = 'name';
 const String _publisher = 'publisher';
 
-extension AppListSortConfig on ListSort {
+extension AppSortConfig on AppSort {
   String get configValue {
     switch (this) {
-      case ListSort.name:
+      case AppSort.name:
         return _name;
-      case ListSort.publisher:
+      case AppSort.publisher:
         return _publisher;
     }
   }
 
-  static ListSort fromValue(String value) {
+  static AppSort fromValue(String value) {
     switch (value) {
       case _publisher:
-        return ListSort.publisher;
+        return AppSort.publisher;
       default:
-        return ListSort.name;
+        return AppSort.name;
     }
   }
 }

@@ -1,6 +1,5 @@
 package net.empathetech.liminal
 
-import android.app.WallpaperManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -46,13 +45,6 @@ class MainActivity : FlutterFragmentActivity() {
             result.success(getInstalledApps())
           } catch (e: Exception) {
             result.error("APPS_ERROR", "Could not retrieve installed apps", e.message)
-          }
-        }
-        "getWallpaper" -> {
-          try {
-            result.success(getSystemWallpaper())
-          } catch (e: Exception) {
-            result.error("WALLPAPER_ERROR", "Could not retrieve wallpaper", e.message)
           }
         }
         "launchApp" -> {
@@ -134,10 +126,6 @@ class MainActivity : FlutterFragmentActivity() {
       apps.add(app)
     }
     return apps
-  }
-
-  private fun getSystemWallpaper(): ByteArray? {
-    return drawableToByteArray(WallpaperManager.getInstance(applicationContext).drawable)
   }
 
   private fun launchApp(packageName: String) {

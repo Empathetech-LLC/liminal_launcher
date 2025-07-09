@@ -31,7 +31,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LiminalScaffold(EzScreen(
+    return LiminalScaffold(LiminalScreen(
       child: Center(
         child: EzScrollView(
           mainAxisAlignment: MainAxisAlignment.center,
