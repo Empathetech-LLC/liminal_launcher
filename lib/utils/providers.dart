@@ -13,6 +13,9 @@ import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 /// ','
 const String folderSplit = ',';
 
+/// 'empty'
+const String emptyTag = 'empty';
+
 class AppInfoProvider extends ChangeNotifier {
   // Construct //
 
@@ -20,22 +23,22 @@ class AppInfoProvider extends ChangeNotifier {
   final List<AppInfo> _apps;
   final Map<String, AppInfo> _appMap;
 
-  // Listeners
+  // App listeners
   static const EventChannel _appEventChannel =
       EventChannel('net.empathetech.liminal/app_events');
   StreamSubscription<dynamic>? _appEventSubscription;
 
-  // Renamed
+  // Renamed apps
   final Set<String> _renamedSet = Set<String>.from(
       EzConfig.get(renamedIDsKey) ?? EzConfig.getDefault(renamedIDsKey));
 
-  // Home list
+  // Home apps
   final Set<String> _homeSet = Set<String>.from(
       EzConfig.get(homeIDsKey) ?? EzConfig.getDefault(homeIDsKey));
   final List<String> _homeList =
       EzConfig.get(homeIDsKey) ?? EzConfig.getDefault(homeIDsKey);
 
-  // Hidden list
+  // Hidden apps
   final Set<String> _hiddenSet = Set<String>.from(
       EzConfig.get(hiddenIDsKey) ?? EzConfig.getDefault(hiddenIDsKey));
   final List<String> _hiddenList =
@@ -46,6 +49,20 @@ class AppInfoProvider extends ChangeNotifier {
         _appMap = <String, AppInfo>{
           for (AppInfo app in apps) app.id: app,
         } {
+    // Iterate through the home set and split any folders
+    final Set<String> folders = <String>{};
+    for (final String item in _homeSet) {
+      if (item.contains(folderSplit)) {
+        _homeSet.addAll(item
+            .split(folderSplit)
+            .where((String item) => item.contains(idSplit))
+            .toSet());
+
+        folders.add(item);
+      }
+    }
+    _homeSet.removeAll(folders);
+
     // Gather renamed apps
     if (_renamedSet.isNotEmpty) {
       for (final String csv in _renamedSet) {
@@ -139,7 +156,7 @@ class AppInfoProvider extends ChangeNotifier {
   // Post //
 
   Future<void> addHomeFolder() async {
-    _homeList.add('Folder${folderSplit}empty');
+    _homeList.add('Folder$folderSplit$emptyTag');
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
@@ -212,7 +229,7 @@ class AppInfoProvider extends ChangeNotifier {
     _homeList.add(id);
 
     if (!_homeList[index].contains(folderSplit)) {
-      _homeList[index] = '${_homeList[index]}${folderSplit}empty';
+      _homeList[index] = '${_homeList[index]}$folderSplit$emptyTag';
     }
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
@@ -317,6 +334,21 @@ class AppInfoProvider extends ChangeNotifier {
 
     _homeList.remove(fullName);
     await EzConfig.setStringList(homeIDsKey, _homeList);
+
+    notifyListeners();
+  }
+
+  Future<void> reset() async {
+    _renamedSet.clear();
+    _homeSet.clear();
+    _homeList.clear();
+    _hiddenSet.clear();
+    _hiddenList.clear();
+
+    sort(
+      AppListSortConfig.fromValue(EzConfig.getDefault(appListSortKey)),
+      EzConfig.getDefault(appListOrderKey),
+    );
 
     notifyListeners();
   }
