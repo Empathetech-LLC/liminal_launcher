@@ -78,10 +78,10 @@ class AppInfoProvider extends ChangeNotifier {
 
     // Sort based on the user's preferences
     sort(
-      AppListSortConfig.fromValue(
-        EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
+      AppSortConfig.fromValue(
+        EzConfig.get(appSortKey) ?? EzConfig.getDefault(appSortKey),
       ),
-      EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey),
+      EzConfig.get(appOrderKey) ?? EzConfig.getDefault(appOrderKey),
     );
 
     // Listen //
@@ -124,10 +124,10 @@ class AppInfoProvider extends ChangeNotifier {
     _appMap[installed.id] = installed;
 
     sort(
-      AppListSortConfig.fromValue(
-        EzConfig.get(appListSortKey) ?? EzConfig.getDefault(appListSortKey),
+      AppSortConfig.fromValue(
+        EzConfig.get(appSortKey) ?? EzConfig.getDefault(appSortKey),
       ),
-      EzConfig.get(appListOrderKey) ?? EzConfig.getDefault(appListOrderKey),
+      EzConfig.get(appOrderKey) ?? EzConfig.getDefault(appOrderKey),
     );
 
     if (EzConfig.get(autoAddToHomeKey) == true &&
@@ -164,13 +164,13 @@ class AppInfoProvider extends ChangeNotifier {
 
   // Put //
 
-  void sort(ListSort sort, bool asc) {
+  void sort(AppSort sort, bool asc) {
     switch (sort) {
-      case ListSort.name:
+      case AppSort.name:
         _apps.sort((AppInfo a, AppInfo b) =>
             (asc) ? a.name.compareTo(b.name) : b.name.compareTo(a.name));
 
-      case ListSort.publisher:
+      case AppSort.publisher:
         _apps.sort((AppInfo a, AppInfo b) => (asc)
             ? a.package.compareTo(b.package)
             : b.package.compareTo(a.package));
@@ -346,8 +346,8 @@ class AppInfoProvider extends ChangeNotifier {
     _hiddenList.clear();
 
     sort(
-      AppListSortConfig.fromValue(EzConfig.getDefault(appListSortKey)),
-      EzConfig.getDefault(appListOrderKey),
+      AppSortConfig.fromValue(EzConfig.getDefault(appSortKey)),
+      EzConfig.getDefault(appOrderKey),
     );
 
     notifyListeners();

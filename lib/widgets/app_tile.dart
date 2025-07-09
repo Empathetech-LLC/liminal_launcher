@@ -52,8 +52,8 @@ class _AppTileState extends State<AppTile> {
   late final LabelType labelType = (widget.onHomeScreen == null)
       ? LabelTypeConfig.fromValue(EzConfig.get(folderLabelTypeKey) ??
           EzConfig.getDefault(folderLabelTypeKey))
-      : LabelTypeConfig.fromValue(EzConfig.get(homeLabelTypeKey) ??
-          EzConfig.getDefault(homeLabelTypeKey));
+      : LabelTypeConfig.fromValue(EzConfig.get(listLabelTypeKey) ??
+          EzConfig.getDefault(listLabelTypeKey));
 
   late bool editing = widget.editing;
 

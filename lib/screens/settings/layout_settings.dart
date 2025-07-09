@@ -45,30 +45,32 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      const EzLayoutSettings(
-        beforeLayout: <Widget>[EzDominantHandSwitch()],
-        prefixSpacer: spacer,
-        postfixSpacer: divider,
-        afterLayout: <Widget>[
-          // _HeaderDropdown(),
-          // const EzSeparator(),
+      const SafeArea(
+        child: EzLayoutSettings(
+          beforeLayout: <Widget>[EzDominantHandSwitch()],
+          prefixSpacer: spacer,
+          postfixSpacer: divider,
+          afterLayout: <Widget>[
+            // _HeaderDropdown(),
+            // const EzSeparator(),
 
-          // Home align
-          _SegmentedAlignmentButton(
-            label: 'Home list alignment',
-            configKey: homeAlignmentKey,
-            segments: alignmentSegments,
-          ),
-          spacer,
+            // Home align
+            _SegmentedAlignmentButton(
+              label: 'Home list alignment',
+              configKey: homeAlignmentKey,
+              segments: alignmentSegments,
+            ),
+            spacer,
 
-          // Full list align
-          _SegmentedAlignmentButton(
-            label: 'Full list alignment',
-            configKey: fullListAlignmentKey,
-            segments: alignmentSegments,
-          ),
-        ],
-        resetSpacer: divider,
+            // Full list align
+            _SegmentedAlignmentButton(
+              label: 'Full list alignment',
+              configKey: fullListAlignmentKey,
+              segments: alignmentSegments,
+            ),
+          ],
+          resetSpacer: divider,
+        ),
       ),
       fab: EzBackFAB(context),
     );

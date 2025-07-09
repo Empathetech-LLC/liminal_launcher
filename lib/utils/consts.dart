@@ -45,7 +45,7 @@ const String homeTimeKey = 'home_time';
 const String homeDateKey = 'home_date';
 // const String homeWeatherKey = 'home_weather';
 const String homeIconKey = 'home_icon';
-const String homeLabelTypeKey = 'home_label_type';
+const String listLabelTypeKey = 'home_label_type';
 const String folderIconKey = 'folder_icon';
 const String folderLabelTypeKey = 'folder_label_type';
 
@@ -81,7 +81,7 @@ final Map<String, Object> defaultConfig = <String, Object>{
   homeDateKey: true,
   // homeWeatherKey: true,
   homeIconKey: true,
-  homeLabelTypeKey: LabelType.full.configValue,
+  listLabelTypeKey: LabelType.full.configValue,
   folderIconKey: true,
   folderLabelTypeKey: LabelType.none.configValue,
 
