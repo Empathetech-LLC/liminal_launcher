@@ -66,8 +66,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   Future<dynamic> update() => showPlatformDialog(
         context: context,
         builder: (_) => const EzAlertDialog(
-          title: Text('Tips', textAlign: TextAlign.center),
-          content: Text('&& tricks', textAlign: TextAlign.center),
+          title: Text('Update available', textAlign: TextAlign.center),
+          content: Text('BLARG', textAlign: TextAlign.center),
         ),
       );
 
@@ -250,9 +250,13 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
 
                   (materialActions, cupertinoActions) = ezActionPairs(
                     context: context,
-                    onConfirm: () {
-                      EzConfig.reset(skip: resetAll ? <String>{} : skip);
-                      Navigator.of(dialogContext).pop();
+                    onConfirm: () async {
+                      await EzConfig.reset(skip: resetAll ? <String>{} : skip);
+                      if (resetAll) await provider.reset();
+
+                      if (dialogContext.mounted) {
+                        Navigator.of(dialogContext).pop();
+                      }
                     },
                     confirmIsDestructive: true,
                     onDeny: () => Navigator.of(dialogContext).pop(),
