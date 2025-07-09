@@ -24,9 +24,9 @@ final AppInfo self = AppInfo(
 // BTS
 const String homeIDsKey = 'home_packages';
 const String hiddenIDsKey = 'hidden_packages';
-const String appListSortKey = 'app_list_sort';
-const String appListOrderKey = 'app_list_order';
 const String renamedIDsKey = 'renamed_apps';
+const String appSortKey = 'app_sort';
+const String appOrderKey = 'app_order';
 
 // Functionality
 const String leftAppKey = 'left_app';
@@ -44,8 +44,14 @@ const String fullListAlignmentKey = 'full_list_alignment';
 const String homeTimeKey = 'home_time';
 const String homeDateKey = 'home_date';
 // const String homeWeatherKey = 'home_weather';
-const String showIconKey = 'show_icon';
-const String labelTypeKey = 'label_type';
+const String homeIconKey = 'home_icon';
+const String homeLabelTypeKey = 'home_label_type';
+const String folderIconKey = 'folder_icon';
+const String folderLabelTypeKey = 'folder_label_type';
+
+// Image
+
+const String useOSKey = 'use_os';
 
 /// [mobileEmpathConfig] with Liminal additions
 final Map<String, Object> defaultConfig = <String, Object>{
@@ -54,8 +60,8 @@ final Map<String, Object> defaultConfig = <String, Object>{
   // BTS
   homeIDsKey: <String>[],
   hiddenIDsKey: <String>[],
-  appListSortKey: ListSort.name.configValue,
-  appListOrderKey: true,
+  appSortKey: AppSort.name.configValue,
+  appOrderKey: true,
   renamedIDsKey: <String>[],
 
   // Functionality
@@ -74,8 +80,13 @@ final Map<String, Object> defaultConfig = <String, Object>{
   homeTimeKey: true,
   homeDateKey: true,
   // homeWeatherKey: true,
-  showIconKey: false,
-  labelTypeKey: LabelType.full.configValue,
+  homeIconKey: true,
+  homeLabelTypeKey: LabelType.full.configValue,
+  folderIconKey: true,
+  folderLabelTypeKey: LabelType.none.configValue,
+
+  // Image
+  useOSKey: true,
 };
 
 // Custom fonts //
