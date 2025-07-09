@@ -15,7 +15,7 @@ class ColorSettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LiminalScaffold(
-        EzColorSettings(target: target),
+        SafeArea(child: EzColorSettings(target: target)),
         fab: EzBackFAB(context),
       );
 }
