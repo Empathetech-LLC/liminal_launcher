@@ -46,11 +46,14 @@ class _AppTileState extends State<AppTile> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  final bool showIcon =
-      EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
-  final LabelType labelType = LabelTypeConfig.fromValue(
-    EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey),
-  );
+  late final bool showIcon = (widget.onHomeScreen == null)
+      ? EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey)
+      : EzConfig.get(homeIconKey) ?? EzConfig.getDefault(homeIconKey);
+  late final LabelType labelType = (widget.onHomeScreen == null)
+      ? LabelTypeConfig.fromValue(EzConfig.get(folderLabelTypeKey) ??
+          EzConfig.getDefault(folderLabelTypeKey))
+      : LabelTypeConfig.fromValue(EzConfig.get(homeLabelTypeKey) ??
+          EzConfig.getDefault(homeLabelTypeKey));
 
   late bool editing = widget.editing;
 
