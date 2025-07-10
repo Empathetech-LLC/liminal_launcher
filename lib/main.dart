@@ -130,6 +130,11 @@ class LiminalLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData darkTheme = ezThemeData(Brightness.dark)
+        .copyWith(scaffoldBackgroundColor: Colors.transparent);
+    final ThemeData lightTheme = ezThemeData(Brightness.light)
+        .copyWith(scaffoldBackgroundColor: Colors.transparent);
+
     return ChangeNotifierProvider<AppInfoProvider>(
       create: (_) => AppInfoProvider(installedApps),
       child: EzAppProvider(
@@ -152,6 +157,8 @@ class LiminalLauncher extends StatelessWidget {
           title: appTitle,
           routerConfig: router,
         ),
+        darkTheme: darkTheme,
+        lightTheme: lightTheme,
       ),
     );
   }
