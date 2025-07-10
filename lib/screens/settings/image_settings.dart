@@ -39,64 +39,59 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      LiminalScreen(
-        child: EzScrollView(
-          children: <Widget>[
-            // Current theme reminder
-            EzText(
-              el10n.gEditingTheme(themeProfile),
-              style: Theme.of(context).textTheme.labelLarge,
-              textAlign: TextAlign.center,
-            ),
-            useOS ? spacer : margin,
-
-            // Wallpaper
-            if (!useOS) ...<Widget>[
-              EzScrollView(
-                scrollDirection: Axis.horizontal,
-                startCentered: true,
-                mainAxisSize: MainAxisSize.min,
-                child: isDark
-                    ? EzImageSetting(
-                        key: UniqueKey(),
-                        configKey: darkBackgroundImageKey,
-                        label: 'Wallpaper',
-                        updateTheme: Brightness.dark,
-                      )
-                    : EzImageSetting(
-                        key: UniqueKey(),
-                        configKey: lightBackgroundImageKey,
-                        label: 'Wallpaper',
-                        updateTheme: Brightness.light,
-                      ),
-              ),
-              spacer,
-            ],
-
-            // Use OS
-            EzSwitchPair(
-              text: 'Use System Wallpaper',
-              valueKey: useOSKey,
-              onChangedCallback: (bool? choice) {
-                if (choice == null) return;
-                setState(() => useOS = choice);
-              },
-            ),
-            separator,
-
-            // Local reset all
-            EzResetButton(
-              dialogTitle: el10n.isResetAll(themeProfile),
-              onConfirm: () async {
-                await EzConfig.removeKeys(
-                    <String>{useOSKey, ...imageKeys.keys});
-                setState(() => useOS = EzConfig.getDefault(useOSKey));
-              },
-            ),
-            separator,
-          ],
+      LiminalScreen(EzScrollView(children: <Widget>[
+        // Current theme reminder
+        EzText(
+          el10n.gEditingTheme(themeProfile),
+          style: Theme.of(context).textTheme.labelLarge,
+          textAlign: TextAlign.center,
         ),
-      ),
+        spacer,
+
+        // Wallpaper
+        if (!useOS) ...<Widget>[
+          EzScrollView(
+            scrollDirection: Axis.horizontal,
+            startCentered: true,
+            mainAxisSize: MainAxisSize.min,
+            child: isDark
+                ? EzImageSetting(
+                    key: UniqueKey(),
+                    configKey: darkBackgroundImageKey,
+                    label: 'Wallpaper',
+                    updateTheme: Brightness.dark,
+                  )
+                : EzImageSetting(
+                    key: UniqueKey(),
+                    configKey: lightBackgroundImageKey,
+                    label: 'Wallpaper',
+                    updateTheme: Brightness.light,
+                  ),
+          ),
+          spacer,
+        ],
+
+        // Use OS
+        EzSwitchPair(
+          text: 'Use System Wallpaper',
+          valueKey: useOSKey,
+          onChangedCallback: (bool? choice) {
+            if (choice == null) return;
+            setState(() => useOS = choice);
+          },
+        ),
+        separator,
+
+        // Local reset all
+        EzResetButton(
+          dialogTitle: el10n.isResetAll(themeProfile),
+          onConfirm: () async {
+            await EzConfig.removeKeys(<String>{useOSKey, ...imageKeys.keys});
+            setState(() => useOS = EzConfig.getDefault(useOSKey));
+          },
+        ),
+        separator,
+      ])),
       fab: EzBackFAB(context),
     );
   }

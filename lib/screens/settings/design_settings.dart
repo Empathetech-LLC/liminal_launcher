@@ -110,210 +110,206 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      LiminalScreen(
-        child: EzScrollView(
+      LiminalScreen(EzScrollView(children: <Widget>[
+        if (spacing > margin) EzSpacer(space: spacing - margin),
+        // Header //
+
+        // Time
+        const EzSwitchPair(text: 'Home time', valueKey: homeTimeKey),
+        spacer,
+
+        // Date
+        const EzSwitchPair(text: 'Home date', valueKey: homeDateKey),
+        // spacer,
+
+        // Weather
+        // EzSwitchPair(
+        //   text: 'Home weather',
+        //   valueKey: homeWeatherKey,
+        //   canChange: (bool choice) async {
+        //     return choice
+        //         ? await showPlatformDialog<bool>(
+        //               context: context,
+        //               builder: (_) => const EzAlertDialog(
+        //                 title: Text('API key'),
+        //                 content: Text('GIVE TO ME'),
+        //               ),
+        //             ) ??
+        //             false
+        //         : true;
+        //   },
+        // ),
+        divider,
+
+        // List AppTile //
+
+        // Preview
+        homeIcon
+            ? EzTextIconButton(
+                icon: EzIcon(PlatformIcons(context).settings),
+                label: listLabel(),
+                onPressed: doNothing,
+              )
+            : EzTextButton(
+                text: listLabel(),
+                onPressed: doNothing,
+              ),
+        spacer,
+
+        // Label type
+        EzRow(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            if (spacing > margin) EzSpacer(space: spacing - margin),
-            // Header //
-
-            // Time
-            const EzSwitchPair(text: 'Home time', valueKey: homeTimeKey),
-            spacer,
-
-            // Date
-            const EzSwitchPair(text: 'Home date', valueKey: homeDateKey),
-            // spacer,
-
-            // Weather
-            // EzSwitchPair(
-            //   text: 'Home weather',
-            //   valueKey: homeWeatherKey,
-            //   canChange: (bool choice) async {
-            //     return choice
-            //         ? await showPlatformDialog<bool>(
-            //               context: context,
-            //               builder: (_) => const EzAlertDialog(
-            //                 title: Text('API key'),
-            //                 content: Text('GIVE TO ME'),
-            //               ),
-            //             ) ??
-            //             false
-            //         : true;
-            //   },
-            // ),
-            divider,
-
-            // List AppTile //
-
-            // Preview
-            homeIcon
-                ? EzTextIconButton(
-                    icon: EzIcon(PlatformIcons(context).settings),
-                    label: listLabel(),
-                    onPressed: doNothing,
-                  )
-                : EzTextButton(
-                    text: listLabel(),
-                    onPressed: doNothing,
-                  ),
-            spacer,
-
-            // Label type
-            EzRow(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const EzText('Label type'),
-                rowSpacer,
-                EzDropdownMenu<LabelType>(
-                  widthEntries: <String>['Full name'],
-                  dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
-                    const DropdownMenuEntry<LabelType>(
-                      value: LabelType.none,
-                      label: 'None',
-                    ),
-                    const DropdownMenuEntry<LabelType>(
-                      value: LabelType.initials,
-                      label: 'Initials',
-                    ),
-                    const DropdownMenuEntry<LabelType>(
-                      value: LabelType.full,
-                      label: 'Full name',
-                    ),
-                    const DropdownMenuEntry<LabelType>(
-                      value: LabelType.wingding,
-                      label: 'Wingding',
-                    ),
-                  ],
-                  enableSearch: false,
-                  initialSelection: listLabelType,
-                  onSelected: (LabelType? choice) async {
-                    if (choice == null) return;
-
-                    await EzConfig.setString(
-                      listLabelTypeKey,
-                      choice.configValue,
-                    );
-                    listLabelType = choice;
-
-                    if (listLabelType == LabelType.none) {
-                      await EzConfig.setBool(listIconKey, true);
-                      homeIcon = true;
-                    }
-
-                    setState(() {});
-                  },
+            const EzText('Label type'),
+            rowSpacer,
+            EzDropdownMenu<LabelType>(
+              widthEntries: <String>['Full name'],
+              dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
+                const DropdownMenuEntry<LabelType>(
+                  value: LabelType.none,
+                  label: 'None',
+                ),
+                const DropdownMenuEntry<LabelType>(
+                  value: LabelType.initials,
+                  label: 'Initials',
+                ),
+                const DropdownMenuEntry<LabelType>(
+                  value: LabelType.full,
+                  label: 'Full name',
+                ),
+                const DropdownMenuEntry<LabelType>(
+                  value: LabelType.wingding,
+                  label: 'Wingding',
                 ),
               ],
-            ),
-            rowSpacer,
+              enableSearch: false,
+              initialSelection: listLabelType,
+              onSelected: (LabelType? choice) async {
+                if (choice == null) return;
 
-            // Show icon
-            EzSwitchPair(
-              text: 'Show icon',
-              valueKey: listIconKey,
-              onChangedCallback: (bool? value) async {
-                if (value == null) return;
+                await EzConfig.setString(
+                  listLabelTypeKey,
+                  choice.configValue,
+                );
+                listLabelType = choice;
 
-                homeIcon = value;
-                if (value == false && listLabelType == LabelType.none) {
-                  await EzConfig.setString(
-                    listLabelTypeKey,
-                    LabelType.full.configValue,
-                  );
-                  listLabelType = LabelType.full;
+                if (listLabelType == LabelType.none) {
+                  await EzConfig.setBool(listIconKey, true);
+                  homeIcon = true;
                 }
 
                 setState(() {});
               },
             ),
-            divider,
-
-            // Folder AppTile //
-            // Preview
-            folderIcon
-                ? EzTextIconButton(
-                    icon: EzIcon(PlatformIcons(context).settings),
-                    label: folderLabel(),
-                    onPressed: doNothing,
-                  )
-                : EzTextButton(
-                    text: folderLabel(),
-                    onPressed: doNothing,
-                  ),
-            spacer,
-
-            // Label type
-            EzRow(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const EzText('Label type'),
-                rowSpacer,
-                EzDropdownMenu<LabelType>(
-                  widthEntries: <String>['Full name'],
-                  dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
-                    const DropdownMenuEntry<LabelType>(
-                      value: LabelType.none,
-                      label: 'None',
-                    ),
-                    const DropdownMenuEntry<LabelType>(
-                      value: LabelType.initials,
-                      label: 'Initials',
-                    ),
-                    const DropdownMenuEntry<LabelType>(
-                      value: LabelType.full,
-                      label: 'Full name',
-                    ),
-                    const DropdownMenuEntry<LabelType>(
-                      value: LabelType.wingding,
-                      label: 'Wingding',
-                    ),
-                  ],
-                  enableSearch: false,
-                  initialSelection: folderLabelType,
-                  onSelected: (LabelType? choice) async {
-                    if (choice == null) return;
-
-                    await EzConfig.setString(
-                      folderLabelTypeKey,
-                      choice.configValue,
-                    );
-                    folderLabelType = choice;
-
-                    if (folderLabelType == LabelType.none) {
-                      await EzConfig.setBool(folderIconKey, true);
-                      folderIcon = true;
-                    }
-
-                    setState(() {});
-                  },
-                ),
-              ],
-            ),
-            rowSpacer,
-
-            // Show icon
-            EzSwitchPair(
-              text: 'Show icon',
-              valueKey: folderIconKey,
-              onChangedCallback: (bool? value) async {
-                if (value == null) return;
-
-                folderIcon = value;
-                if (value == false && folderLabelType == LabelType.none) {
-                  await EzConfig.setString(
-                    folderLabelTypeKey,
-                    LabelType.full.configValue,
-                  );
-                  folderLabelType = LabelType.full;
-                }
-
-                setState(() {});
-              },
-            ),
-            separator,
           ],
         ),
-      ),
+        rowSpacer,
+
+        // Show icon
+        EzSwitchPair(
+          text: 'Show icon',
+          valueKey: listIconKey,
+          onChangedCallback: (bool? value) async {
+            if (value == null) return;
+
+            homeIcon = value;
+            if (value == false && listLabelType == LabelType.none) {
+              await EzConfig.setString(
+                listLabelTypeKey,
+                LabelType.full.configValue,
+              );
+              listLabelType = LabelType.full;
+            }
+
+            setState(() {});
+          },
+        ),
+        divider,
+
+        // Folder AppTile //
+        // Preview
+        folderIcon
+            ? EzTextIconButton(
+                icon: EzIcon(PlatformIcons(context).settings),
+                label: folderLabel(),
+                onPressed: doNothing,
+              )
+            : EzTextButton(
+                text: folderLabel(),
+                onPressed: doNothing,
+              ),
+        spacer,
+
+        // Label type
+        EzRow(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const EzText('Label type'),
+            rowSpacer,
+            EzDropdownMenu<LabelType>(
+              widthEntries: <String>['Full name'],
+              dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
+                const DropdownMenuEntry<LabelType>(
+                  value: LabelType.none,
+                  label: 'None',
+                ),
+                const DropdownMenuEntry<LabelType>(
+                  value: LabelType.initials,
+                  label: 'Initials',
+                ),
+                const DropdownMenuEntry<LabelType>(
+                  value: LabelType.full,
+                  label: 'Full name',
+                ),
+                const DropdownMenuEntry<LabelType>(
+                  value: LabelType.wingding,
+                  label: 'Wingding',
+                ),
+              ],
+              enableSearch: false,
+              initialSelection: folderLabelType,
+              onSelected: (LabelType? choice) async {
+                if (choice == null) return;
+
+                await EzConfig.setString(
+                  folderLabelTypeKey,
+                  choice.configValue,
+                );
+                folderLabelType = choice;
+
+                if (folderLabelType == LabelType.none) {
+                  await EzConfig.setBool(folderIconKey, true);
+                  folderIcon = true;
+                }
+
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+        rowSpacer,
+
+        // Show icon
+        EzSwitchPair(
+          text: 'Show icon',
+          valueKey: folderIconKey,
+          onChangedCallback: (bool? value) async {
+            if (value == null) return;
+
+            folderIcon = value;
+            if (value == false && folderLabelType == LabelType.none) {
+              await EzConfig.setString(
+                folderLabelTypeKey,
+                LabelType.full.configValue,
+              );
+              folderLabelType = LabelType.full;
+            }
+
+            setState(() {});
+          },
+        ),
+        separator,
+      ])),
       fab: EzBackFAB(context),
     );
   }

@@ -75,270 +75,265 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      LiminalScreen(
-        child: EzScrollView(
+      LiminalScreen(EzScrollView(children: <Widget>[
+        Stack(
+          // Core
           children: <Widget>[
-            Stack(
-              // Core
-              children: <Widget>[
-                GestureDetector(
-                  onLongPress: showTips,
-                  child: const EzWarning(
-                      'Appearance settings take full effect on restart.\n\nHave fun!'),
-                ),
-
-                // Tips
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: EzIcon(Icons.help_outline),
-                    onPressed: showTips,
-                  ),
-                ),
-
-                // Updater (if relevant)
-                const Positioned(top: 0, left: 0, child: EzUpdater()),
-              ],
+            GestureDetector(
+              onLongPress: showTips,
+              child: const EzWarning(
+                  'Appearance settings take full effect on restart.\n\nHave fun!'),
             ),
-            separator,
 
-            // Left swipe
-            _SwipeSelector(
-              isLefty: true,
-              entries: swipeEntries,
-              provider: provider,
-              textTheme: textTheme,
-            ),
-            spacer,
-
-            // Right swipe
-            _SwipeSelector(
-              isLefty: false,
-              entries: swipeEntries,
-              provider: provider,
-              textTheme: textTheme,
-            ),
-            separator,
-
-            // Auto search
-            const EzSwitchPair(text: 'Auto search', valueKey: autoSearchKey),
-            spacer,
-
-            // Auto search
-            const EzSwitchPair(text: 'Auth to edit', valueKey: authToEditKey),
-            spacer,
-
-            // Auto add to home
-            const EzSwitchPair(
-              text: 'Add new apps to home',
-              valueKey: autoAddToHomeKey,
-            ),
-            divider,
-
-            // GoTo layout settings
-            EzElevatedIconButton(
-              onPressed: () => context.goNamed(layoutSettingsPath),
-              icon: EzIcon(Icons.navigate_next),
-              label: el10n.lsPageTitle,
-            ),
-            spacer,
-
-            // GoTo design settings
-            EzElevatedIconButton(
-              onPressed: () => context.goNamed(designSettingsPath),
-              icon: EzIcon(Icons.navigate_next),
-              label: 'Design settings',
-            ),
-            spacer,
-
-            // GoTo text settings
-            EzElevatedIconButton(
-              onPressed: () => context.goNamed(textSettingsPath),
-              icon: EzIcon(Icons.navigate_next),
-              label: el10n.tsPageTitle,
-            ),
-            spacer,
-
-            // GoTo color settings
-            EzElevatedIconButton(
-              onPressed: () => context.goNamed(colorSettingsPath),
-              icon: EzIcon(Icons.navigate_next),
-              label: el10n.csPageTitle,
-            ),
-            spacer,
-
-            // GoTo image settings
-            EzElevatedIconButton(
-              onPressed: () => context.goNamed(imageSettingsPath),
-              icon: EzIcon(Icons.navigate_next),
-              label: el10n.isPageTitle,
-            ),
-            divider,
-
-            // Randomize
-            EzConfigRandomizer(
-              dialogContent:
-                  'Only affects appearance settings\n${el10n.gUndoWarn}',
-              onConfirm: () async {
-                await EzConfig.randomize(isDarkTheme(context), shiny: false);
-
-                final Random random = Random();
-
-                // Layout
-
-                final int homeAlignRand = random.nextInt(3);
-                late final String homeAlignValue;
-                switch (homeAlignRand) {
-                  case 1:
-                    homeAlignValue = ListAlignment.start.configValue;
-                    break;
-                  case 2:
-                    homeAlignValue = ListAlignment.end.configValue;
-                    break;
-                  default:
-                    homeAlignValue = ListAlignment.center.configValue;
-                    break;
-                }
-                await EzConfig.setString(homeAlignmentKey, homeAlignValue);
-
-                final int listAlignRand = random.nextInt(3);
-                late final String listAlignValue;
-                switch (listAlignRand) {
-                  case 1:
-                    listAlignValue = ListAlignment.start.configValue;
-                    break;
-                  case 2:
-                    listAlignValue = ListAlignment.end.configValue;
-                    break;
-                  default:
-                    listAlignValue = ListAlignment.center.configValue;
-                    break;
-                }
-                await EzConfig.setString(fullListAlignmentKey, listAlignValue);
-
-                // Design
-
-                await EzConfig.setBool(homeTimeKey, random.nextBool());
-                await EzConfig.setBool(homeDateKey, random.nextBool());
-
-                // final bool headerOrder = random.nextBool();
-                // await EzConfig.setString(
-                //   headerOrderKey,
-                //   ((headerOrder == true)
-                //           ? HeaderOrder.timeFirst
-                //           : HeaderOrder.weatherFirst)
-                //       .configValue,
-                // );
-
-                await EzConfig.setBool(listIconKey, random.nextBool());
-                final int listLabelRand = random.nextInt(4);
-                late final String listLabelValue;
-                switch (listLabelRand) {
-                  case 0:
-                    listLabelValue = LabelType.none.configValue;
-                    break;
-                  case 1:
-                    listLabelValue = LabelType.initials.configValue;
-                    break;
-                  case 3:
-                    listLabelValue = LabelType.wingding.configValue;
-                    break;
-                  default:
-                    listLabelValue = LabelType.full.configValue;
-                    break;
-                }
-                await EzConfig.setString(listLabelTypeKey, listLabelValue);
-
-                await EzConfig.setBool(folderIconKey, random.nextBool());
-                final int folderLabelRand = random.nextInt(3);
-                late final String folderLabelValue;
-                switch (folderLabelRand) {
-                  case 0:
-                    folderLabelValue = LabelType.none.configValue;
-                    break;
-                  case 1:
-                    folderLabelValue = LabelType.initials.configValue;
-                    break;
-                  case 3:
-                    folderLabelValue = LabelType.wingding.configValue;
-                  default:
-                    folderLabelValue = LabelType.full.configValue;
-                    break;
-                }
-                await EzConfig.setString(folderLabelTypeKey, folderLabelValue);
-              },
-            ),
-            spacer,
-
-            // Reset
-            EzElevatedIconButton(
-              onPressed: () => showPlatformDialog(
-                context: context,
-                builder: (_) => StatefulBuilder(builder: (
-                  BuildContext dialogContext,
-                  StateSetter dialogState,
-                ) {
-                  late final Set<String> skip = <String>{
-                    homeIDsKey,
-                    hiddenIDsKey,
-                    leftAppKey,
-                    rightAppKey,
-                    authToEditKey,
-                  };
-
-                  late final List<Widget> materialActions;
-                  late final List<Widget> cupertinoActions;
-
-                  (materialActions, cupertinoActions) = ezActionPairs(
-                    context: context,
-                    onConfirm: () async {
-                      await EzConfig.reset(skip: resetAll ? <String>{} : skip);
-                      if (resetAll) await provider.reset();
-
-                      if (dialogContext.mounted) {
-                        Navigator.of(dialogContext).pop();
-                      }
-                    },
-                    confirmIsDestructive: true,
-                    onDeny: () => Navigator.of(dialogContext).pop(),
-                  );
-
-                  return EzAlertDialog(
-                    key: ValueKey<bool>(resetAll),
-                    title: const Text(
-                      'Reset all appearance settings?',
-                      textAlign: TextAlign.center,
-                    ),
-                    contents: <Widget>[
-                      EzSwitchPair(
-                        text: 'Or, ALL settings',
-                        value: resetAll,
-                        onChanged: (bool? choice) {
-                          resetAll = (choice == null) ? false : choice;
-                          setState(() {});
-                          dialogState(() {});
-                        },
-                      ),
-                      spacer,
-                      Text(
-                        el10n.gUndoWarn,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                    materialActions: materialActions,
-                    cupertinoActions: cupertinoActions,
-                    needsClose: false,
-                  );
-                }),
+            // Tips
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: EzIcon(Icons.help_outline),
+                onPressed: showTips,
               ),
-              icon: EzIcon(PlatformIcons(context).refresh),
-              label: el10n.gResetAll,
             ),
-            separator,
+
+            // Updater (if relevant)
+            const Positioned(top: 0, left: 0, child: EzUpdater()),
           ],
         ),
-      ),
+        separator,
+
+        // Left swipe
+        _SwipeSelector(
+          isLefty: true,
+          entries: swipeEntries,
+          provider: provider,
+          textTheme: textTheme,
+        ),
+        spacer,
+
+        // Right swipe
+        _SwipeSelector(
+          isLefty: false,
+          entries: swipeEntries,
+          provider: provider,
+          textTheme: textTheme,
+        ),
+        separator,
+
+        // Auto search
+        const EzSwitchPair(text: 'Auto search', valueKey: autoSearchKey),
+        spacer,
+
+        // Auto search
+        const EzSwitchPair(text: 'Auth to edit', valueKey: authToEditKey),
+        spacer,
+
+        // Auto add to home
+        const EzSwitchPair(
+          text: 'Add new apps to home',
+          valueKey: autoAddToHomeKey,
+        ),
+        divider,
+
+        // GoTo layout settings
+        EzElevatedIconButton(
+          onPressed: () => context.goNamed(layoutSettingsPath),
+          icon: EzIcon(Icons.navigate_next),
+          label: el10n.lsPageTitle,
+        ),
+        spacer,
+
+        // GoTo design settings
+        EzElevatedIconButton(
+          onPressed: () => context.goNamed(designSettingsPath),
+          icon: EzIcon(Icons.navigate_next),
+          label: 'Design settings',
+        ),
+        spacer,
+
+        // GoTo text settings
+        EzElevatedIconButton(
+          onPressed: () => context.goNamed(textSettingsPath),
+          icon: EzIcon(Icons.navigate_next),
+          label: el10n.tsPageTitle,
+        ),
+        spacer,
+
+        // GoTo color settings
+        EzElevatedIconButton(
+          onPressed: () => context.goNamed(colorSettingsPath),
+          icon: EzIcon(Icons.navigate_next),
+          label: el10n.csPageTitle,
+        ),
+        spacer,
+
+        // GoTo image settings
+        EzElevatedIconButton(
+          onPressed: () => context.goNamed(imageSettingsPath),
+          icon: EzIcon(Icons.navigate_next),
+          label: el10n.isPageTitle,
+        ),
+        divider,
+
+        // Randomize
+        EzConfigRandomizer(
+          dialogContent: 'Only affects appearance settings\n${el10n.gUndoWarn}',
+          onConfirm: () async {
+            await EzConfig.randomize(isDarkTheme(context), shiny: false);
+
+            final Random random = Random();
+
+            // Layout
+
+            final int homeAlignRand = random.nextInt(3);
+            late final String homeAlignValue;
+            switch (homeAlignRand) {
+              case 1:
+                homeAlignValue = ListAlignment.start.configValue;
+                break;
+              case 2:
+                homeAlignValue = ListAlignment.end.configValue;
+                break;
+              default:
+                homeAlignValue = ListAlignment.center.configValue;
+                break;
+            }
+            await EzConfig.setString(homeAlignmentKey, homeAlignValue);
+
+            final int listAlignRand = random.nextInt(3);
+            late final String listAlignValue;
+            switch (listAlignRand) {
+              case 1:
+                listAlignValue = ListAlignment.start.configValue;
+                break;
+              case 2:
+                listAlignValue = ListAlignment.end.configValue;
+                break;
+              default:
+                listAlignValue = ListAlignment.center.configValue;
+                break;
+            }
+            await EzConfig.setString(fullListAlignmentKey, listAlignValue);
+
+            // Design
+
+            await EzConfig.setBool(homeTimeKey, random.nextBool());
+            await EzConfig.setBool(homeDateKey, random.nextBool());
+
+            // final bool headerOrder = random.nextBool();
+            // await EzConfig.setString(
+            //   headerOrderKey,
+            //   ((headerOrder == true)
+            //           ? HeaderOrder.timeFirst
+            //           : HeaderOrder.weatherFirst)
+            //       .configValue,
+            // );
+
+            await EzConfig.setBool(listIconKey, random.nextBool());
+            final int listLabelRand = random.nextInt(4);
+            late final String listLabelValue;
+            switch (listLabelRand) {
+              case 0:
+                listLabelValue = LabelType.none.configValue;
+                break;
+              case 1:
+                listLabelValue = LabelType.initials.configValue;
+                break;
+              case 3:
+                listLabelValue = LabelType.wingding.configValue;
+                break;
+              default:
+                listLabelValue = LabelType.full.configValue;
+                break;
+            }
+            await EzConfig.setString(listLabelTypeKey, listLabelValue);
+
+            await EzConfig.setBool(folderIconKey, random.nextBool());
+            final int folderLabelRand = random.nextInt(3);
+            late final String folderLabelValue;
+            switch (folderLabelRand) {
+              case 0:
+                folderLabelValue = LabelType.none.configValue;
+                break;
+              case 1:
+                folderLabelValue = LabelType.initials.configValue;
+                break;
+              case 3:
+                folderLabelValue = LabelType.wingding.configValue;
+              default:
+                folderLabelValue = LabelType.full.configValue;
+                break;
+            }
+            await EzConfig.setString(folderLabelTypeKey, folderLabelValue);
+          },
+        ),
+        spacer,
+
+        // Reset
+        EzElevatedIconButton(
+          onPressed: () => showPlatformDialog(
+            context: context,
+            builder: (_) => StatefulBuilder(builder: (
+              BuildContext dialogContext,
+              StateSetter dialogState,
+            ) {
+              late final Set<String> skip = <String>{
+                homeIDsKey,
+                hiddenIDsKey,
+                leftAppKey,
+                rightAppKey,
+                authToEditKey,
+              };
+
+              late final List<Widget> materialActions;
+              late final List<Widget> cupertinoActions;
+
+              (materialActions, cupertinoActions) = ezActionPairs(
+                context: context,
+                onConfirm: () async {
+                  await EzConfig.reset(skip: resetAll ? <String>{} : skip);
+                  if (resetAll) await provider.reset();
+
+                  if (dialogContext.mounted) {
+                    Navigator.of(dialogContext).pop();
+                  }
+                },
+                confirmIsDestructive: true,
+                onDeny: () => Navigator.of(dialogContext).pop(),
+              );
+
+              return EzAlertDialog(
+                key: ValueKey<bool>(resetAll),
+                title: const Text(
+                  'Reset all appearance settings?',
+                  textAlign: TextAlign.center,
+                ),
+                contents: <Widget>[
+                  EzSwitchPair(
+                    text: 'Or, ALL settings',
+                    value: resetAll,
+                    onChanged: (bool? choice) {
+                      resetAll = (choice == null) ? false : choice;
+                      setState(() {});
+                      dialogState(() {});
+                    },
+                  ),
+                  spacer,
+                  Text(
+                    el10n.gUndoWarn,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+                materialActions: materialActions,
+                cupertinoActions: cupertinoActions,
+                needsClose: false,
+              );
+            }),
+          ),
+          icon: EzIcon(PlatformIcons(context).refresh),
+          label: el10n.gResetAll,
+        ),
+        separator,
+      ])),
       fab: EzBackFAB(context, showHome: true),
     );
   }
