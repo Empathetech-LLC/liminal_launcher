@@ -3,6 +3,7 @@
  * See LICENSE for distribution and usage details.
  */
 
+import '../../utils/export.dart';
 import '../../widgets/export.dart';
 
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class ImageSettingsScreen extends StatefulWidget {
 class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
   // Gather the theme data //
 
+  static const EzSpacer spacer = EzSpacer();
   static const EzSeparator separator = EzSeparator();
 
   final EzSpacer margin = EzMargin();
@@ -29,6 +31,8 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
 
   late final String themeProfile =
       isDark ? el10n.gDark.toLowerCase() : el10n.gLight.toLowerCase();
+
+  bool useOS = EzConfig.get(useOSKey) ?? EzConfig.getDefault(useOSKey);
 
   // Return the build //
 
@@ -44,35 +48,52 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
               style: Theme.of(context).textTheme.labelLarge,
               textAlign: TextAlign.center,
             ),
-            margin,
+            useOS ? spacer : margin,
 
             // Wallpaper
-            EzScrollView(
-              scrollDirection: Axis.horizontal,
-              startCentered: true,
-              mainAxisSize: MainAxisSize.min,
-              child: isDark
-                  ? EzImageSetting(
-                      key: UniqueKey(),
-                      configKey: darkBackgroundImageKey,
-                      label: 'Wallpaper',
-                      updateTheme: Brightness.dark,
-                    )
-                  : EzImageSetting(
-                      key: UniqueKey(),
-                      configKey: lightBackgroundImageKey,
-                      label: 'Wallpaper',
-                      updateTheme: Brightness.light,
-                    ),
+            if (!useOS) ...<Widget>[
+              EzScrollView(
+                scrollDirection: Axis.horizontal,
+                startCentered: true,
+                mainAxisSize: MainAxisSize.min,
+                child: isDark
+                    ? EzImageSetting(
+                        key: UniqueKey(),
+                        configKey: darkBackgroundImageKey,
+                        label: 'Wallpaper',
+                        updateTheme: Brightness.dark,
+                      )
+                    : EzImageSetting(
+                        key: UniqueKey(),
+                        configKey: lightBackgroundImageKey,
+                        label: 'Wallpaper',
+                        updateTheme: Brightness.light,
+                      ),
+              ),
+              spacer,
+            ],
+
+            // Use OS
+            EzSwitchPair(
+              text: 'Use System Wallpaper',
+              valueKey: useOSKey,
+              onChangedCallback: (bool? choice) {
+                if (choice == null) return;
+                setState(() => useOS = choice);
+              },
             ),
             separator,
 
             // Local reset all
-            // EzResetButton(
-            //   dialogTitle: el10n.isResetAll(themeProfile),
-            //   onConfirm: () => EzConfig.removeKeys(imageKeys.keys.toSet()),
-            // ),
-            // separator,
+            EzResetButton(
+              dialogTitle: el10n.isResetAll(themeProfile),
+              onConfirm: () async {
+                await EzConfig.removeKeys(
+                    <String>{useOSKey, ...imageKeys.keys});
+                setState(() => useOS = EzConfig.getDefault(useOSKey));
+              },
+            ),
+            separator,
           ],
         ),
       ),
