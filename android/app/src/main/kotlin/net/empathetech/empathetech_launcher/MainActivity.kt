@@ -12,10 +12,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.WindowManager
 
 import androidx.annotation.NonNull
 
@@ -35,15 +33,6 @@ class MainActivity : FlutterFragmentActivity() {
   private val EVENT_CHANNEL: String = "net.empathetech.liminal/app_events"
 
   private var appEventStreamHandler: AppEventStreamHandler? = null
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    window.setBackgroundDrawableResource(android.R.color.transparent)
-    window.setFlags(
-      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-    )
-  }
 
   override fun getBackgroundMode(): FlutterActivityLaunchConfigs.BackgroundMode {
     return FlutterActivityLaunchConfigs.BackgroundMode.transparent
