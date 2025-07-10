@@ -130,10 +130,14 @@ class LiminalLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData darkTheme = ezThemeData(Brightness.dark)
-        .copyWith(scaffoldBackgroundColor: Colors.transparent);
-    final ThemeData lightTheme = ezThemeData(Brightness.light)
-        .copyWith(scaffoldBackgroundColor: Colors.transparent);
+    final ThemeData darkTheme = ezThemeData(Brightness.dark).copyWith(
+      scaffoldBackgroundColor: Colors.transparent,
+      pageTransitionsTheme: EzNoTransitions(),
+    );
+    final ThemeData lightTheme = ezThemeData(Brightness.light).copyWith(
+      scaffoldBackgroundColor: Colors.transparent,
+      pageTransitionsTheme: EzNoTransitions(),
+    );
 
     return ChangeNotifierProvider<AppInfoProvider>(
       create: (_) => AppInfoProvider(installedApps),
