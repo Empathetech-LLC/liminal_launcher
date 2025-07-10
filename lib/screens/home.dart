@@ -287,8 +287,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: TileButton(
                                   key: ValueKey<String>(app.id),
                                   app: app,
-                                  showIcon: folderIcon,
-                                  type: folderLabel,
+                                  showIcon: listIcon,
+                                  type: listLabel,
                                   onPressed: () async {
                                     await provider.addHomeApp(app.id);
                                     refreshHome();
