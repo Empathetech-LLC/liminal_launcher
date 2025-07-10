@@ -47,14 +47,12 @@ class _AppListScreenState extends State<AppListScreen> {
 
   final ScrollController scrollControl = ScrollController();
 
-  late final List<AppInfo> appList = provider.apps
-      .where((AppInfo app) => !provider.hiddenSet.contains(app.id))
-      .toList();
-
+  late List<AppInfo> appList = getApps();
   late List<AppInfo> searchList = appList;
-  final TextEditingController searchControl = TextEditingController();
+
   bool searching =
       EzConfig.get(autoSearchKey) ?? EzConfig.getDefault(autoSearchKey);
+  final TextEditingController searchControl = TextEditingController();
 
   bool atTop = true;
   bool atBottom = false;
@@ -63,8 +61,12 @@ class _AppListScreenState extends State<AppListScreen> {
 
   void refreshAll() {
     widget.refreshHome?.call();
-    setState(() {});
+    setState(() => appList = getApps());
   }
+
+  List<AppInfo> getApps() => provider.apps
+      .where((AppInfo app) => !provider.hiddenSet.contains(app.id))
+      .toList();
 
   List<AppInfo> searchApps(List<AppInfo> appList) => appList
       .where((AppInfo app) =>
@@ -236,7 +238,8 @@ class _AppListScreenState extends State<AppListScreen> {
                 },
                 child: searching
                     ? Expanded(
-                        key: const ValueKey<String>('searchList'),
+                        key:
+                            ValueKey<String>('searchList_${searchList.length}'),
                         child: ListView.builder(
                           controller: scrollControl,
                           physics: const ClampingScrollPhysics(),
@@ -254,7 +257,7 @@ class _AppListScreenState extends State<AppListScreen> {
                         ),
                       )
                     : Expanded(
-                        key: const ValueKey<String>('appList'),
+                        key: ValueKey<String>('appList_${appList.length}'),
                         child: ListView.builder(
                           controller: scrollControl,
                           physics: const ClampingScrollPhysics(),
