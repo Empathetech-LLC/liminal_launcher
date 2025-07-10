@@ -48,7 +48,7 @@ class _AppTileState extends State<AppTile> {
 
   late final bool showIcon = (widget.onHomeScreen == null)
       ? EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey)
-      : EzConfig.get(homeIconKey) ?? EzConfig.getDefault(homeIconKey);
+      : EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
   late final LabelType labelType = (widget.onHomeScreen == null)
       ? LabelTypeConfig.fromValue(EzConfig.get(folderLabelTypeKey) ??
           EzConfig.getDefault(folderLabelTypeKey))

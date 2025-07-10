@@ -233,7 +233,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 //       .configValue,
                 // );
 
-                await EzConfig.setBool(homeIconKey, random.nextBool());
+                await EzConfig.setBool(listIconKey, random.nextBool());
                 final int listLabelRand = random.nextInt(4);
                 late final String listLabelValue;
                 switch (listLabelRand) {

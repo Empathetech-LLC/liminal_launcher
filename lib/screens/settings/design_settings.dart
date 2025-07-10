@@ -43,7 +43,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
-  bool homeIcon = EzConfig.get(homeIconKey) ?? EzConfig.getDefault(homeIconKey);
+  bool homeIcon = EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
   LabelType listLabelType = LabelTypeConfig.fromValue(
       EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
 
@@ -196,7 +196,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
                     listLabelType = choice;
 
                     if (listLabelType == LabelType.none) {
-                      await EzConfig.setBool(homeIconKey, true);
+                      await EzConfig.setBool(listIconKey, true);
                       homeIcon = true;
                     }
 
@@ -210,7 +210,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             // Show icon
             EzSwitchPair(
               text: 'Show icon',
-              valueKey: homeIconKey,
+              valueKey: listIconKey,
               onChangedCallback: (bool? value) async {
                 if (value == null) return;
 
