@@ -54,11 +54,16 @@ class _HomeScreenState extends State<HomeScreen> {
   final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
       EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
 
-  final LabelType labelType = LabelTypeConfig.fromValue(
-      EzConfig.get(labelTypeKey) ?? EzConfig.getDefault(labelTypeKey));
+  final bool listIcon =
+      EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
+  final LabelType listLabel = LabelTypeConfig.fromValue(
+      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
 
-  final bool showIcon =
-      EzConfig.get(showIconKey) ?? EzConfig.getDefault(showIconKey);
+  final bool folderIcon =
+      EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey);
+  final LabelType folderLabel = LabelTypeConfig.fromValue(
+      EzConfig.get(folderLabelTypeKey) ??
+          EzConfig.getDefault(folderLabelTypeKey));
 
   bool editing = false;
   bool atBottom = false;
@@ -81,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
             name: parts[0],
             ids: parts.sublist(1),
             alignment: homeAlign,
-            showIcon: showIcon,
-            labelType: labelType,
+            showIcon: folderIcon,
+            labelType: folderLabel,
             editing: editing,
             refreshHome: refreshHome,
           ),
@@ -194,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (toLaunch != null) launchApp(toLaunch.package);
           }
         },
-        child: EzScreen(
+        child: LiminalScreen(
           child: Column(
             crossAxisAlignment: homeAlign.crossAxis,
             children: <Widget>[
@@ -282,8 +287,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: TileButton(
                                   key: ValueKey<String>(app.id),
                                   app: app,
-                                  type: labelType,
-                                  showIcon: showIcon,
+                                  showIcon: folderIcon,
+                                  type: folderLabel,
                                   onPressed: () async {
                                     await provider.addHomeApp(app.id);
                                     refreshHome();
