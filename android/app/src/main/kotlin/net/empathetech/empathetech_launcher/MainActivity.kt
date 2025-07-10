@@ -33,6 +33,10 @@ class MainActivity : FlutterFragmentActivity() {
 
   private var appEventStreamHandler: AppEventStreamHandler? = null
 
+  override fun getTransparencyMode(): TransparencyMode {
+    return TransparencyMode.transparent
+  }
+
   override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
 
