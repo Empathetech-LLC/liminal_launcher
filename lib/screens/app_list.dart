@@ -88,196 +88,193 @@ class _AppListScreenState extends State<AppListScreen> {
             }
           }
         },
-        child: LiminalScreen(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: listAlign.crossAxis,
-            children: <Widget>[
-              if (spacing > margin) EzSpacer(space: spacing - margin),
+        child: LiminalScreen(Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: listAlign.crossAxis,
+          children: <Widget>[
+            if (spacing > margin) EzSpacer(space: spacing - margin),
 
-              // List controls
-              EzScrollView(
-                scrollDirection: Axis.horizontal,
-                mainAxisAlignment: listAlign.mainAxis,
-                children: <Widget>[
-                  // Sort
-                  MenuAnchor(
-                    builder: (_, MenuController controller, __) => EzIconButton(
-                      onPressed: () => controller.isOpen
-                          ? controller.close()
-                          : controller.open(),
-                      icon: const Icon(Icons.sort),
+            // List controls
+            EzScrollView(
+              scrollDirection: Axis.horizontal,
+              mainAxisAlignment: listAlign.mainAxis,
+              children: <Widget>[
+                // Sort
+                MenuAnchor(
+                  builder: (_, MenuController controller, __) => EzIconButton(
+                    onPressed: () => controller.isOpen
+                        ? controller.close()
+                        : controller.open(),
+                    icon: const Icon(Icons.sort),
+                  ),
+                  menuChildren: <EzMenuButton>[
+                    // By name
+                    EzMenuButton(
+                      label: 'Name',
+                      textAlign: listAlign.textAlign,
+                      onPressed: () async {
+                        listSort = AppSort.name;
+
+                        await EzConfig.setString(
+                          appSortKey,
+                          listSort.configValue,
+                        );
+                        provider.sort(listSort, ascList);
+
+                        setState(() {});
+                      },
                     ),
-                    menuChildren: <EzMenuButton>[
-                      // By name
-                      EzMenuButton(
-                        label: 'Name',
-                        textAlign: listAlign.textAlign,
-                        onPressed: () async {
-                          listSort = AppSort.name;
+                    // By publisher
+                    EzMenuButton(
+                      label: 'Publisher',
+                      textAlign: listAlign.textAlign,
+                      onPressed: () async {
+                        listSort = AppSort.publisher;
 
-                          await EzConfig.setString(
-                            appSortKey,
-                            listSort.configValue,
-                          );
-                          provider.sort(listSort, ascList);
+                        await EzConfig.setString(
+                          appSortKey,
+                          listSort.configValue,
+                        );
+                        provider.sort(listSort, ascList);
 
-                          setState(() {});
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+                rowSpacer,
+
+                // Order
+                EzIconButton(
+                  icon: EzIcon(
+                      ascList ? Icons.arrow_upward : Icons.arrow_downward),
+                  onPressed: () async {
+                    ascList = !ascList;
+
+                    await EzConfig.setBool(appOrderKey, ascList);
+                    provider.sort(listSort, ascList);
+
+                    setState(() {});
+                  },
+                ),
+                rowSpacer,
+
+                // Search
+                AnimatedContainer(
+                  duration: animDuration,
+                  width: searching ? 200 : null,
+                  curve: Curves.easeInOut,
+                  child: EzRow(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      EzIconButton(
+                        icon: Icon(PlatformIcons(context).search),
+                        onPressed: () {
+                          if (searching) {
+                            closeKeyboard(context);
+                            searchControl.clear();
+                            searchList = appList;
+                            setState(() => searching = false);
+                          } else {
+                            searchList = searchApps(appList);
+                            setState(() => searching = true);
+                          }
                         },
                       ),
-                      // By publisher
-                      EzMenuButton(
-                        label: 'Publisher',
-                        textAlign: listAlign.textAlign,
-                        onPressed: () async {
-                          listSort = AppSort.publisher;
-
-                          await EzConfig.setString(
-                            appSortKey,
-                            listSort.configValue,
-                          );
-                          provider.sort(listSort, ascList);
-
-                          setState(() {});
-                        },
-                      ),
+                      if (searching) ...<Widget>[
+                        EzMargin(vertical: false),
+                        Expanded(
+                          child: TextField(
+                            controller: searchControl,
+                            autofocus: searching,
+                            decoration: const InputDecoration(
+                              hintText: 'Search',
+                              border: InputBorder.none,
+                              isDense: true,
+                            ),
+                            onChanged: (_) => setState(
+                                () => searchList = searchApps(appList)),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                  rowSpacer,
+                ),
+              ],
+            ),
+            spacer,
 
-                  // Order
-                  EzIconButton(
-                    icon: EzIcon(
-                        ascList ? Icons.arrow_upward : Icons.arrow_downward),
-                    onPressed: () async {
-                      ascList = !ascList;
-
-                      await EzConfig.setBool(appOrderKey, ascList);
-                      provider.sort(listSort, ascList);
-
-                      setState(() {});
-                    },
-                  ),
-                  rowSpacer,
-
-                  // Search
-                  AnimatedContainer(
-                    duration: animDuration,
-                    width: searching ? 200 : null,
-                    curve: Curves.easeInOut,
-                    child: EzRow(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        EzIconButton(
-                          icon: Icon(PlatformIcons(context).search),
-                          onPressed: () {
-                            if (searching) {
-                              closeKeyboard(context);
-                              searchControl.clear();
-                              searchList = appList;
-                              setState(() => searching = false);
-                            } else {
-                              searchList = searchApps(appList);
-                              setState(() => searching = true);
-                            }
-                          },
-                        ),
-                        if (searching) ...<Widget>[
-                          EzMargin(vertical: false),
-                          Expanded(
-                            child: TextField(
-                              controller: searchControl,
-                              autofocus: searching,
-                              decoration: const InputDecoration(
-                                hintText: 'Search',
-                                border: InputBorder.none,
-                                isDense: true,
-                              ),
-                              onChanged: (_) => setState(
-                                  () => searchList = searchApps(appList)),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              spacer,
-
-              // App list
-              NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification notification) {
-                  if (notification is OverscrollNotification &&
-                      notification.overscroll < 0) {
-                    // Pop on top overscroll
-                    if (atTop) {
-                      Navigator.of(context).pop();
-                      return true;
-                    } else {
-                      setState(() => atTop = true);
-                      return true;
-                    }
-                  } else if (notification is ScrollUpdateNotification) {
-                    if (atTop && notification.metrics.pixels > 0) {
-                      setState(() => atTop = false);
-                    }
-
-                    if (atBottom &&
-                        notification.metrics.pixels <
-                            notification.metrics.maxScrollExtent) {
-                      setState(() => atBottom = false);
-                    }
-                  } else if (notification is ScrollEndNotification) {
-                    atTop = (notification.metrics.pixels == 0);
-                    atBottom = (notification.metrics.pixels ==
-                        notification.metrics.maxScrollExtent);
-                    setState(() {});
+            // App list
+            NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification notification) {
+                if (notification is OverscrollNotification &&
+                    notification.overscroll < 0) {
+                  // Pop on top overscroll
+                  if (atTop) {
+                    Navigator.of(context).pop();
+                    return true;
+                  } else {
+                    setState(() => atTop = true);
+                    return true;
                   }
-                  return false;
-                },
-                child: searching
-                    ? Expanded(
-                        key:
-                            ValueKey<String>('searchList_${searchList.length}'),
-                        child: ListView.builder(
-                          controller: scrollControl,
-                          physics: const ClampingScrollPhysics(),
-                          itemCount: searchList.length,
-                          itemBuilder: (_, int index) => Padding(
-                            key: ValueKey<String>(searchList[index].id),
-                            padding: listPadding,
-                            child: AppTile(
-                              app: searchList[index],
-                              onHomeScreen: false,
-                              editing: false,
-                              refresh: refreshAll,
-                            ),
-                          ),
-                        ),
-                      )
-                    : Expanded(
-                        key: ValueKey<String>('appList_${appList.length}'),
-                        child: ListView.builder(
-                          controller: scrollControl,
-                          physics: const ClampingScrollPhysics(),
-                          itemCount: appList.length,
-                          itemBuilder: (_, int index) => Padding(
-                            padding: listPadding,
-                            key: ValueKey<String>(appList[index].id),
-                            child: AppTile(
-                              app: appList[index],
-                              onHomeScreen: false,
-                              editing: false,
-                              refresh: refreshAll,
-                            ),
+                } else if (notification is ScrollUpdateNotification) {
+                  if (atTop && notification.metrics.pixels > 0) {
+                    setState(() => atTop = false);
+                  }
+
+                  if (atBottom &&
+                      notification.metrics.pixels <
+                          notification.metrics.maxScrollExtent) {
+                    setState(() => atBottom = false);
+                  }
+                } else if (notification is ScrollEndNotification) {
+                  atTop = (notification.metrics.pixels == 0);
+                  atBottom = (notification.metrics.pixels ==
+                      notification.metrics.maxScrollExtent);
+                  setState(() {});
+                }
+                return false;
+              },
+              child: searching
+                  ? Expanded(
+                      key: ValueKey<String>('searchList_${searchList.length}'),
+                      child: ListView.builder(
+                        controller: scrollControl,
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: searchList.length,
+                        itemBuilder: (_, int index) => Padding(
+                          key: ValueKey<String>(searchList[index].id),
+                          padding: listPadding,
+                          child: AppTile(
+                            app: searchList[index],
+                            onHomeScreen: false,
+                            editing: false,
+                            refresh: refreshAll,
                           ),
                         ),
                       ),
-              ),
-            ],
-          ),
-        ),
+                    )
+                  : Expanded(
+                      key: ValueKey<String>('appList_${appList.length}'),
+                      child: ListView.builder(
+                        controller: scrollControl,
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: appList.length,
+                        itemBuilder: (_, int index) => Padding(
+                          padding: listPadding,
+                          key: ValueKey<String>(appList[index].id),
+                          child: AppTile(
+                            app: appList[index],
+                            onHomeScreen: false,
+                            editing: false,
+                            refresh: refreshAll,
+                          ),
+                        ),
+                      ),
+                    ),
+            ),
+          ],
+        )),
       ),
       fab: Column(
         mainAxisSize: MainAxisSize.min,

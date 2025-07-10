@@ -199,59 +199,57 @@ class _HomeScreenState extends State<HomeScreen> {
             if (toLaunch != null) launchApp(toLaunch.package);
           }
         },
-        child: LiminalScreen(
-          child: Column(
-            crossAxisAlignment: homeAlign.crossAxis,
-            children: <Widget>[
-              header(),
-              spacer,
+        child: LiminalScreen(Column(
+          crossAxisAlignment: homeAlign.crossAxis,
+          children: <Widget>[
+            header(),
+            spacer,
 
-              // App list
-              editing
-                  ? NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification notification) {
-                        if (notification is OverscrollNotification &&
-                            notification.overscroll > 0) {
-                          // Navigate on bottom overscroll
-                          if (atBottom) {
-                            context.goNamed(hiddenListPath);
-                            return true;
-                          } else {
-                            setState(() => atBottom = true);
-                            return true;
-                          }
-                        } else if (notification is ScrollUpdateNotification) {
-                          if (atBottom && notification.metrics.pixels < 0) {
-                            setState(() => atBottom = false);
-                          }
-                        } else if (notification is ScrollEndNotification) {
-                          atBottom = (notification.metrics.pixels ==
-                              notification.metrics.maxScrollExtent);
-                          setState(() {});
+            // App list
+            editing
+                ? NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification notification) {
+                      if (notification is OverscrollNotification &&
+                          notification.overscroll > 0) {
+                        // Navigate on bottom overscroll
+                        if (atBottom) {
+                          context.goNamed(hiddenListPath);
+                          return true;
+                        } else {
+                          setState(() => atBottom = true);
+                          return true;
                         }
-                        return false; // Let other notifications propagate
-                      },
-                      child: Expanded(
-                        child: ReorderableListView(
-                          onReorder: (int oldIndex, int newIndex) async {
-                            await provider.reorderHomeItem(
-                              oldIndex: oldIndex,
-                              newIndex: newIndex,
-                            );
-                            refreshHome();
-                          },
-                          children: homeA2T(),
-                        ),
+                      } else if (notification is ScrollUpdateNotification) {
+                        if (atBottom && notification.metrics.pixels < 0) {
+                          setState(() => atBottom = false);
+                        }
+                      } else if (notification is ScrollEndNotification) {
+                        atBottom = (notification.metrics.pixels ==
+                            notification.metrics.maxScrollExtent);
+                        setState(() {});
+                      }
+                      return false; // Let other notifications propagate
+                    },
+                    child: Expanded(
+                      child: ReorderableListView(
+                        onReorder: (int oldIndex, int newIndex) async {
+                          await provider.reorderHomeItem(
+                            oldIndex: oldIndex,
+                            newIndex: newIndex,
+                          );
+                          refreshHome();
+                        },
+                        children: homeA2T(),
                       ),
-                    )
-                  : EzScrollView(
-                      crossAxisAlignment: homeAlign.crossAxis,
-                      children: homeA2T(),
                     ),
-              spacer,
-            ],
-          ),
-        ),
+                  )
+                : EzScrollView(
+                    crossAxisAlignment: homeAlign.crossAxis,
+                    children: homeA2T(),
+                  ),
+            spacer,
+          ],
+        )),
       ),
       fab: Visibility(
         visible: editing,

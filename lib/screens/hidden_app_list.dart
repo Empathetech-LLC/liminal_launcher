@@ -52,7 +52,7 @@ class _HiddenAppListScreenState extends State<HiddenAppListScreen> {
           }
         },
         child: LiminalScreen(
-          child: NotificationListener<ScrollNotification>(
+          NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
               if (notification is OverscrollNotification &&
                   notification.overscroll < 0) {
