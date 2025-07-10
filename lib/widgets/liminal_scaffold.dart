@@ -32,30 +32,9 @@ class LiminalScaffold extends StatelessWidget {
 }
 
 class LiminalScreen extends StatelessWidget {
-  /// [Container.alignment] passthrough
-  final AlignmentGeometry? alignment;
-
-  /// Screen width
-  final double width;
-
-  /// Screen height
-  final double height;
-
-  /// [Container.clipBehavior] passthrough
-  final Clip clipBehavior;
-
-  /// Screen content
   final Widget child;
 
-  /// Modified [EzScreen]
-  const LiminalScreen({
-    super.key,
-    this.alignment,
-    this.width = double.infinity,
-    this.height = double.infinity,
-    this.clipBehavior = Clip.none,
-    required this.child,
-  });
+  const LiminalScreen(this.child, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -81,12 +60,11 @@ class LiminalScreen extends StatelessWidget {
     }
 
     return Container(
-      alignment: alignment,
       padding: screenMargin,
       decoration: (EzConfig.get(useOSKey) == false) ? buildDecoration() : null,
-      width: width,
-      height: height,
-      clipBehavior: clipBehavior,
+      width: double.infinity,
+      height: double.infinity,
+      clipBehavior: Clip.none,
       child: SafeArea(child: child),
     );
   }
