@@ -28,8 +28,6 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
 
-  final EzSpacer margin = EzMargin();
-
   late final ButtonStyle menuButtonStyle = TextButton.styleFrom(
     padding: EzInsets.wrap(EzConfig.get(paddingKey)),
   );
@@ -364,6 +362,12 @@ class _SwipeSelector extends StatefulWidget {
 }
 
 class _SwipeSelectorState extends State<_SwipeSelector> {
+  // Gather the theme data //
+
+  final EzSpacer rowMargin = EzMargin(vertical: false);
+
+  // Define the build data //
+
   late final String leftLabel = 'Left package';
   late final String rightLabel = 'Right package';
 
@@ -377,6 +381,8 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
       ? nullApp
       : widget.provider.appMap[rightID!] ?? nullApp;
 
+  // Return the build //
+
   @override
   Widget build(BuildContext context) {
     return EzRow(
@@ -384,7 +390,7 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
       children: widget.isLefty
           ? <Widget>[
               EzText(leftLabel, style: widget.textTheme.bodyLarge),
-              EzMargin(),
+              rowMargin,
               EzDropdownMenu<AppInfo>(
                 widthEntries: <String>['Play Store'],
                 dropdownMenuEntries: widget.entries,
@@ -399,7 +405,7 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
             ]
           : <Widget>[
               EzText(rightLabel, style: widget.textTheme.bodyLarge),
-              EzMargin(),
+              rowMargin,
               EzDropdownMenu<AppInfo>(
                 widthEntries: <String>['Play Store'],
                 dropdownMenuEntries: widget.entries,
