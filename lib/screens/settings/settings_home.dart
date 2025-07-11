@@ -61,15 +61,6 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         ),
       );
 
-  Future<dynamic> update() => showPlatformDialog(
-        context: context,
-        builder: (_) => const EzAlertDialog(
-          title: Text('Update available', textAlign: TextAlign.center),
-          content: Text('BLARG',
-              textAlign: TextAlign.center), // TODO: Add a link n shit
-        ),
-      );
-
   // Return the build //
 
   @override
@@ -96,7 +87,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
             ),
 
             // Updater (if relevant)
-            const Positioned(top: 0, left: 0, child: EzUpdater()),
+            const Positioned(top: 0, left: 0, child: LiminalUpdater()),
           ],
         ),
         separator,
