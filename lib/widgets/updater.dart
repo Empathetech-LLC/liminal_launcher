@@ -15,16 +15,16 @@ const String _versionSource =
 /// 1.0.0
 const String _appVersion = '1.0.0';
 
-class EzUpdater extends StatefulWidget {
+class LiminalUpdater extends StatefulWidget {
   /// Checks for Open UI updates
   /// [FloatingActionButton] (wrapped in a [Visibility]) that links to the latest version
-  const EzUpdater({super.key});
+  const LiminalUpdater({super.key});
 
   @override
-  State<EzUpdater> createState() => _EzUpdaterState();
+  State<LiminalUpdater> createState() => _LiminalUpdaterState();
 }
 
-class _EzUpdaterState extends State<EzUpdater> {
+class _LiminalUpdaterState extends State<LiminalUpdater> {
   // Define build data //
 
   String? latestVersion;
@@ -33,10 +33,7 @@ class _EzUpdaterState extends State<EzUpdater> {
 
   // Define custom functions //
 
-  /// Check for Open UI updates (Desktop only)
   void checkVersion() async {
-    if (isMobile()) return;
-
     final http.Response response = await http.get(Uri.parse(_versionSource));
 
     if (response.statusCode != 200) return;
@@ -57,10 +54,12 @@ class _EzUpdaterState extends State<EzUpdater> {
           return;
         } else if (latestDigits[i] < appDigits[i]) {
           return;
-        } // if == continue
+        }
       }
     }
   }
+
+  // Init //
 
   @override
   void initState() {
@@ -68,11 +67,15 @@ class _EzUpdaterState extends State<EzUpdater> {
     checkVersion();
   }
 
+  // Return the build //
+
   @override
   Widget build(BuildContext context) => Visibility(
         visible: !isLatest,
         child: IconButton(
           onPressed: () => launchUrl(Uri.parse(
+              'https://github.com/Empathetech-LLC/liminal_launcher/releases')), // TODO: GPlay link
+          onLongPress: () => launchUrl(Uri.parse(
               'https://github.com/Empathetech-LLC/liminal_launcher/releases')),
           tooltip: ezL10n(context).gUpdates,
           icon: EzIcon(Icons.update),
