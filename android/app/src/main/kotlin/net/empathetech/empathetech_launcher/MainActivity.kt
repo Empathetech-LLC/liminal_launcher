@@ -173,10 +173,7 @@ class AppEventReceiver(private val eventSink: EventSink?) : BroadcastReceiver() 
       }
       Intent.ACTION_PACKAGE_REMOVED -> {
         val isUpdate = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
-        if (!isUpdate) {
-          val appDetails = getAppDetails(context, packageName)
-          if (appDetails != null) eventSink?.success(mapOf("eventType" to "uninstalled", "appInfo" to appDetails))
-        }
+        if (!isUpdate) eventSink?.success(mapOf("eventType" to "uninstalled", "packageName" to packageName))
       }
     }
   }
@@ -218,7 +215,13 @@ class AppEventStreamHandler(private val context: Context) : EventChannel.StreamH
       addAction(Intent.ACTION_PACKAGE_REMOVED)
       addDataScheme("package")
     }
-    context.registerReceiver(appEventReceiver, intentFilter)
+    
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      context.registerReceiver(appEventReceiver, intentFilter, Context.RECEIVER_EXPORTED)
+    } else {
+      @Suppress("DEPRECATION")
+      context.registerReceiver(appEventReceiver, intentFilter)
+    }
   }
 
   override fun onCancel(arguments: Any?) {
