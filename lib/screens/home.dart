@@ -329,22 +329,22 @@ class _ClockState extends State<_Clock> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return EzTextBackground(Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: widget.homeAlign.crossAxis,
       children: <Widget>[
         if (widget.homeTime)
-          EzText(
+          Text(
             TimeOfDay.fromDateTime(now).format(context),
             style: widget.textTheme.headlineLarge,
           ),
         if (widget.homeDate)
-          EzText(
+          Text(
             MaterialLocalizations.of(context).formatMediumDate(now),
             style: widget.textTheme.labelLarge,
           ),
       ],
-    );
+    ));
   }
 
   @override
