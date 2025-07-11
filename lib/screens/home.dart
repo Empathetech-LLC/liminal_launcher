@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final EdgeInsets listPadding =
       EdgeInsets.symmetric(vertical: spacing / 2);
-  late final EdgeInsets modalPadding = EzInsets.col(spacing);
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
 
@@ -59,14 +59,20 @@ class _HomeScreenState extends State<HomeScreen> {
   final LabelType listLabel = LabelTypeConfig.fromValue(
       EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
 
-  final bool folderIcon =
-      EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey);
-  final LabelType folderLabel = LabelTypeConfig.fromValue(
-      EzConfig.get(folderLabelTypeKey) ??
-          EzConfig.getDefault(folderLabelTypeKey));
-
   bool editing = false;
   bool atBottom = false;
+
+  late final Map<String, dynamic> appListData = listData(
+    listCheck: (String id) => !provider.hiddenSet.contains(id),
+    onSelected: (String id) => launchApp(id),
+    refresh: refresh,
+  );
+  late final Map<String, dynamic> hiddenListData = listData(
+    listCheck: (String id) => provider.hiddenSet.contains(id),
+    onSelected: (String id) => launchApp(id),
+    icon: PlatformIcons(context).eyeSlash,
+    refresh: refresh,
+  );
 
   // Define custom functions //
 
@@ -79,29 +85,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (parts.length > 1) {
         tileList.add(Padding(
+          key: ValueKey<String>('${parts[0]}_$index'),
           padding: EdgeInsets.symmetric(vertical: spacing / 2),
-          key: ValueKey<String>('$index:${parts[0]}'),
           child: AppFolder(
             index: index,
             name: parts[0],
             ids: parts.sublist(1),
             alignment: homeAlign,
-            showIcon: folderIcon,
-            labelType: folderLabel,
+            folderIcon: listIcon,
             editing: editing,
-            refreshHome: refreshHome,
+            refresh: refresh,
           ),
         ));
       } else {
         final AppInfo app = provider.appMap[parts[0]] ?? nullApp;
         tileList.add(Padding(
-          padding: EdgeInsets.symmetric(vertical: spacing / 2),
           key: ValueKey<String>(app.id),
+          padding: EdgeInsets.symmetric(vertical: spacing / 2),
           child: AppTile(
             app: app,
             onHomeScreen: true,
+            onSelected: (String id) => launchApp(id),
             editing: editing,
-            refresh: refreshHome,
+            refresh: refresh,
           ),
         ));
       }
@@ -110,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return tileList;
   }
 
-  void refreshHome() => setState(() {});
+  void refresh() => setState(() {});
 
   // Define custom Widgets //
 
@@ -151,8 +157,9 @@ class _HomeScreenState extends State<HomeScreen> {
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onLongPress: () async {
-          final bool needAuth =
-              EzConfig.get(authToEditKey) ?? EzConfig.getDefault(authToEditKey);
+          final bool needAuth = !editing &&
+              (EzConfig.get(authToEditKey) ??
+                  EzConfig.getDefault(authToEditKey));
           // Check every time so no reset is required; O(1)
 
           if (needAuth) {
@@ -178,8 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (details.primaryVelocity! < 0) {
               // Swiped up
               context.goNamed(
-                editing ? hiddenListPath : appListPath,
-                extra: editing ? null : refreshHome,
+                appListPath,
+                extra: editing ? hiddenListData : appListData,
               );
             }
           }
@@ -213,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           notification.overscroll > 0) {
                         // Navigate on bottom overscroll
                         if (atBottom) {
-                          context.goNamed(hiddenListPath);
+                          context.goNamed(appListPath, extra: hiddenListData);
                           return true;
                         } else {
                           setState(() => atBottom = true);
@@ -237,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             oldIndex: oldIndex,
                             newIndex: newIndex,
                           );
-                          refreshHome();
+                          refresh();
                         },
                         children: homeA2T(),
                       ),
@@ -260,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (provider.homeSet.isNotEmpty) ...<Widget>[
               AddFolderFAB(context, () {
                 provider.addHomeFolder();
-                refreshHome();
+                refresh();
               }),
               separator,
             ],
@@ -268,35 +275,15 @@ class _HomeScreenState extends State<HomeScreen> {
             // Add app
             AddAppFAB(
               context,
-              () => showModalBottomSheet(
-                context: context,
-                useSafeArea: true,
-                isScrollControlled: true,
-                builder: (_) => StatefulBuilder(
-                  builder: (_, StateSetter setModalState) {
-                    return EzScrollView(
-                      mainAxisSize: MainAxisSize.min,
-                      children: provider.apps
-                          .where((AppInfo app) =>
-                              !provider.homeSet.contains(app.id) &&
-                              !provider.hiddenSet.contains(app.id))
-                          .map((AppInfo app) => Padding(
-                                padding: modalPadding,
-                                child: TileButton(
-                                  key: ValueKey<String>(app.id),
-                                  app: app,
-                                  showIcon: listIcon,
-                                  type: listLabel,
-                                  onPressed: () async {
-                                    await provider.addHomeApp(app.id);
-                                    refreshHome();
-                                    setModalState(() {});
-                                  },
-                                ),
-                              ))
-                          .toList(),
-                    );
-                  },
+              () => context.goNamed(
+                appListPath,
+                extra: listData(
+                  listCheck: (String id) =>
+                      !provider.hiddenSet.contains(id) &&
+                      !provider.homeSet.contains(id),
+                  onSelected: (String id) => provider.addHomeApp(id),
+                  icon: PlatformIcons(context).add,
+                  refresh: refresh,
                 ),
               ),
             ),
