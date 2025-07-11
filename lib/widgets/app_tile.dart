@@ -17,15 +17,17 @@ class AppTile extends StatefulWidget {
   /// Quantum computing
   final bool? onHomeScreen;
 
+  final Future<void> Function(String id) onSelected;
   final bool editing;
-  final void Function()? refresh;
+  final void Function() refresh;
 
   const AppTile({
     super.key,
     required this.app,
     required this.onHomeScreen,
+    required this.onSelected,
     required this.editing,
-    this.refresh,
+    required this.refresh,
   });
 
   @override
@@ -59,7 +61,6 @@ class _AppTileState extends State<AppTile> {
 
   // Define custom functions //
 
-  Future<void> activateTile() => launchApp(widget.app.package);
   void holdTile() => setState(() => editing = !editing);
 
   // Return the build //
@@ -75,7 +76,7 @@ class _AppTileState extends State<AppTile> {
               // App icon
               if (widget.app.icon != null) ...<Widget>[
                 GestureDetector(
-                  onTap: activateTile,
+                  onTap: () => widget.onSelected(widget.app.id),
                   child: Image.memory(
                     widget.app.icon!,
                     semanticLabel: widget.app.name,
@@ -107,7 +108,7 @@ class _AppTileState extends State<AppTile> {
                           if (dialogContext.mounted) {
                             Navigator.of(dialogContext).pop(name);
                           }
-                          widget.refresh?.call();
+                          widget.refresh();
                         }
                       }
 
@@ -159,7 +160,7 @@ class _AppTileState extends State<AppTile> {
                   onPressed: () async {
                     await provider.addHomeApp(widget.app.id);
                     setState(() => editing = false);
-                    widget.refresh?.call();
+                    widget.refresh();
                   },
                   icon: const Icon(Icons.add_to_home_screen),
                 ),
@@ -172,7 +173,7 @@ class _AppTileState extends State<AppTile> {
                   onPressed: () async {
                     await provider.removeHomeApp(widget.app.id);
                     setState(() => editing = false);
-                    widget.refresh?.call();
+                    widget.refresh();
                   },
                   icon: Icon(PlatformIcons(context).remove),
                 ),
@@ -186,7 +187,7 @@ class _AppTileState extends State<AppTile> {
                       ? await provider.showApp(widget.app.id)
                       : await provider.hideApp(widget.app.id);
                   setState(() => editing = false);
-                  widget.refresh?.call();
+                  widget.refresh();
                 },
                 icon: Icon(provider.hiddenSet.contains(widget.app.id)
                     ? PlatformIcons(context).eyeSolid
@@ -201,7 +202,7 @@ class _AppTileState extends State<AppTile> {
                   if (widget.onHomeScreen == false && context.mounted) {
                     Navigator.of(context).pop();
                   }
-                  widget.refresh?.call();
+                  widget.refresh();
                 },
                 icon: Icon(PlatformIcons(context).info),
               ),
@@ -215,7 +216,7 @@ class _AppTileState extends State<AppTile> {
                     if (deleted) {
                       await provider.removeDeleted(widget.app.id);
                       setState(() => editing = false);
-                      widget.refresh?.call();
+                      widget.refresh();
                     }
                   },
                   icon: Icon(PlatformIcons(context).delete),
@@ -243,7 +244,7 @@ class _AppTileState extends State<AppTile> {
             app: widget.app,
             type: labelType,
             showIcon: showIcon,
-            onPressed: activateTile,
+            onPressed: () => widget.onSelected(widget.app.id),
             onLongPress: holdTile,
           );
   }
