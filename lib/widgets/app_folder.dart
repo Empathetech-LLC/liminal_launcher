@@ -47,6 +47,8 @@ class _AppFolderState extends State<AppFolder> {
   late final EdgeInsets rowPadding =
       EdgeInsets.symmetric(horizontal: spacing / 2);
 
+  late final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
   late final EFUILang el10n = ezL10n(context);
   late final TextTheme textTheme = Theme.of(context).textTheme;
 
@@ -162,7 +164,16 @@ class _AppFolderState extends State<AppFolder> {
                 listCheck: (String id) => !folderSet.contains(id),
                 onSelected: (String id) =>
                     provider.addToFolder(id, index: index),
-                icon: PlatformIcons(context).add,
+                icon: EzTextBackground(EzRow(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(widget.name),
+                    EzIcon(
+                      PlatformIcons(context).add,
+                      color: colorScheme.onSurface,
+                    ),
+                  ],
+                )),
                 refresh: refresh,
               ),
             ),
@@ -179,7 +190,16 @@ class _AppFolderState extends State<AppFolder> {
                   listCheck: (String id) => folderSet.contains(id),
                   onSelected: (String id) =>
                       provider.removeFromFolder(id, index: index),
-                  icon: PlatformIcons(context).remove,
+                  icon: EzTextBackground(EzRow(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(widget.name),
+                      EzIcon(
+                        PlatformIcons(context).remove,
+                        color: colorScheme.onSurface,
+                      ),
+                    ],
+                  )),
                   refresh: refresh,
                 ),
               ),
@@ -199,7 +219,7 @@ class _AppFolderState extends State<AppFolder> {
           // Drag handle
           EzIcon(
             Icons.drag_handle,
-            color: Theme.of(context).colorScheme.outline,
+            color: colorScheme.outline,
           ),
         ],
       );

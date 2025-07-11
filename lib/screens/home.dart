@@ -34,6 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late final EdgeInsets listPadding =
       EdgeInsets.symmetric(vertical: spacing / 2);
 
+  late final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
   late final TextTheme textTheme = Theme.of(context).textTheme;
 
   // Define the build data //
@@ -70,7 +72,16 @@ class _HomeScreenState extends State<HomeScreen> {
   late final Map<String, dynamic> hiddenListData = listData(
     listCheck: (String id) => provider.hiddenSet.contains(id),
     onSelected: (String id) => launchApp(id),
-    icon: PlatformIcons(context).eyeSlash,
+    icon: EzTextBackground(EzRow(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        const Text('Hidden'),
+        EzIcon(
+          PlatformIcons(context).eyeSlash,
+          color: colorScheme.onSurface,
+        ),
+      ],
+    )),
     refresh: refresh,
   );
 
@@ -282,7 +293,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       !provider.hiddenSet.contains(id) &&
                       !provider.homeSet.contains(id),
                   onSelected: (String id) => provider.addHomeApp(id),
-                  icon: PlatformIcons(context).add,
+                  icon: EzTextBackground(EzRow(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      const Text('Home'),
+                      EzIcon(
+                        PlatformIcons(context).add,
+                        color: colorScheme.onSurface,
+                      ),
+                    ],
+                  )),
                   refresh: refresh,
                 ),
               ),
