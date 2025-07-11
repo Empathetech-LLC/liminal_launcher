@@ -170,26 +170,29 @@ class _AppFolderState extends State<AppFolder> {
           rowSpacer,
 
           // Remove apps
-          EzIconButton(
-            icon: Icon(PlatformIcons(context).remove),
-            onPressed: () => context.goNamed(
-              appListPath,
-              extra: listData(
-                listCheck: (String id) => folderSet.contains(id),
-                onSelected: (String id) =>
-                    provider.removeFromFolder(id, index: index),
-                icon: PlatformIcons(context).remove,
-                refresh: refresh,
+          if (folderList.isNotEmpty) ...<Widget>[
+            EzIconButton(
+              icon: Icon(PlatformIcons(context).remove),
+              onPressed: () => context.goNamed(
+                appListPath,
+                extra: listData(
+                  listCheck: (String id) => folderSet.contains(id),
+                  onSelected: (String id) =>
+                      provider.removeFromFolder(id, index: index),
+                  icon: PlatformIcons(context).remove,
+                  refresh: refresh,
+                ),
               ),
             ),
-          ),
-          rowSpacer,
+            rowSpacer,
+          ],
 
           // Delete folder
           EzIconButton(
             icon: Icon(PlatformIcons(context).delete),
-            onPressed: () => provider.deleteFolder(
-                <String>[widget.name, ...folderList].join(folderSplit)),
+            onPressed: () => provider.deleteFolder(folderList.isEmpty
+                ? '${widget.name}$folderSplit$emptyTag'
+                : <String>[widget.name, ...folderList].join(folderSplit)),
           ),
           rowSpacer,
 
