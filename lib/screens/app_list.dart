@@ -82,9 +82,11 @@ class _AppListScreenState extends State<AppListScreen> {
 
   // Define custom functions //
 
+  void refreshList() => setState(() => appList = getApps());
+
   void refreshAll() {
     widget.refresh();
-    setState(() => appList = getApps());
+    refreshList();
   }
 
   List<AppInfo> getApps() =>
@@ -152,7 +154,7 @@ class _AppListScreenState extends State<AppListScreen> {
                         );
                         provider.sort(listSort, ascList);
 
-                        setState(() {});
+                        refreshList();
                       },
                     ),
                     // By publisher
@@ -168,7 +170,7 @@ class _AppListScreenState extends State<AppListScreen> {
                         );
                         provider.sort(listSort, ascList);
 
-                        setState(() {});
+                        refreshList();
                       },
                     ),
                   ],
@@ -185,7 +187,7 @@ class _AppListScreenState extends State<AppListScreen> {
                     await EzConfig.setBool(appOrderKey, ascList);
                     provider.sort(listSort, ascList);
 
-                    setState(() {});
+                    refreshList();
                   },
                 ),
                 rowSpacer,
@@ -204,6 +206,7 @@ class _AppListScreenState extends State<AppListScreen> {
                           if (searching) {
                             closeKeyboard(context);
                             searchControl.clear();
+
                             searchList = appList;
                             setState(() => searching = false);
                           } else {
@@ -268,7 +271,6 @@ class _AppListScreenState extends State<AppListScreen> {
               },
               child: searching
                   ? Expanded(
-                      key: UniqueKey(),
                       child: ListView.builder(
                         controller: scrollControl,
                         physics: const ClampingScrollPhysics(),
@@ -287,7 +289,6 @@ class _AppListScreenState extends State<AppListScreen> {
                       ),
                     )
                   : Expanded(
-                      key: UniqueKey(),
                       child: ListView.builder(
                         controller: scrollControl,
                         physics: const ClampingScrollPhysics(),
