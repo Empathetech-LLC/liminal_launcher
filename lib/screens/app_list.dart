@@ -49,7 +49,10 @@ class _AppListScreenState extends State<AppListScreen> {
   static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   final EzSpacer rowMargin = EzMargin(vertical: false);
 
+  final double iconSize = EzConfig.get(iconSizeKey);
+
   final double margin = EzConfig.get(marginKey);
+  final double padding = EzConfig.get(paddingKey);
   final double spacing = EzConfig.get(spacingKey);
 
   late final EdgeInsets listPadding =
@@ -309,33 +312,41 @@ class _AppListScreenState extends State<AppListScreen> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           // Scroll to top
-          if (!atTop)
-            FloatingActionButton(
-              onPressed: () {
-                scrollControl.animateTo(
-                  0,
-                  duration: animDuration,
-                  curve: Curves.easeOut,
-                );
-              },
-              child: EzIcon(PlatformIcons(context).upArrow),
+          SizedBox(
+            height: iconSize + padding,
+            child: Visibility(
+              visible: !atTop,
+              child: FloatingActionButton(
+                onPressed: () {
+                  scrollControl.animateTo(
+                    0,
+                    duration: animDuration,
+                    curve: Curves.easeOut,
+                  );
+                },
+                child: EzIcon(PlatformIcons(context).upArrow),
+              ),
             ),
-
-          // Spacer (if needed)
-          if (!atTop && !atBottom) spacer,
+          ),
+          spacer,
 
           // Scroll to bottom
-          if (!atBottom)
-            FloatingActionButton(
-              onPressed: () {
-                scrollControl.animateTo(
-                  scrollControl.position.maxScrollExtent,
-                  duration: animDuration,
-                  curve: Curves.easeOut,
-                );
-              },
-              child: EzIcon(PlatformIcons(context).downArrow),
+          SizedBox(
+            height: iconSize + padding,
+            child: Visibility(
+              visible: !atBottom,
+              child: FloatingActionButton(
+                onPressed: () {
+                  scrollControl.animateTo(
+                    scrollControl.position.maxScrollExtent,
+                    duration: animDuration,
+                    curve: Curves.easeOut,
+                  );
+                },
+                child: EzIcon(PlatformIcons(context).downArrow),
+              ),
             ),
+          ),
         ],
       ),
     );
