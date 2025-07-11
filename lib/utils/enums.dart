@@ -33,6 +33,23 @@ extension AppSortConfig on AppSort {
   }
 }
 
+enum ListData { listCheck, onSelected, icon, refresh }
+
+extension ListDataConfig on ListData {
+  String get key {
+    switch (this) {
+      case ListData.listCheck:
+        return 'listCheck';
+      case ListData.onSelected:
+        return 'onSelected';
+      case ListData.icon:
+        return 'icon';
+      case ListData.refresh:
+        return 'refresh';
+    }
+  }
+}
+
 // Layout settings //
 
 enum HeaderOrder { timeFirst, weatherFirst }
