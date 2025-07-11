@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: AppFolder(
             index: index,
             name: parts[0],
-            ids: parts.sublist(1),
+            ids: parts[0] == emptyTag ? <String>[] : parts.sublist(1),
             alignment: homeAlign,
             folderIcon: listIcon,
             editing: editing,
