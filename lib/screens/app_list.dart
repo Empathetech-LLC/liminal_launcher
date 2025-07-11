@@ -14,7 +14,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 Map<String, dynamic> listData({
   required bool Function(String id) listCheck,
   required Future<void> Function(String id) onSelected,
-  IconData? icon,
+  Widget? icon,
   required void Function() refresh,
 }) =>
     <String, dynamic>{
@@ -27,7 +27,7 @@ Map<String, dynamic> listData({
 class AppListScreen extends StatefulWidget {
   final bool Function(String) listCheck;
   final Future<void> Function(String id) onSelected;
-  final IconData? icon;
+  final Widget? icon;
   final void Function() refresh;
 
   const AppListScreen({
@@ -123,15 +123,6 @@ class _AppListScreenState extends State<AppListScreen> {
               scrollDirection: Axis.horizontal,
               mainAxisAlignment: listAlign.mainAxis,
               children: <Widget>[
-                // Optional icon
-                if (widget.icon != null) ...<Widget>[
-                  EzIcon(
-                    widget.icon,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  rowMargin,
-                ],
-
                 // Sort
                 MenuAnchor(
                   builder: (_, MenuController controller, __) => EzIconButton(
@@ -236,6 +227,10 @@ class _AppListScreenState extends State<AppListScreen> {
                 ),
               ],
             ),
+            if (widget.icon != null) ...<Widget>[
+              EzMargin(),
+              widget.icon!,
+            ],
             spacer,
 
             // App list
