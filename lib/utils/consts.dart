@@ -85,10 +85,6 @@ final Map<String, Object> defaultConfig = <String, Object>{
   folderIconKey: true,
   folderLabelTypeKey: LabelType.none.configValue,
 
-  // Text
-  darkTextBackgroundOpacityKey: 0.4,
-  lightTextBackgroundOpacityKey: 0.4,
-
   // Image
   useOSKey: true,
 };
