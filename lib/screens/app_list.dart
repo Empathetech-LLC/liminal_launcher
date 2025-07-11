@@ -11,10 +11,32 @@ import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-class AppListScreen extends StatefulWidget {
-  final void Function()? refreshHome;
+Map<String, dynamic> listData({
+  required bool Function(String id) listCheck,
+  required Future<void> Function(String id) onSelected,
+  IconData? icon,
+  required void Function() refresh,
+}) =>
+    <String, dynamic>{
+      ListData.listCheck.key: listCheck,
+      ListData.onSelected.key: onSelected,
+      ListData.icon.key: icon,
+      ListData.refresh.key: refresh,
+    };
 
-  const AppListScreen({super.key, this.refreshHome});
+class AppListScreen extends StatefulWidget {
+  final bool Function(String) listCheck;
+  final Future<void> Function(String id) onSelected;
+  final IconData? icon;
+  final void Function() refresh;
+
+  const AppListScreen({
+    super.key,
+    required this.listCheck,
+    required this.onSelected,
+    this.icon,
+    required this.refresh,
+  });
 
   @override
   State<AppListScreen> createState() => _AppListScreenState();
@@ -25,6 +47,7 @@ class _AppListScreenState extends State<AppListScreen> {
 
   static const EzSpacer spacer = EzSpacer();
   static const EzSpacer rowSpacer = EzSpacer(vertical: false);
+  final EzSpacer rowMargin = EzMargin(vertical: false);
 
   final double margin = EzConfig.get(marginKey);
   final double spacing = EzConfig.get(spacingKey);
@@ -60,13 +83,12 @@ class _AppListScreenState extends State<AppListScreen> {
   // Define custom functions //
 
   void refreshAll() {
-    widget.refreshHome?.call();
+    widget.refresh();
     setState(() => appList = getApps());
   }
 
-  List<AppInfo> getApps() => provider.apps
-      .where((AppInfo app) => !provider.hiddenSet.contains(app.id))
-      .toList();
+  List<AppInfo> getApps() =>
+      provider.apps.where((AppInfo app) => widget.listCheck(app.id)).toList();
 
   List<AppInfo> searchApps(List<AppInfo> appList) => appList
       .where((AppInfo app) =>
@@ -99,6 +121,15 @@ class _AppListScreenState extends State<AppListScreen> {
               scrollDirection: Axis.horizontal,
               mainAxisAlignment: listAlign.mainAxis,
               children: <Widget>[
+                // Optional icon
+                if (widget.icon != null) ...<Widget>[
+                  EzIcon(
+                    widget.icon,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  rowMargin,
+                ],
+
                 // Sort
                 MenuAnchor(
                   builder: (_, MenuController controller, __) => EzIconButton(
@@ -182,7 +213,7 @@ class _AppListScreenState extends State<AppListScreen> {
                         },
                       ),
                       if (searching) ...<Widget>[
-                        EzMargin(vertical: false),
+                        rowMargin,
                         Expanded(
                           child: TextField(
                             controller: searchControl,
@@ -235,10 +266,10 @@ class _AppListScreenState extends State<AppListScreen> {
                 }
                 return false;
               },
-              child: searching
-                  ? Expanded(
-                      key: ValueKey<String>('searchList_${searchList.length}'),
-                      child: ListView.builder(
+              child: Expanded(
+                key: UniqueKey(),
+                child: searching
+                    ? ListView.builder(
                         controller: scrollControl,
                         physics: const ClampingScrollPhysics(),
                         itemCount: searchList.length,
@@ -249,29 +280,28 @@ class _AppListScreenState extends State<AppListScreen> {
                             app: searchList[index],
                             onHomeScreen: false,
                             editing: false,
+                            onSelected: widget.onSelected,
                             refresh: refreshAll,
                           ),
                         ),
-                      ),
-                    )
-                  : Expanded(
-                      key: ValueKey<String>('appList_${appList.length}'),
-                      child: ListView.builder(
+                      )
+                    : ListView.builder(
                         controller: scrollControl,
                         physics: const ClampingScrollPhysics(),
                         itemCount: appList.length,
                         itemBuilder: (_, int index) => Padding(
-                          padding: listPadding,
                           key: ValueKey<String>(appList[index].id),
+                          padding: listPadding,
                           child: AppTile(
                             app: appList[index],
                             onHomeScreen: false,
                             editing: false,
+                            onSelected: widget.onSelected,
                             refresh: refreshAll,
                           ),
                         ),
                       ),
-                    ),
+              ),
             ),
           ],
         )),
