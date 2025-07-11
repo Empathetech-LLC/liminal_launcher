@@ -90,7 +90,7 @@ class AppInfoProvider extends ChangeNotifier {
 
   void _listenToAppEvents() {
     _appEventSubscription =
-        _appEventChannel.receiveBroadcastStream().listen((dynamic event) {
+        _appEventChannel.receiveBroadcastStream().listen((dynamic event) async {
       if (event is Map<dynamic, dynamic>) {
         final String eventType = event['eventType'] as String;
 
@@ -99,15 +99,25 @@ class AppInfoProvider extends ChangeNotifier {
             final Map<String, dynamic>? appInfoMap =
                 event['appInfo'] as Map<String, dynamic>?;
 
-            if (appInfoMap != null) _handleAppInstalled(appInfoMap);
+            if (appInfoMap != null) await _handleAppInstalled(appInfoMap);
             break;
           case 'uninstalled':
-            final Map<String, dynamic>? appInfoMap =
-                event['appInfo'] as Map<String, dynamic>?;
+            final String? packageName = event['packageName'] as String?;
+            if (packageName == null) return;
 
-            if (appInfoMap != null) {
-              final AppInfo uninstalled = AppInfo.fromMap(appInfoMap);
-              removeDeleted(uninstalled.id);
+            final List<AppInfo> apps = _apps
+                .where((AppInfo app) => app.package == packageName)
+                .toList();
+
+            if (apps.isEmpty) {
+              return;
+            } else if (apps.length == 1) {
+              await removeDeleted(apps.first.id);
+            } else {
+              await removeDeleted(apps.first.id);
+              // Needs improvement
+              // Some apps can have the same package name
+              // Rare edge case, but still possible
             }
             break;
         }
