@@ -3,11 +3,13 @@
  * See LICENSE for distribution and usage details.
  */
 
+import '../screens/export.dart';
 import '../utils/export.dart';
 import './export.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
@@ -16,10 +18,9 @@ class AppFolder extends StatefulWidget {
   final String name;
   final List<String> ids;
   final ListAlignment alignment;
-  final bool showIcon;
-  final LabelType labelType;
+  final bool folderIcon;
   final bool editing;
-  final void Function()? refreshHome;
+  final void Function() refresh;
 
   const AppFolder({
     super.key,
@@ -27,10 +28,9 @@ class AppFolder extends StatefulWidget {
     required this.name,
     required this.ids,
     required this.alignment,
-    required this.showIcon,
-    required this.labelType,
+    required this.folderIcon,
     required this.editing,
-    required this.refreshHome,
+    required this.refresh,
   });
 
   @override
@@ -46,7 +46,6 @@ class _AppFolderState extends State<AppFolder> {
 
   late final EdgeInsets rowPadding =
       EdgeInsets.symmetric(horizontal: spacing / 2);
-  late final EdgeInsets modalPadding = EzInsets.col(spacing);
 
   late final EFUILang el10n = ezL10n(context);
   late final TextTheme textTheme = Theme.of(context).textTheme;
@@ -65,6 +64,11 @@ class _AppFolderState extends State<AppFolder> {
   // Define custom functions //
 
   void toggleOpen() => setState(() => open = !open);
+
+  void refresh() {
+    widget.refresh();
+    setState(() {});
+  }
 
   // Define custom Widgets //
 
@@ -104,7 +108,7 @@ class _AppFolderState extends State<AppFolder> {
                       if (dialogContext.mounted) {
                         Navigator.of(dialogContext).pop(name);
                       }
-                      widget.refreshHome?.call();
+                      refresh();
                     }
                   }
 
@@ -149,85 +153,33 @@ class _AppFolderState extends State<AppFolder> {
           ),
           rowSpacer,
 
-          // Edit apps
+          // Add apps
           EzIconButton(
-            icon: Icon(PlatformIcons(context).edit),
-            onPressed: () => showModalBottomSheet(
-              context: context,
-              useSafeArea: true,
-              isScrollControlled: true,
-              builder: (_) => StatefulBuilder(
-                builder: (_, StateSetter setModalState) {
-                  void onRemove(String id) async {
-                    final bool removed =
-                        await provider.removeFromFolder(id, index: index);
+            icon: Icon(PlatformIcons(context).add),
+            onPressed: () => context.goNamed(
+              appListPath,
+              extra: listData(
+                listCheck: (String id) => !folderSet.contains(id),
+                onSelected: (String id) =>
+                    provider.addToFolder(id, index: index),
+                icon: PlatformIcons(context).add,
+                refresh: refresh,
+              ),
+            ),
+          ),
+          rowSpacer,
 
-                    if (removed) {
-                      folderList.remove(id);
-                      folderSet.remove(id);
-
-                      widget.refreshHome?.call();
-                      setState(() {});
-                      setModalState(() {});
-                    }
-                  }
-
-                  void onAdd(String id) async {
-                    final int? indexMod =
-                        await provider.addToFolder(id, index: index);
-
-                    if (indexMod != null) {
-                      folderList.add(id);
-                      folderSet.add(id);
-
-                      widget.refreshHome?.call();
-                      setState(() => index += indexMod);
-                      setModalState(() {});
-                    }
-                  }
-
-                  return EzScrollView(
-                    key: ValueKey<int>(folderSet.length),
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: widget.alignment.crossAxis,
-                    children: <Widget>[
-                      // Remove
-                      ...folderList.map((String id) {
-                        final AppInfo? app = provider.appMap[id];
-                        if (app == null) return null;
-
-                        return Padding(
-                            key: ValueKey<String>(app.id),
-                            padding: modalPadding,
-                            child: TileButton(
-                              app: app,
-                              type: widget.labelType,
-                              showIcon: widget.showIcon,
-                              onPressed: () => onRemove(app.id),
-                            ));
-                      }).whereType<Widget>(),
-                      EzDivider(height: spacing),
-
-                      // Add
-                      ...provider.apps
-                          .where((AppInfo app) =>
-                              !folderSet.contains(app.id) &&
-                              !provider.hiddenSet.contains(app.id))
-                          .map((AppInfo app) {
-                        return Padding(
-                          key: ValueKey<String>(app.id),
-                          padding: modalPadding,
-                          child: TileButton(
-                            app: app,
-                            type: widget.labelType,
-                            showIcon: widget.showIcon,
-                            onPressed: () => onAdd(app.id),
-                          ),
-                        );
-                      }),
-                    ],
-                  );
-                },
+          // Remove apps
+          EzIconButton(
+            icon: Icon(PlatformIcons(context).remove),
+            onPressed: () => context.goNamed(
+              appListPath,
+              extra: listData(
+                listCheck: (String id) => folderSet.contains(id),
+                onSelected: (String id) =>
+                    provider.removeFromFolder(id, index: index),
+                icon: PlatformIcons(context).remove,
+                refresh: refresh,
               ),
             ),
           ),
@@ -265,8 +217,9 @@ class _AppFolderState extends State<AppFolder> {
                         child: AppTile(
                           app: app,
                           onHomeScreen: null,
+                          onSelected: (String id) => launchApp(id),
                           editing: editing,
-                          refresh: widget.refreshHome,
+                          refresh: refresh,
                         ),
                       );
                     })
@@ -274,7 +227,7 @@ class _AppFolderState extends State<AppFolder> {
                     .toList() +
                 closeTail,
           )
-        : (widget.showIcon
+        : (widget.folderIcon
             ? EzTextIconButton(
                 icon: EzIcon(PlatformIcons(context).folder),
                 label: widget.name,
