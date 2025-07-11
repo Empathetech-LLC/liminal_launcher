@@ -196,7 +196,13 @@ class _AppTileState extends State<AppTile> {
 
               // Info
               EzIconButton(
-                onPressed: () => openSettings(widget.app.package),
+                onPressed: () async {
+                  await openSettings(widget.app.package);
+                  if (widget.onHomeScreen == false && context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                  widget.refresh?.call();
+                },
                 icon: Icon(PlatformIcons(context).info),
               ),
               rowSpacer,
