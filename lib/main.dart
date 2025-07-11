@@ -32,9 +32,6 @@ void main() async {
   runApp(LiminalLauncher(await getApps()));
 }
 
-/// Initialize a path based router for web-enabled apps
-/// Or any other app that requires deep linking
-/// https://docs.flutter.dev/ui/navigation/deep-linking
 final GoRouter router = GoRouter(
   initialLocation: homePath,
   errorBuilder: (_, GoRouterState state) => ErrorScreen(state.error),
@@ -48,15 +45,16 @@ final GoRouter router = GoRouter(
           path: appListPath,
           name: appListPath,
           builder: (_, GoRouterState state) {
-            final void Function()? refreshHome =
-                state.extra as void Function()?;
-            return AppListScreen(refreshHome: refreshHome);
+            final Map<String, dynamic> listData =
+                state.extra as Map<String, dynamic>;
+
+            return AppListScreen(
+              listCheck: listData[ListData.listCheck.key],
+              onSelected: listData[ListData.onSelected.key],
+              icon: listData[ListData.icon.key],
+              refresh: listData[ListData.refresh.key],
+            );
           },
-        ),
-        GoRoute(
-          path: hiddenListPath,
-          name: hiddenListPath,
-          builder: (_, __) => const HiddenAppListScreen(),
         ),
         GoRoute(
           path: settingsHomePath,

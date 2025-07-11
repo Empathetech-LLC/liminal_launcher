@@ -9,7 +9,6 @@ export 'error.dart';
 
 export 'home.dart';
 export 'app_list.dart';
-export 'hidden_app_list.dart';
 
 export 'settings/settings_home.dart';
 
@@ -23,9 +22,6 @@ export 'settings/image_settings.dart';
 
 /// 'app-list'
 const String appListPath = 'app-list';
-
-/// 'hidden-list'
-const String hiddenListPath = 'hidden-list';
 
 /// 'settings-home'
 const String settingsHomePath = 'settings-home';
