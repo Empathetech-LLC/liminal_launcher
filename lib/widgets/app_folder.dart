@@ -167,7 +167,7 @@ class _AppFolderState extends State<AppFolder> {
                 icon: EzTextBackground(EzRow(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text(widget.name),
+                    Text('${widget.name}\t'),
                     EzIcon(
                       PlatformIcons(context).add,
                       color: colorScheme.onSurface,
@@ -193,7 +193,7 @@ class _AppFolderState extends State<AppFolder> {
                   icon: EzTextBackground(EzRow(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Text(widget.name),
+                      Text('${widget.name}\t'),
                       EzIcon(
                         PlatformIcons(context).remove,
                         color: colorScheme.onSurface,
