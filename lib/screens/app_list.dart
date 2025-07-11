@@ -266,10 +266,10 @@ class _AppListScreenState extends State<AppListScreen> {
                 }
                 return false;
               },
-              child: Expanded(
-                key: UniqueKey(),
-                child: searching
-                    ? ListView.builder(
+              child: searching
+                  ? Expanded(
+                      key: UniqueKey(),
+                      child: ListView.builder(
                         controller: scrollControl,
                         physics: const ClampingScrollPhysics(),
                         itemCount: searchList.length,
@@ -284,8 +284,11 @@ class _AppListScreenState extends State<AppListScreen> {
                             refresh: refreshAll,
                           ),
                         ),
-                      )
-                    : ListView.builder(
+                      ),
+                    )
+                  : Expanded(
+                      key: UniqueKey(),
+                      child: ListView.builder(
                         controller: scrollControl,
                         physics: const ClampingScrollPhysics(),
                         itemCount: appList.length,
@@ -301,7 +304,7 @@ class _AppListScreenState extends State<AppListScreen> {
                           ),
                         ),
                       ),
-              ),
+                    ),
             ),
           ],
         )),
