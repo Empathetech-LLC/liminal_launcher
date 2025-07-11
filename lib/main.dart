@@ -18,7 +18,9 @@ import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+  await SystemChrome.setPreferredOrientations(
+    <DeviceOrientation>[DeviceOrientation.portraitUp],
+  );
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
