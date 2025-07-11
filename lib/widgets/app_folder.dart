@@ -232,7 +232,10 @@ class _AppFolderState extends State<AppFolder> {
           )
         : (widget.folderIcon
             ? EzTextIconButton(
-                icon: EzIcon(PlatformIcons(context).folder),
+                icon: Icon(
+                  PlatformIcons(context).folderOpen,
+                  size: EzConfig.get(iconSizeKey) + EzConfig.get(paddingKey),
+                ),
                 label: widget.name,
                 onPressed: toggleOpen,
               )
