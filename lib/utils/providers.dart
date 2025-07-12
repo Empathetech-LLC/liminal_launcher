@@ -312,11 +312,31 @@ class AppInfoProvider extends ChangeNotifier {
     required int newIndex,
   }) async {
     if (oldIndex == newIndex) return false;
-
     if (newIndex > oldIndex) newIndex -= 1;
 
     final String id = _homeList.removeAt(oldIndex);
     _homeList.insert(newIndex, id);
+
+    await EzConfig.setStringList(homeIDsKey, _homeList);
+    notifyListeners();
+
+    return true;
+  }
+
+  Future<bool> reorderFolderItem({
+    required int oldIndex,
+    required int newIndex,
+    required int folderIndex,
+  }) async {
+    if (oldIndex == newIndex) return false;
+    if (newIndex > oldIndex) newIndex -= 1;
+
+    final List<String> folderList = _homeList[folderIndex].split(folderSplit);
+    final String id = folderList.removeAt(oldIndex);
+    folderList.insert(newIndex, id);
+
+    final String newFullName = folderList.join(folderSplit);
+    _homeList[folderIndex] = newFullName;
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
