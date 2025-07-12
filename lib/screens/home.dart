@@ -99,11 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
           key: ValueKey<String>('${parts[0]}_$index'),
           padding: EdgeInsets.symmetric(vertical: spacing / 2),
           child: AppFolder(
+            provider: provider,
             index: index,
             name: parts[0],
             ids: parts[1] == emptyTag ? <String>[] : parts.sublist(1),
             alignment: homeAlign,
             folderIcon: listIcon,
+            appIcon: listIcon,
+            appLabel: listLabel,
             editing: editing,
             refresh: refresh,
           ),
@@ -251,11 +254,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Expanded(
                       child: ReorderableListView(
                         onReorder: (int oldIndex, int newIndex) async {
-                          await provider.reorderHomeItem(
+                          final bool reordered = await provider.reorderHomeItem(
                             oldIndex: oldIndex,
                             newIndex: newIndex,
                           );
-                          refresh();
+                          if (reordered) refresh();
                         },
                         children: homeA2T(),
                       ),
