@@ -51,8 +51,8 @@ Future<void> openSettings(String package) async {
 }
 
 /// Uninstall [app]
+/// Android will show it's built-in uninstall dialog
 Future<bool> deleteApp(BuildContext context, AppInfo app) async {
-  // Android will show it's built-in uninstall dialog
   try {
     await platform.invokeMethod('deleteApp', <String, dynamic>{
       'packageName': app.package,
