@@ -24,7 +24,7 @@ void main() async {
   EzConfig.init(
     preferences: prefs,
     defaults: defaultConfig,
-    fallbackLang: await EFUILang.delegate.load(english),
+    fallbackLang: await EFUILang.delegate.load(americanEnglish),
     assetPaths: <String>{},
   );
 
@@ -39,7 +39,7 @@ void main() async {
         // Load localization(s) //
 
         ezLog('Loading localizations');
-        final EFUILang l10n = await EFUILang.delegate.load(english);
+        final EFUILang l10n = await EFUILang.delegate.load(americanEnglish);
 
         // Load the app //
 
