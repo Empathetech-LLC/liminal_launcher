@@ -64,7 +64,7 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
           // Full list align
           _SegmentedAlignmentButton(
             label: 'Full list alignment',
-            configKey: fullListAlignmentKey,
+            configKey: listAlignmentKey,
             segments: alignmentSegments,
           ),
         ],

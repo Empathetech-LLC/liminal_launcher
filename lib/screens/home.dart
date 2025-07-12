@@ -210,11 +210,11 @@ class _HomeScreenState extends State<HomeScreen> {
             AppInfo? toLaunch;
 
             if (details.primaryVelocity! < 0 && !editing) {
-              toLaunch = provider.appMap[EzConfig.get(leftAppKey)];
+              toLaunch = provider.appMap[EzConfig.get(leftSwipeIDKey)];
             } else if (details.primaryVelocity! > 0) {
               editing
                   ? setState(() => editing = false)
-                  : toLaunch = provider.appMap[EzConfig.get(rightAppKey)];
+                  : toLaunch = provider.appMap[EzConfig.get(rightSwipeIDKey)];
             }
 
             if (toLaunch != null) launchApp(toLaunch.package);

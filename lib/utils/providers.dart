@@ -79,9 +79,9 @@ class AppInfoProvider extends ChangeNotifier {
     // Sort based on the user's preferences
     sort(
       AppSortConfig.fromValue(
-        EzConfig.get(appSortKey) ?? EzConfig.getDefault(appSortKey),
+        EzConfig.get(listSortKey) ?? EzConfig.getDefault(listSortKey),
       ),
-      EzConfig.get(appOrderKey) ?? EzConfig.getDefault(appOrderKey),
+      EzConfig.get(ascListKey) ?? EzConfig.getDefault(ascListKey),
     );
 
     // Listen //
@@ -135,9 +135,9 @@ class AppInfoProvider extends ChangeNotifier {
 
     sort(
       AppSortConfig.fromValue(
-        EzConfig.get(appSortKey) ?? EzConfig.getDefault(appSortKey),
+        EzConfig.get(listSortKey) ?? EzConfig.getDefault(listSortKey),
       ),
-      EzConfig.get(appOrderKey) ?? EzConfig.getDefault(appOrderKey),
+      EzConfig.get(ascListKey) ?? EzConfig.getDefault(ascListKey),
     );
 
     if (EzConfig.get(autoAddToHomeKey) == true &&
@@ -376,8 +376,8 @@ class AppInfoProvider extends ChangeNotifier {
     _hiddenList.clear();
 
     sort(
-      AppSortConfig.fromValue(EzConfig.getDefault(appSortKey)),
-      EzConfig.getDefault(appOrderKey),
+      AppSortConfig.fromValue(EzConfig.getDefault(listSortKey)),
+      EzConfig.getDefault(ascListKey),
     );
 
     notifyListeners();

@@ -22,15 +22,15 @@ final AppInfo self = AppInfo(
 // EzConfig //
 
 // BTS
-const String homeIDsKey = 'home_packages';
-const String hiddenIDsKey = 'hidden_packages';
-const String renamedIDsKey = 'renamed_apps';
-const String appSortKey = 'app_sort';
-const String appOrderKey = 'app_order';
+const String homeIDsKey = 'home_ids';
+const String hiddenIDsKey = 'hidden_ids';
+const String renamedIDsKey = 'renamed_ids';
+const String listSortKey = 'list_sort';
+const String ascListKey = 'asc_list';
 
 // Functionality
-const String leftAppKey = 'left_app';
-const String rightAppKey = 'right_app';
+const String leftSwipeIDKey = 'left_swipe_id';
+const String rightSwipeIDKey = 'right_swipe_id';
 const String autoSearchKey = 'auto_search';
 const String authToEditKey = 'auth_to_edit';
 const String autoAddToHomeKey = 'auto_add_to_home';
@@ -38,7 +38,7 @@ const String autoAddToHomeKey = 'auto_add_to_home';
 // Layout
 // const String headerOrderKey = 'header_order';
 const String homeAlignmentKey = 'home_alignment';
-const String fullListAlignmentKey = 'full_list_alignment';
+const String listAlignmentKey = 'list_alignment';
 
 // Design
 const String homeTimeKey = 'home_time';
@@ -50,7 +50,6 @@ const String folderIconKey = 'folder_icon';
 const String folderLabelTypeKey = 'folder_label_type';
 
 // Image
-
 const String useOSKey = 'use_os';
 
 /// [mobileEmpathConfig] with Liminal additions
@@ -60,13 +59,13 @@ final Map<String, Object> defaultConfig = <String, Object>{
   // BTS
   homeIDsKey: <String>[],
   hiddenIDsKey: <String>[],
-  appSortKey: AppSort.name.configValue,
-  appOrderKey: true,
   renamedIDsKey: <String>[],
+  listSortKey: AppSort.name.configValue,
+  ascListKey: true,
 
   // Functionality
-  leftAppKey: '',
-  rightAppKey: '',
+  leftSwipeIDKey: '',
+  rightSwipeIDKey: '',
   autoSearchKey: false,
   authToEditKey: false,
   autoAddToHomeKey: false,
@@ -74,12 +73,12 @@ final Map<String, Object> defaultConfig = <String, Object>{
   // Layout
   // headerOrderKey: HeaderOrder.timeFirst.configValue,
   homeAlignmentKey: ListAlignment.center.configValue,
-  fullListAlignmentKey: ListAlignment.center.configValue,
+  listAlignmentKey: ListAlignment.center.configValue,
 
   // Design
   homeTimeKey: true,
   homeDateKey: true,
-  // homeWeatherKey: true,
+  // homeWeatherKey: false,
   listIconKey: true,
   listLabelTypeKey: LabelType.full.configValue,
   folderIconKey: true,

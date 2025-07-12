@@ -63,13 +63,12 @@ class _AppListScreenState extends State<AppListScreen> {
   late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   final ListAlignment listAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(fullListAlignmentKey) ??
-          EzConfig.getDefault(fullListAlignmentKey));
+      EzConfig.get(listAlignmentKey) ?? EzConfig.getDefault(listAlignmentKey));
 
   AppSort listSort = AppSortConfig.fromValue(
-    EzConfig.get(appSortKey) ?? EzConfig.getDefault(appSortKey),
+    EzConfig.get(listSortKey) ?? EzConfig.getDefault(listSortKey),
   );
-  bool ascList = EzConfig.get(appOrderKey) ?? EzConfig.getDefault(appOrderKey);
+  bool ascList = EzConfig.get(ascListKey) ?? EzConfig.getDefault(ascListKey);
 
   final ScrollController scrollControl = ScrollController();
 
@@ -143,7 +142,7 @@ class _AppListScreenState extends State<AppListScreen> {
                         listSort = AppSort.name;
 
                         await EzConfig.setString(
-                          appSortKey,
+                          listSortKey,
                           listSort.configValue,
                         );
                         provider.sort(listSort, ascList);
@@ -159,7 +158,7 @@ class _AppListScreenState extends State<AppListScreen> {
                         listSort = AppSort.publisher;
 
                         await EzConfig.setString(
-                          appSortKey,
+                          listSortKey,
                           listSort.configValue,
                         );
                         provider.sort(listSort, ascList);
@@ -178,7 +177,7 @@ class _AppListScreenState extends State<AppListScreen> {
                   onPressed: () async {
                     ascList = !ascList;
 
-                    await EzConfig.setBool(appOrderKey, ascList);
+                    await EzConfig.setBool(ascListKey, ascList);
                     provider.sort(listSort, ascList);
 
                     refreshList();

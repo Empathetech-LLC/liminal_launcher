@@ -203,7 +203,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 listAlignValue = ListAlignment.center.configValue;
                 break;
             }
-            await EzConfig.setString(fullListAlignmentKey, listAlignValue);
+            await EzConfig.setString(listAlignmentKey, listAlignValue);
 
             // Design
 
@@ -270,8 +270,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
               late final Set<String> skip = <String>{
                 homeIDsKey,
                 hiddenIDsKey,
-                leftAppKey,
-                rightAppKey,
+                leftSwipeIDKey,
+                rightSwipeIDKey,
                 authToEditKey,
               };
 
@@ -357,8 +357,8 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
   late final String leftLabel = 'Left package';
   late final String rightLabel = 'Right package';
 
-  late final String? leftID = EzConfig.get(leftAppKey);
-  late final String? rightID = EzConfig.get(rightAppKey);
+  late final String? leftID = EzConfig.get(leftSwipeIDKey);
+  late final String? rightID = EzConfig.get(rightSwipeIDKey);
 
   late AppInfo leftApp = (leftID == null || leftID!.isEmpty)
       ? nullApp
@@ -384,7 +384,7 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                 onSelected: (AppInfo? app) async {
                   if (app == null || app == leftApp) return;
 
-                  await EzConfig.setString(leftAppKey, app.id);
+                  await EzConfig.setString(leftSwipeIDKey, app.id);
                   setState(() => leftApp = app);
                 },
               )
@@ -399,7 +399,7 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                 onSelected: (AppInfo? app) async {
                   if (app == null || app == rightApp) return;
 
-                  await EzConfig.setString(rightAppKey, app.id);
+                  await EzConfig.setString(rightSwipeIDKey, app.id);
                   setState(() => rightApp = app);
                 },
               )
