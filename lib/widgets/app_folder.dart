@@ -8,27 +8,32 @@ import '../utils/export.dart';
 import './export.dart';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class AppFolder extends StatefulWidget {
+  final AppInfoProvider provider;
   final int index;
   final String name;
   final List<String> ids;
   final ListAlignment alignment;
   final bool folderIcon;
+  final LabelType appLabel;
+  final bool appIcon;
   final bool editing;
   final void Function() refresh;
 
   const AppFolder({
     super.key,
+    required this.provider,
     required this.index,
     required this.name,
     required this.ids,
     required this.alignment,
     required this.folderIcon,
+    required this.appIcon,
+    required this.appLabel,
     required this.editing,
     required this.refresh,
   });
@@ -44,6 +49,7 @@ class _AppFolderState extends State<AppFolder> {
 
   final double spacing = EzConfig.get(spacingKey);
 
+  late final EdgeInsets colPadding = EzInsets.col(spacing);
   late final EdgeInsets rowPadding =
       EdgeInsets.symmetric(horizontal: spacing / 2);
 
@@ -53,8 +59,6 @@ class _AppFolderState extends State<AppFolder> {
   late final TextTheme textTheme = Theme.of(context).textTheme;
 
   // Define the build data //
-
-  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
 
   late final List<String> folderList = widget.ids;
   late final Set<String> folderSet = folderList.toSet();
@@ -104,7 +108,7 @@ class _AppFolderState extends State<AppFolder> {
                     if (validateRename(name) != null) return null;
 
                     final bool success =
-                        await provider.renameFolder(name, index: index);
+                        await widget.provider.renameFolder(name, index: index);
 
                     if (success) {
                       if (dialogContext.mounted) {
@@ -163,7 +167,7 @@ class _AppFolderState extends State<AppFolder> {
               extra: listData(
                 listCheck: (String id) => !folderSet.contains(id),
                 onSelected: (String id) =>
-                    provider.addToFolder(id, index: index),
+                    widget.provider.addToFolder(id, index: index),
                 icon: EzTextBackground(EzRow(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -180,8 +184,8 @@ class _AppFolderState extends State<AppFolder> {
           ),
           rowSpacer,
 
-          // Remove apps
           if (folderList.isNotEmpty) ...<Widget>[
+            // Remove apps
             EzIconButton(
               icon: Icon(PlatformIcons(context).remove),
               onPressed: () => context.goNamed(
@@ -189,7 +193,7 @@ class _AppFolderState extends State<AppFolder> {
                 extra: listData(
                   listCheck: (String id) => folderSet.contains(id),
                   onSelected: (String id) =>
-                      provider.removeFromFolder(id, index: index),
+                      widget.provider.removeFromFolder(id, index: index),
                   icon: EzTextBackground(EzRow(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -205,12 +209,54 @@ class _AppFolderState extends State<AppFolder> {
               ),
             ),
             rowSpacer,
+
+            // Re-order apps
+            EzIconButton(
+              icon: Icon(PlatformIcons(context).remove),
+              onPressed: () => showPlatformDialog(
+                context: context,
+                builder: (_) => EzAlertDialog(
+                  title: Text(
+                    'Reorder ${widget.name}',
+                    textAlign: TextAlign.center,
+                  ),
+                  content: ReorderableListView(
+                    onReorder: (int oldIndex, int newIndex) async {
+                      final bool reordered =
+                          await widget.provider.reorderFolderItem(
+                        oldIndex: oldIndex + 1, // name offset
+                        newIndex: newIndex + 1,
+                        folderIndex: widget.index,
+                      );
+                      if (reordered) refresh();
+                    },
+                    children: folderList
+                        .map((String id) {
+                          final AppInfo? app = widget.provider.appMap[id];
+                          if (app == null) return null;
+
+                          return Padding(
+                            padding: colPadding,
+                            child: TileButton(
+                              app: app,
+                              type: widget.appLabel,
+                              showIcon: widget.appIcon,
+                            ),
+                          );
+                        })
+                        .whereType<Widget>()
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),
+            rowSpacer,
           ],
 
           // Delete folder
           EzIconButton(
             icon: Icon(PlatformIcons(context).delete),
-            onPressed: () => provider.deleteFolder(folderList.isEmpty
+            onPressed: () => widget.provider.deleteFolder(folderList.isEmpty
                 ? '${widget.name}$folderSplit$emptyTag'
                 : <String>[widget.name, ...folderList].join(folderSplit)),
           ),
@@ -232,7 +278,7 @@ class _AppFolderState extends State<AppFolder> {
             mainAxisAlignment: widget.alignment.mainAxis,
             children: folderList
                     .map((String id) {
-                      final AppInfo? app = provider.appMap[id];
+                      final AppInfo? app = widget.provider.appMap[id];
                       if (app == null) return null;
 
                       return Padding(
