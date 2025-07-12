@@ -6,7 +6,28 @@
 import './export.dart';
 import 'package:flutter/material.dart';
 
-// BTS settings //
+//* BTS settings *//
+
+// AppListScreen Data //
+
+enum ListData { listCheck, onSelected, icon, refresh }
+
+extension ListDataConfig on ListData {
+  String get key {
+    switch (this) {
+      case ListData.listCheck:
+        return 'listCheck';
+      case ListData.onSelected:
+        return 'onSelected';
+      case ListData.icon:
+        return 'icon';
+      case ListData.refresh:
+        return 'refresh';
+    }
+  }
+}
+
+// AppList Sort //
 
 enum AppSort { name, publisher }
 
@@ -33,24 +54,9 @@ extension AppSortConfig on AppSort {
   }
 }
 
-enum ListData { listCheck, onSelected, icon, refresh }
+//* Layout settings *//
 
-extension ListDataConfig on ListData {
-  String get key {
-    switch (this) {
-      case ListData.listCheck:
-        return 'listCheck';
-      case ListData.onSelected:
-        return 'onSelected';
-      case ListData.icon:
-        return 'icon';
-      case ListData.refresh:
-        return 'refresh';
-    }
-  }
-}
-
-// Layout settings //
+// Home Header Order //
 
 enum HeaderOrder { timeFirst, weatherFirst }
 
@@ -76,6 +82,8 @@ extension HeaderOrderConfig on HeaderOrder {
     }
   }
 }
+
+// App List Alignment //
 
 enum ListAlignment { center, start, end }
 
@@ -151,7 +159,9 @@ extension ListAlignmentConfig on ListAlignment {
   }
 }
 
-// Design settings //
+//* Design settings *//
+
+// App/Folder Label Type //
 
 enum LabelType { none, initials, full, wingding }
 
