@@ -53,6 +53,7 @@ final GoRouter router = GoRouter(
               onSelected: listData[ListData.onSelected.key],
               refresh: listData[ListData.refresh.key],
               autoRefresh: listData[ListData.autoRefresh.key],
+              editable: listData[ListData.editable.key],
               icon: listData[ListData.icon.key],
             );
           },

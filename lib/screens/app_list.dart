@@ -11,13 +11,12 @@ import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-// TODO: Audit local list management
-
 Map<String, dynamic> listData({
   required bool Function(String id) listCheck,
   required Future<void> Function(String id) onSelected,
   required void Function() refresh,
   bool autoRefresh = false,
+  bool editable = true,
   Widget? icon,
 }) =>
     <String, dynamic>{
@@ -25,6 +24,7 @@ Map<String, dynamic> listData({
       ListData.onSelected.key: onSelected,
       ListData.refresh.key: refresh,
       ListData.autoRefresh.key: autoRefresh,
+      ListData.editable.key: editable,
       ListData.icon.key: icon,
     };
 
@@ -33,6 +33,7 @@ class AppListScreen extends StatefulWidget {
   final Future<void> Function(String id) onSelected;
   final void Function() refresh;
   final bool autoRefresh;
+  final bool editable;
   final Widget? icon;
 
   const AppListScreen({
@@ -41,6 +42,7 @@ class AppListScreen extends StatefulWidget {
     required this.onSelected,
     required this.refresh,
     required this.autoRefresh,
+    required this.editable,
     this.icon,
   });
 
@@ -301,6 +303,7 @@ class _AppListScreenState extends State<AppListScreen> {
                             labelType: listLabel,
                             showIcon: listIcon,
                             onSelected: onSelected,
+                            editable: widget.editable,
                             editing: false,
                             refresh: refreshAll,
                           ),
@@ -323,6 +326,7 @@ class _AppListScreenState extends State<AppListScreen> {
                             labelType: listLabel,
                             showIcon: listIcon,
                             onSelected: onSelected,
+                            editable: widget.editable,
                             editing: false,
                             refresh: refreshAll,
                           ),
