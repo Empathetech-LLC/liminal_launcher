@@ -62,6 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late final AppInfoProvider editor =
       Provider.of<AppInfoProvider>(context, listen: false);
 
+  late List<Widget> homeTiles = homeA2T();
+
   late final Map<String, dynamic> appListData = listData(
     listCheck: (String id) => !listener.hiddenSet.contains(id),
     onSelected: (String id) => launchApp(id),
@@ -87,6 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool atBottom = false;
 
   // Define custom functions //
+
+  void refresh() => setState(() => homeTiles = homeA2T());
 
   List<Widget> homeA2T() {
     final List<Widget> tileList = <Widget>[];
@@ -136,8 +140,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return tileList;
   }
-
-  void refresh() => setState(() {});
 
   // Define custom Widgets //
 
@@ -232,9 +234,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           setState(() => atBottom = false);
                         }
                       } else if (notification is ScrollEndNotification) {
-                        atBottom = (notification.metrics.pixels ==
-                            notification.metrics.maxScrollExtent);
-                        setState(() {});
+                        setState(() => atBottom =
+                            (notification.metrics.pixels ==
+                                notification.metrics.maxScrollExtent));
                       }
                       return false; // Let other notifications propagate
                     },
