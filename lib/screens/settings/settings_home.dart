@@ -389,8 +389,8 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                       await EzConfig.setString(leftSwipeIDKey, id);
                       setState(() => leftApp = app);
                     },
-                    icon: const Text('Selecting left swipe'),
                     refresh: () => setState(() {}),
+                    icon: const Text('Selecting left swipe'),
                   ),
                 ),
               ),
@@ -413,8 +413,8 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                       await EzConfig.setString(rightSwipeIDKey, id);
                       setState(() => rightApp = app);
                     },
-                    icon: const Text('Selecting right swipe'),
                     refresh: () => setState(() {}),
+                    icon: const Text('Selecting right swipe'),
                   ),
                 ),
               ),
