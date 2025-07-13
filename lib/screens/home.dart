@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
     icon: EzTextBackground(EzRow(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const Text('Hidden\t'),
+        Text('Hidden\t', style: textTheme.labelLarge),
         EzIcon(
           PlatformIcons(context).eyeSlash,
           color: colorScheme.onSurface,
@@ -291,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: EzTextBackground(EzRow(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      const Text('Home\t'),
+                      Text('Home\t', style: textTheme.labelLarge),
                       EzIcon(
                         PlatformIcons(context).add,
                         color: colorScheme.onSurface,

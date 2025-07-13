@@ -344,6 +344,8 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
 
   final EzSpacer rowMargin = EzMargin(vertical: false);
 
+  late final TextTheme textTheme = Theme.of(context).textTheme;
+
   // Define the build data //
 
   final bool showIcon =
@@ -390,7 +392,10 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                       setState(() => leftApp = app);
                     },
                     refresh: () => setState(() {}),
-                    icon: const Text('Selecting left swipe'),
+                    icon: Text(
+                      'Selecting left swipe',
+                      style: textTheme.labelLarge,
+                    ),
                   ),
                 ),
               ),
@@ -414,7 +419,10 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                       setState(() => rightApp = app);
                     },
                     refresh: () => setState(() {}),
-                    icon: const Text('Selecting right swipe'),
+                    icon: Text(
+                      'Selecting right swipe',
+                      style: textTheme.labelLarge,
+                    ),
                   ),
                 ),
               ),
