@@ -50,8 +50,10 @@ class AppInfoProvider extends ChangeNotifier {
           for (AppInfo app in apps) app.id: app,
         } {
     // Iterate through the home set and split any folders
+    final Set<String> homeCopy = Set<String>.from(_homeSet);
     final Set<String> folders = <String>{};
-    for (final String item in _homeSet) {
+
+    for (final String item in homeCopy) {
       if (item.contains(folderSplit)) {
         _homeSet.addAll(item
             .split(folderSplit)
