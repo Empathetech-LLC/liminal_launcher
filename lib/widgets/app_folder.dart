@@ -16,8 +16,6 @@ class AppFolder extends StatefulWidget {
   final AppInfoProvider listener;
   final AppInfoProvider editor;
   final int index;
-  final String name;
-  final List<String> ids;
   final ListAlignment alignment;
   final LabelType folderLabel;
   final bool folderIcon;
@@ -31,8 +29,6 @@ class AppFolder extends StatefulWidget {
     required this.listener,
     required this.editor,
     required this.index,
-    required this.name,
-    required this.ids,
     required this.alignment,
     required this.folderLabel,
     required this.folderIcon,
@@ -66,8 +62,12 @@ class _AppFolderState extends State<AppFolder> {
 
   late final String folderLabel;
 
-  late final List<String> folderList = widget.ids;
-  late final Set<String> folderSet = folderList.toSet();
+  late List<String> items =
+      widget.listener.homeList[widget.index].split(folderSplit);
+  late String name = items[0];
+  late List<String> appList =
+      (items.length <= 1) ? <String>[] : items.sublist(1);
+  late Set<String> appSet = appList.toSet();
 
   bool open = false;
   late bool editing = widget.editing;
@@ -77,9 +77,16 @@ class _AppFolderState extends State<AppFolder> {
 
   void toggleOpen() => setState(() => open = !open);
 
-  void refresh() {
+  void refreshFolder() {
+    items = widget.listener.homeList[index].split(folderSplit);
+    name = items[0];
+    appList = (items.length <= 1) ? <String>[] : items.sublist(1);
+    appSet = appList.toSet();
+  }
+
+  void refreshAll() {
     widget.refresh();
-    setState(() {});
+    refreshFolder();
   }
 
   // Define custom Widgets //
@@ -100,17 +107,17 @@ class _AppFolderState extends State<AppFolder> {
         folderLabel = '';
 
       case LabelType.initials:
-        folderLabel = widget.name
+        folderLabel = name
             .split(' ')
             .map((String word) => word.isNotEmpty ? word[0] : '')
             .join()
             .toUpperCase();
 
       case LabelType.full:
-        folderLabel = widget.name;
+        folderLabel = name;
 
       case LabelType.wingding:
-        folderLabel = widget.name
+        folderLabel = name
             .split('')
             .map((String char) => wingdingMap[char] ?? char)
             .join();
@@ -148,7 +155,7 @@ class _AppFolderState extends State<AppFolder> {
                       if (dialogContext.mounted) {
                         Navigator.of(dialogContext).pop(name);
                       }
-                      refresh();
+                      refreshAll();
                     }
                   }
 
@@ -171,7 +178,7 @@ class _AppFolderState extends State<AppFolder> {
 
                   return EzAlertDialog(
                     title: Text(
-                      "Rename folder '${widget.name}'?",
+                      "Rename folder '$name'?",
                       textAlign: TextAlign.center,
                     ),
                     content: Form(
@@ -189,7 +196,7 @@ class _AppFolderState extends State<AppFolder> {
                     needsClose: false,
                   );
                 }),
-            child: Text(widget.name, style: textTheme.bodyLarge),
+            child: Text(name, style: textTheme.bodyLarge),
           ),
           rowSpacer,
 
@@ -199,15 +206,15 @@ class _AppFolderState extends State<AppFolder> {
             onPressed: () => context.goNamed(
               appListPath,
               extra: listData(
-                listCheck: (String id) => !folderSet.contains(id),
+                listCheck: (String id) => !appSet.contains(id),
                 onSelected: (String id) =>
                     widget.editor.addToFolder(id, index: index),
-                refresh: refresh,
+                refresh: refreshAll,
                 autoRefresh: true,
                 icon: EzTextBackground(EzRow(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('${widget.name}\t', style: textTheme.labelLarge),
+                    Text('$name\t', style: textTheme.labelLarge),
                     EzIcon(
                       PlatformIcons(context).add,
                       color: colorScheme.onSurface,
@@ -219,22 +226,22 @@ class _AppFolderState extends State<AppFolder> {
           ),
           rowSpacer,
 
-          if (folderList.isNotEmpty) ...<Widget>[
+          if (appSet.isNotEmpty) ...<Widget>[
             // Remove apps
             EzIconButton(
               icon: Icon(PlatformIcons(context).remove),
               onPressed: () => context.goNamed(
                 appListPath,
                 extra: listData(
-                  listCheck: (String id) => folderSet.contains(id),
+                  listCheck: (String id) => appSet.contains(id),
                   onSelected: (String id) =>
                       widget.editor.removeFromFolder(id, index: index),
-                  refresh: refresh,
+                  refresh: refreshAll,
                   autoRefresh: true,
                   icon: EzTextBackground(EzRow(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Text('${widget.name}\t', style: textTheme.labelLarge),
+                      Text('$name\t', style: textTheme.labelLarge),
                       EzIcon(
                         PlatformIcons(context).remove,
                         color: colorScheme.onSurface,
@@ -253,7 +260,7 @@ class _AppFolderState extends State<AppFolder> {
                 context: context,
                 builder: (_) => EzAlertDialog(
                   title: Text(
-                    'Reorder ${widget.name}',
+                    'Reorder $name',
                     textAlign: TextAlign.center,
                   ),
                   content: ReorderableListView(
@@ -264,9 +271,9 @@ class _AppFolderState extends State<AppFolder> {
                         newIndex: newIndex + 1,
                         folderIndex: widget.index,
                       );
-                      if (reordered) refresh();
+                      if (reordered) refreshFolder();
                     },
-                    children: folderList
+                    children: appList
                         .map((String id) {
                           final AppInfo? app = widget.listener.appMap[id];
                           if (app == null) return null;
@@ -292,9 +299,9 @@ class _AppFolderState extends State<AppFolder> {
           // Delete folder
           EzIconButton(
             icon: Icon(PlatformIcons(context).delete),
-            onPressed: () => widget.editor.deleteFolder(folderList.isEmpty
-                ? '${widget.name}$folderSplit$emptyTag'
-                : <String>[widget.name, ...folderList].join(folderSplit)),
+            onPressed: () => widget.editor.deleteFolder(appList.isEmpty
+                ? '$name$folderSplit$emptyTag'
+                : <String>[name, ...appList].join(folderSplit)),
           ),
           rowSpacer,
 
@@ -312,7 +319,7 @@ class _AppFolderState extends State<AppFolder> {
             scrollDirection: Axis.horizontal,
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: widget.alignment.mainAxis,
-            children: folderList
+            children: appList
                     .map((String id) {
                       final AppInfo? app = widget.listener.appMap[id];
                       if (app == null) return null;
@@ -328,7 +335,7 @@ class _AppFolderState extends State<AppFolder> {
                           showIcon: widget.folderIcon,
                           onSelected: (String id) => launchApp(id),
                           editing: editing,
-                          refresh: refresh,
+                          refresh: refreshAll,
                         ),
                       );
                     })
@@ -345,6 +352,6 @@ class _AppFolderState extends State<AppFolder> {
                 label: folderLabel,
                 onPressed: toggleOpen,
               )
-            : EzTextButton(text: widget.name, onPressed: toggleOpen));
+            : EzTextButton(text: name, onPressed: toggleOpen));
   }
 }
