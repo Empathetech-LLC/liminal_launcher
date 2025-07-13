@@ -28,9 +28,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
 
-  late final ButtonStyle menuButtonStyle = TextButton.styleFrom(
-    padding: EzInsets.wrap(EzConfig.get(paddingKey)),
-  );
+  final bool isLefty =
+      EzConfig.get(isLeftyKey) ?? EzConfig.getDefault(isLeftyKey);
 
   late final EFUILang el10n = ezL10n(context);
 
@@ -38,16 +37,9 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
 
   // Define the build data //
 
-  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
-
-  late final List<DropdownMenuEntry<AppInfo>> swipeEntries =
-      <AppInfo>[nullApp, ...provider.apps]
-          .map((AppInfo app) => DropdownMenuEntry<AppInfo>(
-                value: app,
-                label: app.name,
-                style: menuButtonStyle,
-              ))
-          .toList();
+  late final AppInfoProvider listener = Provider.of<AppInfoProvider>(context);
+  late final AppInfoProvider editor =
+      Provider.of<AppInfoProvider>(context, listen: false);
 
   bool resetAll = false;
 
@@ -79,43 +71,53 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
             // Tips
             Positioned(
               top: 0,
-              right: 0,
+              right: isLefty ? null : 0,
+              left: isLefty ? 0 : null,
               child: IconButton(
                 icon: EzIcon(Icons.help_outline),
                 onPressed: showTips,
               ),
             ),
 
-            // Updater (if relevant)
-            const Positioned(top: 0, left: 0, child: LiminalUpdater()),
+            // Updater
+            Positioned(
+              top: 0,
+              left: isLefty ? null : 0,
+              right: isLefty ? 0 : null,
+              child: const LiminalUpdater(),
+            ),
           ],
         ),
         separator,
 
         // Left swipe
         _SwipeSelector(
-          isLefty: true,
-          entries: swipeEntries,
-          provider: provider,
+          isLeft: true,
+          listener: listener,
           textTheme: textTheme,
         ),
         spacer,
 
         // Right swipe
         _SwipeSelector(
-          isLefty: false,
-          entries: swipeEntries,
-          provider: provider,
+          isLeft: false,
+          listener: listener,
           textTheme: textTheme,
         ),
         separator,
 
         // Auto search
-        const EzSwitchPair(text: 'Auto search', valueKey: autoSearchKey),
+        const EzSwitchPair(
+          text: 'Auto search',
+          valueKey: autoSearchKey,
+        ),
         spacer,
 
         // Auto search
-        const EzSwitchPair(text: 'Auth to edit', valueKey: authToEditKey),
+        const EzSwitchPair(
+          text: 'Auth to edit',
+          valueKey: authToEditKey,
+        ),
         spacer,
 
         // Auto add to home
@@ -282,7 +284,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
                 context: context,
                 onConfirm: () async {
                   await EzConfig.reset(skip: resetAll ? <String>{} : skip);
-                  if (resetAll) await provider.reset();
+                  if (resetAll) await editor.reset();
 
                   if (dialogContext.mounted) {
                     Navigator.of(dialogContext).pop();
@@ -331,15 +333,14 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
 }
 
 class _SwipeSelector extends StatefulWidget {
-  final bool isLefty;
-  final List<DropdownMenuEntry<AppInfo>> entries;
-  final AppInfoProvider provider;
+  final bool isLeft;
+
+  final AppInfoProvider listener;
   final TextTheme textTheme;
 
   const _SwipeSelector({
-    required this.isLefty,
-    required this.entries,
-    required this.provider,
+    required this.isLeft,
+    required this.listener,
     required this.textTheme,
   });
 
@@ -354,6 +355,11 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
 
   // Define the build data //
 
+  final bool showIcon =
+      EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
+  final LabelType labelType = LabelTypeConfig.fromValue(
+      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
+
   late final String leftLabel = 'Left package';
   late final String rightLabel = 'Right package';
 
@@ -362,10 +368,30 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
 
   late AppInfo leftApp = (leftID == null || leftID!.isEmpty)
       ? nullApp
-      : widget.provider.appMap[leftID!] ?? nullApp;
+      : widget.listener.appMap[leftID!] ?? nullApp;
   late AppInfo rightApp = (rightID == null || rightID!.isEmpty)
       ? nullApp
-      : widget.provider.appMap[rightID!] ?? nullApp;
+      : widget.listener.appMap[rightID!] ?? nullApp;
+
+  late final Map<String, dynamic> appListData = listData(
+    listCheck: (String id) => true,
+    onSelected: (String id) async {
+      final AppInfo? app = widget.listener.appMap[id];
+
+      if (widget.isLeft) {
+        if (app == null || app == leftApp) return;
+
+        await EzConfig.setString(leftSwipeIDKey, id);
+        setState(() => leftApp = app);
+      } else {
+        if (app == null || app == rightApp) return;
+
+        await EzConfig.setString(rightSwipeIDKey, id);
+        setState(() => rightApp = app);
+      }
+    },
+    refresh: () => setState(() {}),
+  );
 
   // Return the build //
 
@@ -373,36 +399,32 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
   Widget build(BuildContext context) {
     return EzRow(
       mainAxisSize: MainAxisSize.min,
-      children: widget.isLefty
+      children: widget.isLeft
           ? <Widget>[
               EzText(leftLabel, style: widget.textTheme.bodyLarge),
               rowMargin,
-              EzDropdownMenu<AppInfo>(
-                widthEntries: <String>['Play Store'],
-                dropdownMenuEntries: widget.entries,
-                initialSelection: leftApp,
-                onSelected: (AppInfo? app) async {
-                  if (app == null || app == leftApp) return;
-
-                  await EzConfig.setString(leftSwipeIDKey, app.id);
-                  setState(() => leftApp = app);
-                },
-              )
+              TileButton(
+                app: leftApp,
+                type: labelType,
+                showIcon: showIcon,
+                onPressed: () => context.goNamed(
+                  appListPath,
+                  extra: appListData,
+                ),
+              ),
             ]
           : <Widget>[
               EzText(rightLabel, style: widget.textTheme.bodyLarge),
               rowMargin,
-              EzDropdownMenu<AppInfo>(
-                widthEntries: <String>['Play Store'],
-                dropdownMenuEntries: widget.entries,
-                initialSelection: rightApp,
-                onSelected: (AppInfo? app) async {
-                  if (app == null || app == rightApp) return;
-
-                  await EzConfig.setString(rightSwipeIDKey, app.id);
-                  setState(() => rightApp = app);
-                },
-              )
+              TileButton(
+                app: rightApp,
+                type: labelType,
+                showIcon: showIcon,
+                onPressed: () => context.goNamed(
+                  appListPath,
+                  extra: appListData,
+                ),
+              ),
             ],
     );
   }
