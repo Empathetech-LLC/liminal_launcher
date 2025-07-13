@@ -51,7 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
   // final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
   //     EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey));
 
-  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+  late final AppInfoProvider listener = Provider.of<AppInfoProvider>(context);
+  late final AppInfoProvider editor =
+      Provider.of<AppInfoProvider>(context, listen: false);
 
   final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
       EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
@@ -65,12 +67,12 @@ class _HomeScreenState extends State<HomeScreen> {
   bool atBottom = false;
 
   late final Map<String, dynamic> appListData = listData(
-    listCheck: (String id) => !provider.hiddenSet.contains(id),
+    listCheck: (String id) => !listener.hiddenSet.contains(id),
     onSelected: (String id) => launchApp(id),
     refresh: refresh,
   );
   late final Map<String, dynamic> hiddenListData = listData(
-    listCheck: (String id) => provider.hiddenSet.contains(id),
+    listCheck: (String id) => listener.hiddenSet.contains(id),
     onSelected: (String id) => launchApp(id),
     icon: EzTextBackground(EzRow(
       mainAxisSize: MainAxisSize.min,
@@ -90,8 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> homeA2T() {
     final List<Widget> tileList = <Widget>[];
 
-    for (int index = 0; index < provider.homeList.length; index++) {
-      final String item = provider.homeList[index];
+    for (int index = 0; index < listener.homeList.length; index++) {
+      final String item = listener.homeList[index];
       final List<String> parts = item.split(folderSplit);
 
       if (parts.length > 1) {
@@ -99,7 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
           key: ValueKey<String>('${parts[0]}_$index'),
           padding: EdgeInsets.symmetric(vertical: spacing / 2),
           child: AppFolder(
-            provider: provider,
+            listener: listener,
+            editor: editor,
             index: index,
             name: parts[0],
             ids: parts[1] == emptyTag ? <String>[] : parts.sublist(1),
@@ -112,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ));
       } else {
-        final AppInfo app = provider.appMap[parts[0]] ?? nullApp;
+        final AppInfo app = listener.appMap[parts[0]] ?? nullApp;
         tileList.add(Padding(
           key: ValueKey<String>(app.id),
           padding: EdgeInsets.symmetric(vertical: spacing / 2),
@@ -210,11 +213,11 @@ class _HomeScreenState extends State<HomeScreen> {
             AppInfo? toLaunch;
 
             if (details.primaryVelocity! < 0 && !editing) {
-              toLaunch = provider.appMap[EzConfig.get(leftSwipeIDKey)];
+              toLaunch = listener.appMap[EzConfig.get(leftSwipeIDKey)];
             } else if (details.primaryVelocity! > 0) {
               editing
                   ? setState(() => editing = false)
-                  : toLaunch = provider.appMap[EzConfig.get(rightSwipeIDKey)];
+                  : toLaunch = listener.appMap[EzConfig.get(rightSwipeIDKey)];
             }
 
             if (toLaunch != null) launchApp(toLaunch.package);
@@ -254,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Expanded(
                       child: ReorderableListView(
                         onReorder: (int oldIndex, int newIndex) async {
-                          final bool reordered = await provider.reorderHomeItem(
+                          final bool reordered = await editor.reorderHomeItem(
                             oldIndex: oldIndex,
                             newIndex: newIndex,
                           );
@@ -278,9 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             // Add folder
-            if (provider.homeSet.isNotEmpty) ...<Widget>[
+            if (listener.homeSet.isNotEmpty) ...<Widget>[
               AddFolderFAB(context, () {
-                provider.addHomeFolder();
+                editor.addHomeFolder();
                 refresh();
               }),
               separator,
@@ -293,9 +296,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 appListPath,
                 extra: listData(
                   listCheck: (String id) =>
-                      !provider.hiddenSet.contains(id) &&
-                      !provider.homeSet.contains(id),
-                  onSelected: (String id) => provider.addHomeApp(id),
+                      !listener.hiddenSet.contains(id) &&
+                      !listener.homeSet.contains(id),
+                  onSelected: (String id) => editor.addHomeApp(id),
                   icon: EzTextBackground(EzRow(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -345,9 +348,14 @@ class _ClockState extends State<_Clock> {
   @override
   void initState() {
     super.initState();
-    ticker = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() => now = DateTime.now());
-    });
+
+    ticker = widget.homeTime
+        ? Timer.periodic(const Duration(seconds: 1), (_) {
+            if (mounted) setState(() => now = DateTime.now());
+          })
+        : Timer.periodic(const Duration(minutes: 1), (_) {
+            if (mounted) setState(() => now = DateTime.now());
+          });
   }
 
   @override
