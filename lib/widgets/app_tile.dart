@@ -271,11 +271,7 @@ class TileButton extends StatelessWidget {
     late final double padding = EzConfig.get(paddingKey);
 
     late final Widget iconImage = (app.icon == null)
-        ? Icon(
-            Icons.question_mark,
-            semanticLabel: app.name,
-            size: iconSize + padding,
-          )
+        ? const SizedBox.shrink()
         : Image.memory(
             app.icon!,
             semanticLabel: app.name,
