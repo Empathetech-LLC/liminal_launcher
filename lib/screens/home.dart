@@ -107,8 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
             listener: listener,
             editor: editor,
             index: index,
-            name: parts[0],
-            ids: parts[1] == emptyTag ? <String>[] : parts.sublist(1),
             alignment: homeAlign,
             folderLabel: folderLabel,
             folderIcon: listIcon,
