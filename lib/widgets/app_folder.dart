@@ -12,8 +12,6 @@ import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-// TODO: Audit local list management
-
 class AppFolder extends StatefulWidget {
   final AppInfoProvider listener;
   final AppInfoProvider editor;
@@ -66,6 +64,8 @@ class _AppFolderState extends State<AppFolder> {
 
   // Define the build data //
 
+  late final String folderLabel;
+
   late final List<String> folderList = widget.ids;
   late final Set<String> folderSet = folderList.toSet();
 
@@ -88,6 +88,34 @@ class _AppFolderState extends State<AppFolder> {
     EzSpacer(space: spacing / 2, vertical: false),
     EzIconButton(icon: const Icon(Icons.close), onPressed: toggleOpen),
   ];
+
+  // Init //
+
+  @override
+  void initState() {
+    super.initState();
+
+    switch (widget.appLabel) {
+      case LabelType.none:
+        folderLabel = '';
+
+      case LabelType.initials:
+        folderLabel = widget.name
+            .split(' ')
+            .map((String word) => word.isNotEmpty ? word[0] : '')
+            .join()
+            .toUpperCase();
+
+      case LabelType.full:
+        folderLabel = widget.name;
+
+      case LabelType.wingding:
+        folderLabel = widget.name
+            .split('')
+            .map((String char) => wingdingMap[char] ?? char)
+            .join();
+    }
+  }
 
   // Return the build //
 
@@ -174,6 +202,8 @@ class _AppFolderState extends State<AppFolder> {
                 listCheck: (String id) => !folderSet.contains(id),
                 onSelected: (String id) =>
                     widget.editor.addToFolder(id, index: index),
+                refresh: refresh,
+                autoRefresh: true,
                 icon: EzTextBackground(EzRow(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -184,11 +214,10 @@ class _AppFolderState extends State<AppFolder> {
                     ),
                   ],
                 )),
-                refresh: refresh,
               ),
             ),
           ),
-          rowSpacer, // TODO: Add refresh after press
+          rowSpacer,
 
           if (folderList.isNotEmpty) ...<Widget>[
             // Remove apps
@@ -200,6 +229,8 @@ class _AppFolderState extends State<AppFolder> {
                   listCheck: (String id) => folderSet.contains(id),
                   onSelected: (String id) =>
                       widget.editor.removeFromFolder(id, index: index),
+                  refresh: refresh,
+                  autoRefresh: true,
                   icon: EzTextBackground(EzRow(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -210,7 +241,6 @@ class _AppFolderState extends State<AppFolder> {
                       ),
                     ],
                   )),
-                  refresh: refresh,
                 ),
               ),
             ),
@@ -312,7 +342,7 @@ class _AppFolderState extends State<AppFolder> {
                   PlatformIcons(context).folderOpen,
                   size: EzConfig.get(iconSizeKey) + EzConfig.get(paddingKey),
                 ),
-                label: widget.name, // TODO: use (app) labelType
+                label: folderLabel,
                 onPressed: toggleOpen,
               )
             : EzTextButton(text: widget.name, onPressed: toggleOpen));
