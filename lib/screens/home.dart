@@ -86,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   bool editing = false;
+  bool showRefresh = false;
   bool atBottom = false;
 
   // Define custom functions //
@@ -180,6 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           editing = !editing;
+          showRefresh = false;
           setState(() => homeTiles = homeA2T());
         },
         onVerticalDragEnd: (DragEndDetails details) async {
@@ -190,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 appListPath,
                 extra: editing ? hiddenListData : appListData,
               );
+              if (editing) setState(() => showRefresh = true);
             }
           }
         },
@@ -201,7 +204,10 @@ class _HomeScreenState extends State<HomeScreen> {
               toLaunch = listener.appMap[EzConfig.get(leftSwipeIDKey)];
             } else if (details.primaryVelocity! > 0) {
               editing
-                  ? setState(() => editing = false)
+                  ? setState(() {
+                      editing = false;
+                      showRefresh = false;
+                    })
                   : toLaunch = listener.appMap[EzConfig.get(rightSwipeIDKey)];
             }
 
@@ -223,6 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Navigate on bottom overscroll
                         if (atBottom) {
                           context.goNamed(appListPath, extra: hiddenListData);
+                          setState(() => showRefresh = true);
                           return true;
                         } else {
                           setState(() => atBottom = true);
@@ -265,39 +272,49 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Add folder
-            if (listener.homeSet.isNotEmpty) ...<Widget>[
-              AddFolderFAB(context, () {
-                editor.addHomeFolder();
+            // Refresh list
+            if (showRefresh) ...<Widget>[
+              RefreshFAB(context, () {
+                showRefresh = false;
                 refresh();
               }),
               separator,
             ],
 
+            // Add folder
+            AddFolderFAB(context, () {
+              editor.addHomeFolder();
+              refresh();
+            }),
+            separator,
+
             // Add app
             AddAppFAB(
               context,
-              () => context.goNamed(
-                appListPath,
-                extra: listData(
-                  listCheck: (String id) =>
-                      !listener.hiddenSet.contains(id) &&
-                      !listener.homeSet.contains(id),
-                  onSelected: (String id) => editor.addHomeApp(id),
-                  refresh: refresh,
-                  autoRefresh: true,
-                  icon: EzTextBackground(EzRow(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text('Home\t', style: textTheme.labelLarge),
-                      EzIcon(
-                        PlatformIcons(context).add,
-                        color: colorScheme.onSurface,
-                      ),
-                    ],
-                  )),
-                ),
-              ),
+              () {
+                context.goNamed(
+                  appListPath,
+                  extra: listData(
+                    listCheck: (String id) =>
+                        !listener.hiddenSet.contains(id) &&
+                        !listener.homeSet.contains(id),
+                    onSelected: (String id) => editor.addHomeApp(id),
+                    refresh: refresh,
+                    autoRefresh: true,
+                    icon: EzTextBackground(EzRow(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('Home\t', style: textTheme.labelLarge),
+                        EzIcon(
+                          PlatformIcons(context).add,
+                          color: colorScheme.onSurface,
+                        ),
+                      ],
+                    )),
+                  ),
+                );
+                setState(() => showRefresh = true);
+              },
             ),
             separator,
 
