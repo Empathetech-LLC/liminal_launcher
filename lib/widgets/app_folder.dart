@@ -188,7 +188,7 @@ class _AppFolderState extends State<AppFolder> {
               ),
             ),
           ),
-          rowSpacer,
+          rowSpacer, // TODO: Add refresh after press
 
           if (folderList.isNotEmpty) ...<Widget>[
             // Remove apps
