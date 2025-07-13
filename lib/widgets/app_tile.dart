@@ -157,9 +157,13 @@ class _AppTileState extends State<AppTile> {
                   !widget.listener.homeSet.contains(widget.app.id)) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    await widget.editor.addHomeApp(widget.app.id);
-                    setState(() => editing = false);
-                    widget.refresh();
+                    final bool success =
+                        await widget.editor.addHomeApp(widget.app.id);
+
+                    if (success) {
+                      setState(() => editing = false);
+                      widget.refresh();
+                    }
                   },
                   icon: const Icon(Icons.add_to_home_screen),
                 ),
@@ -170,9 +174,13 @@ class _AppTileState extends State<AppTile> {
               if (widget.onHomeScreen == true) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    await widget.editor.removeHomeApp(widget.app.id);
-                    setState(() => editing = false);
-                    widget.refresh();
+                    final bool success =
+                        await widget.editor.removeHomeApp(widget.app.id);
+
+                    if (success) {
+                      setState(() => editing = false);
+                      widget.refresh();
+                    }
                   },
                   icon: Icon(PlatformIcons(context).remove),
                 ),
@@ -212,9 +220,10 @@ class _AppTileState extends State<AppTile> {
                 EzIconButton(
                   onPressed: () async {
                     final bool deleted = await deleteApp(context, widget.app);
+
                     if (deleted) {
-                      await widget.editor.removeDeleted(widget.app.id);
                       setState(() => editing = false);
+                      await widget.editor.removeDeleted(widget.app.id);
                       widget.refresh();
                     }
                   },
