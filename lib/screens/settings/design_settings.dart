@@ -7,7 +7,6 @@ import '../../utils/export.dart';
 import '../../widgets/export.dart';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
@@ -27,23 +26,11 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   static const EzDivider divider = EzDivider();
 
   final double margin = EzConfig.get(marginKey);
-  final double padding = EzConfig.get(paddingKey);
   final double spacing = EzConfig.get(spacingKey);
-
-  late final ButtonStyle menuButtonStyle = TextButton.styleFrom(
-    padding: EzInsets.wrap(padding),
-  );
-
-  late final Lang l10n = Lang.of(context)!;
-  late final EFUILang el10n = ezL10n(context);
-
-  late final TextTheme textTheme = Theme.of(context).textTheme;
 
   // Define the build data //
 
-  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
-
-  bool homeIcon = EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
+  bool listIcon = EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
   LabelType listLabelType = LabelTypeConfig.fromValue(
       EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
 
@@ -52,6 +39,26 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
   LabelType folderLabelType = LabelTypeConfig.fromValue(
       EzConfig.get(folderLabelTypeKey) ??
           EzConfig.getDefault(folderLabelTypeKey));
+
+  final List<DropdownMenuEntry<LabelType>> labelEntries =
+      <DropdownMenuEntry<LabelType>>[
+    const DropdownMenuEntry<LabelType>(
+      value: LabelType.none,
+      label: 'None',
+    ),
+    const DropdownMenuEntry<LabelType>(
+      value: LabelType.initials,
+      label: 'Initials',
+    ),
+    const DropdownMenuEntry<LabelType>(
+      value: LabelType.full,
+      label: 'Full name',
+    ),
+    const DropdownMenuEntry<LabelType>(
+      value: LabelType.wingding,
+      label: 'Wingding',
+    ),
+  ];
 
   // Define custom functions //
 
@@ -112,6 +119,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
     return LiminalScaffold(
       LiminalScreen(EzScrollView(children: <Widget>[
         if (spacing > margin) EzSpacer(space: spacing - margin),
+
         // Header //
 
         // Time
@@ -120,31 +128,11 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
         // Date
         const EzSwitchPair(text: 'Home date', valueKey: homeDateKey),
-        // spacer,
-
-        // Weather
-        // EzSwitchPair(
-        //   text: 'Home weather',
-        //   valueKey: homeWeatherKey,
-        //   canChange: (bool choice) async {
-        //     return choice
-        //         ? await showPlatformDialog<bool>(
-        //               context: context,
-        //               builder: (_) => const EzAlertDialog(
-        //                 title: Text('API key'),
-        //                 content: Text('GIVE TO ME'),
-        //               ),
-        //             ) ??
-        //             false
-        //         : true;
-        //   },
-        // ),
         divider,
 
         // List AppTile //
-
         // Preview
-        homeIcon
+        listIcon
             ? EzTextIconButton(
                 icon: EzIcon(PlatformIcons(context).settings),
                 label: listLabel(),
@@ -164,24 +152,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             rowSpacer,
             EzDropdownMenu<LabelType>(
               widthEntries: <String>['Full name'],
-              dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
-                const DropdownMenuEntry<LabelType>(
-                  value: LabelType.none,
-                  label: 'None',
-                ),
-                const DropdownMenuEntry<LabelType>(
-                  value: LabelType.initials,
-                  label: 'Initials',
-                ),
-                const DropdownMenuEntry<LabelType>(
-                  value: LabelType.full,
-                  label: 'Full name',
-                ),
-                const DropdownMenuEntry<LabelType>(
-                  value: LabelType.wingding,
-                  label: 'Wingding',
-                ),
-              ],
+              dropdownMenuEntries: labelEntries,
               enableSearch: false,
               initialSelection: listLabelType,
               onSelected: (LabelType? choice) async {
@@ -195,7 +166,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
                 if (listLabelType == LabelType.none) {
                   await EzConfig.setBool(listIconKey, true);
-                  homeIcon = true;
+                  listIcon = true;
                 }
 
                 setState(() {});
@@ -212,7 +183,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
           onChangedCallback: (bool? value) async {
             if (value == null) return;
 
-            homeIcon = value;
+            listIcon = value;
             if (value == false && listLabelType == LabelType.none) {
               await EzConfig.setString(
                 listLabelTypeKey,
@@ -248,24 +219,7 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
             rowSpacer,
             EzDropdownMenu<LabelType>(
               widthEntries: <String>['Full name'],
-              dropdownMenuEntries: <DropdownMenuEntry<LabelType>>[
-                const DropdownMenuEntry<LabelType>(
-                  value: LabelType.none,
-                  label: 'None',
-                ),
-                const DropdownMenuEntry<LabelType>(
-                  value: LabelType.initials,
-                  label: 'Initials',
-                ),
-                const DropdownMenuEntry<LabelType>(
-                  value: LabelType.full,
-                  label: 'Full name',
-                ),
-                const DropdownMenuEntry<LabelType>(
-                  value: LabelType.wingding,
-                  label: 'Wingding',
-                ),
-              ],
+              dropdownMenuEntries: labelEntries,
               enableSearch: false,
               initialSelection: folderLabelType,
               onSelected: (LabelType? choice) async {
