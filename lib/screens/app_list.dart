@@ -16,28 +16,32 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 Map<String, dynamic> listData({
   required bool Function(String id) listCheck,
   required Future<void> Function(String id) onSelected,
-  Widget? icon,
   required void Function() refresh,
+  bool autoRefresh = false,
+  Widget? icon,
 }) =>
     <String, dynamic>{
       ListData.listCheck.key: listCheck,
       ListData.onSelected.key: onSelected,
-      ListData.icon.key: icon,
       ListData.refresh.key: refresh,
+      ListData.autoRefresh.key: autoRefresh,
+      ListData.icon.key: icon,
     };
 
 class AppListScreen extends StatefulWidget {
   final bool Function(String) listCheck;
   final Future<void> Function(String id) onSelected;
-  final Widget? icon;
   final void Function() refresh;
+  final bool autoRefresh;
+  final Widget? icon;
 
   const AppListScreen({
     super.key,
     required this.listCheck,
     required this.onSelected,
-    this.icon,
     required this.refresh,
+    required this.autoRefresh,
+    this.icon,
   });
 
   @override

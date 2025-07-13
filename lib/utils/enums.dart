@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 // AppListScreen Data //
 
-enum ListData { listCheck, onSelected, icon, refresh }
+enum ListData { listCheck, onSelected, refresh, autoRefresh, icon }
 
 extension ListDataConfig on ListData {
   String get key {
@@ -19,10 +19,12 @@ extension ListDataConfig on ListData {
         return 'listCheck';
       case ListData.onSelected:
         return 'onSelected';
-      case ListData.icon:
-        return 'icon';
       case ListData.refresh:
         return 'refresh';
+      case ListData.autoRefresh:
+        return 'autoRefresh';
+      case ListData.icon:
+        return 'icon';
     }
   }
 }

@@ -51,8 +51,9 @@ final GoRouter router = GoRouter(
             return AppListScreen(
               listCheck: listData[ListData.listCheck.key],
               onSelected: listData[ListData.onSelected.key],
-              icon: listData[ListData.icon.key],
               refresh: listData[ListData.refresh.key],
+              autoRefresh: listData[ListData.autoRefresh.key],
+              icon: listData[ListData.icon.key],
             );
           },
         ),

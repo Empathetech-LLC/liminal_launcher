@@ -283,6 +283,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       !listener.hiddenSet.contains(id) &&
                       !listener.homeSet.contains(id),
                   onSelected: (String id) => editor.addHomeApp(id),
+                  refresh: refresh,
+                  autoRefresh: true,
                   icon: EzTextBackground(EzRow(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -293,7 +295,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   )),
-                  refresh: refresh,
                 ),
               ),
             ),
