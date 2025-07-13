@@ -181,7 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (!authed) return;
           }
 
-          setState(() => editing = !editing);
+          editing = !editing;
+          setState(() => homeTiles = homeA2T());
         },
         onVerticalDragEnd: (DragEndDetails details) async {
           if (details.primaryVelocity != null) {
@@ -249,13 +250,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                           if (reordered) refresh();
                         },
-                        children: homeA2T(),
+                        children: homeTiles,
                       ),
                     ),
                   )
                 : EzScrollView(
                     crossAxisAlignment: homeAlign.crossAxis,
-                    children: homeA2T(),
+                    children: homeTiles,
                   ),
             spacer,
           ],
