@@ -364,26 +364,6 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
       ? nullApp
       : widget.listener.appMap[rightID!] ?? nullApp;
 
-  late final Map<String, dynamic> appListData = listData(
-    listCheck: (String id) => true,
-    onSelected: (String id) async {
-      final AppInfo? app = widget.listener.appMap[id];
-
-      if (widget.isLeft) {
-        if (app == null || app == leftApp) return;
-
-        await EzConfig.setString(leftSwipeIDKey, id);
-        setState(() => leftApp = app);
-      } else {
-        if (app == null || app == rightApp) return;
-
-        await EzConfig.setString(rightSwipeIDKey, id);
-        setState(() => rightApp = app);
-      }
-    },
-    refresh: () => setState(() {}),
-  );
-
   // Return the build //
 
   @override
@@ -400,7 +380,18 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                 showIcon: showIcon,
                 onPressed: () => context.goNamed(
                   appListPath,
-                  extra: appListData,
+                  extra: listData(
+                    listCheck: (String id) => true,
+                    onSelected: (String id) async {
+                      final AppInfo? app = widget.listener.appMap[id];
+                      if (app == null || app == leftApp) return;
+
+                      await EzConfig.setString(leftSwipeIDKey, id);
+                      setState(() => leftApp = app);
+                    },
+                    icon: const Text('Selecting left swipe'),
+                    refresh: () => setState(() {}),
+                  ),
                 ),
               ),
             ]
@@ -413,7 +404,18 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
                 showIcon: showIcon,
                 onPressed: () => context.goNamed(
                   appListPath,
-                  extra: appListData,
+                  extra: listData(
+                    listCheck: (String id) => true,
+                    onSelected: (String id) async {
+                      final AppInfo? app = widget.listener.appMap[id];
+                      if (app == null || app == rightApp) return;
+
+                      await EzConfig.setString(rightSwipeIDKey, id);
+                      setState(() => rightApp = app);
+                    },
+                    icon: const Text('Selecting right swipe'),
+                    refresh: () => setState(() {}),
+                  ),
                 ),
               ),
             ],
