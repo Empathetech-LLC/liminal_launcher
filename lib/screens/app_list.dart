@@ -104,6 +104,11 @@ class _AppListScreenState extends State<AppListScreen> {
     refreshList();
   }
 
+  Future<void> onSelected(String id) async {
+    await widget.onSelected(id);
+    if (widget.autoRefresh) refreshList();
+  }
+
   List<AppInfo> getApps() =>
       listener.apps.where((AppInfo app) => widget.listCheck(app.id)).toList();
 
@@ -295,7 +300,7 @@ class _AppListScreenState extends State<AppListScreen> {
                             onHomeScreen: false,
                             labelType: listLabel,
                             showIcon: listIcon,
-                            onSelected: widget.onSelected,
+                            onSelected: onSelected,
                             editing: false,
                             refresh: refreshAll,
                           ),
@@ -317,7 +322,7 @@ class _AppListScreenState extends State<AppListScreen> {
                             onHomeScreen: false,
                             labelType: listLabel,
                             showIcon: listIcon,
-                            onSelected: widget.onSelected,
+                            onSelected: onSelected,
                             editing: false,
                             refresh: refreshAll,
                           ),
