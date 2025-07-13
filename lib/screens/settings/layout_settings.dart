@@ -50,9 +50,6 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
         prefixSpacer: spacer,
         postfixSpacer: divider,
         afterLayout: <Widget>[
-          // _HeaderDropdown(),
-          // const EzSeparator(),
-
           // Home align
           _SegmentedAlignmentButton(
             label: 'Home list alignment',
@@ -74,53 +71,6 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
     );
   }
 }
-
-// class _HeaderDropdown extends StatefulWidget {
-//   const _HeaderDropdown();
-
-//   @override
-//   State<_HeaderDropdown> createState() => _HeaderDropdownState();
-// }
-
-// class _HeaderDropdownState extends State<_HeaderDropdown> {
-//   late HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
-//     EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey),
-//   );
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return EzRow(
-//       mainAxisSize: MainAxisSize.min,
-//       children: <Widget>[
-//         const EzText('Header order'),
-//         const EzSpacer(vertical: false),
-//         EzDropdownMenu<HeaderOrder>(
-//           widthEntries: <String>['Weather first'],
-//           dropdownMenuEntries: <DropdownMenuEntry<HeaderOrder>>[
-//             const DropdownMenuEntry<HeaderOrder>(
-//               value: HeaderOrder.timeFirst,
-//               label: 'Time first',
-//             ),
-//             const DropdownMenuEntry<HeaderOrder>(
-//               value: HeaderOrder.weatherFirst,
-//               label: 'Weather first',
-//             ),
-//           ],
-//           enableSearch: false,
-//           initialSelection: headerOrder,
-//           onSelected: (HeaderOrder? choice) async {
-//             if (choice == null) return;
-//             await EzConfig.setString(
-//               headerOrderKey,
-//               choice.configValue,
-//             );
-//             setState(() => headerOrder = choice);
-//           },
-//         ),
-//       ],
-//     );
-//   }
-// }
 
 class _SegmentedAlignmentButton extends StatefulWidget {
   final String label;

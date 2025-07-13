@@ -26,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
-  static const EzSpacer rowSpacer = EzSpacer(vertical: false);
   static const EzSeparator separator = EzSeparator();
 
   final double spacing = EzConfig.get(spacingKey);
@@ -44,12 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
       EzConfig.get(homeTimeKey) ?? EzConfig.getDefault(homeTimeKey);
   final bool homeDate =
       EzConfig.get(homeDateKey) ?? EzConfig.getDefault(homeDateKey);
-
-  // final bool homeWeather =
-  //     EzConfig.get(homeWeatherKey) ?? EzConfig.getDefault(homeWeatherKey);
-
-  // final HeaderOrder headerOrder = HeaderOrderConfig.fromValue(
-  //     EzConfig.get(headerOrderKey) ?? EzConfig.getDefault(headerOrderKey));
 
   late final AppInfoProvider listener = Provider.of<AppInfoProvider>(context);
   late final AppInfoProvider editor =
@@ -137,34 +130,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Define custom Widgets //
 
-  Widget header() {
-    final List<Widget> children = <Widget>[];
-
-    if (homeTime || homeDate) {
-      children.add(_Clock(
-        homeTime: homeTime,
-        homeDate: homeDate,
-        homeAlign: homeAlign,
-        textTheme: textTheme,
-      ));
-    }
-
-    // if (homeWeather) {
-    //   children.add(EzText(
-    //     'Weather',
-    //     style: textTheme.headlineLarge,
-    //   ));
-    // }
-
-    if (children.length == 2) children.insert(1, rowSpacer);
-
-    return Row(
-      mainAxisAlignment: homeAlign.mainAxis,
-      children: children, // headerOrder == HeaderOrder.timeFirst
-      // ? children
-      // : children.reversed.toList(),
-    );
-  }
+  Widget header() => (homeTime || homeDate)
+      ? _Clock(
+          homeTime: homeTime,
+          homeDate: homeDate,
+          homeAlign: homeAlign,
+          textTheme: textTheme,
+        )
+      : const SizedBox.shrink();
 
   // Return the build //
 

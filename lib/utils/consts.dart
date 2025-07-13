@@ -36,14 +36,12 @@ const String authToEditKey = 'auth_to_edit';
 const String autoAddToHomeKey = 'auto_add_to_home';
 
 // Layout
-// const String headerOrderKey = 'header_order';
 const String homeAlignmentKey = 'home_alignment';
 const String listAlignmentKey = 'list_alignment';
 
 // Design
 const String homeTimeKey = 'home_time';
 const String homeDateKey = 'home_date';
-// const String homeWeatherKey = 'home_weather';
 const String listIconKey = 'list_icon';
 const String listLabelTypeKey = 'list_label_type';
 const String folderIconKey = 'folder_icon';
@@ -71,14 +69,12 @@ final Map<String, Object> defaultConfig = <String, Object>{
   autoAddToHomeKey: false,
 
   // Layout
-  // headerOrderKey: HeaderOrder.timeFirst.configValue,
   homeAlignmentKey: ListAlignment.center.configValue,
   listAlignmentKey: ListAlignment.center.configValue,
 
   // Design
   homeTimeKey: true,
   homeDateKey: true,
-  // homeWeatherKey: false,
   listIconKey: true,
   listLabelTypeKey: LabelType.full.configValue,
   folderIconKey: true,

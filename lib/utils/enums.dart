@@ -56,33 +56,6 @@ extension AppSortConfig on AppSort {
 
 //* Layout settings *//
 
-// Home Header Order //
-
-enum HeaderOrder { timeFirst, weatherFirst }
-
-const String _timeFirst = 'time_first';
-const String _weatherFirst = 'weather_first';
-
-extension HeaderOrderConfig on HeaderOrder {
-  String get configValue {
-    switch (this) {
-      case HeaderOrder.timeFirst:
-        return _timeFirst;
-      case HeaderOrder.weatherFirst:
-        return _weatherFirst;
-    }
-  }
-
-  static HeaderOrder fromValue(String value) {
-    switch (value) {
-      case _weatherFirst:
-        return HeaderOrder.weatherFirst;
-      default:
-        return HeaderOrder.timeFirst;
-    }
-  }
-}
-
 // App List Alignment //
 
 enum ListAlignment { center, start, end }
