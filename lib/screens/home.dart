@@ -37,6 +37,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
 
+  final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
+      EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
+
+  final bool listIcon =
+      EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
+  final LabelType listLabel = LabelTypeConfig.fromValue(
+      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
+
+  final bool folderIcon =
+      EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey);
+  final LabelType folderLabel = LabelTypeConfig.fromValue(
+      EzConfig.get(folderLabelTypeKey) ??
+          EzConfig.getDefault(folderLabelTypeKey));
+
   // Define the build data //
 
   final bool homeTime =
@@ -47,17 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
   late final AppInfoProvider listener = Provider.of<AppInfoProvider>(context);
   late final AppInfoProvider editor =
       Provider.of<AppInfoProvider>(context, listen: false);
-
-  final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
-
-  final bool listIcon =
-      EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
-  final LabelType listLabel = LabelTypeConfig.fromValue(
-      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
-
-  bool editing = false;
-  bool atBottom = false;
 
   late final Map<String, dynamic> appListData = listData(
     listCheck: (String id) => !listener.hiddenSet.contains(id),
@@ -80,6 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
     refresh: refresh,
   );
 
+  bool editing = false;
+  bool atBottom = false;
+
   // Define custom functions //
 
   List<Widget> homeA2T() {
@@ -100,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             name: parts[0],
             ids: parts[1] == emptyTag ? <String>[] : parts.sublist(1),
             alignment: homeAlign,
+            folderLabel: folderLabel,
             folderIcon: listIcon,
             appIcon: listIcon,
             appLabel: listLabel,
@@ -114,7 +121,11 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.symmetric(vertical: spacing / 2),
           child: AppTile(
             app: app,
+            listener: listener,
+            editor: editor,
             onHomeScreen: true,
+            labelType: listLabel,
+            showIcon: listIcon,
             onSelected: (String id) => launchApp(id),
             editing: editing,
             refresh: refresh,

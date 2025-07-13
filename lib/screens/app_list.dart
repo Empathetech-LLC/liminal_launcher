@@ -11,6 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
+// TODO: Audit local list management
+
 Map<String, dynamic> listData({
   required bool Function(String id) listCheck,
   required Future<void> Function(String id) onSelected,
@@ -58,19 +60,19 @@ class _AppListScreenState extends State<AppListScreen> {
   late final EdgeInsets listPadding =
       EdgeInsets.symmetric(vertical: spacing / 2);
 
-  // Define the build data //
-
-  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
+  final LabelType listLabel = LabelTypeConfig.fromValue(
+      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
+  final bool listIcon =
+      EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
 
   final ListAlignment listAlign = ListAlignmentConfig.fromValue(
       EzConfig.get(listAlignmentKey) ?? EzConfig.getDefault(listAlignmentKey));
 
-  AppSort listSort = AppSortConfig.fromValue(
-    EzConfig.get(listSortKey) ?? EzConfig.getDefault(listSortKey),
-  );
-  bool ascList = EzConfig.get(ascListKey) ?? EzConfig.getDefault(ascListKey);
+  // Define the build data //
 
-  final ScrollController scrollControl = ScrollController();
+  late final AppInfoProvider listener = Provider.of<AppInfoProvider>(context);
+  late final AppInfoProvider editor =
+      Provider.of<AppInfoProvider>(context, listen: false);
 
   late List<AppInfo> appList = getApps();
   late List<AppInfo> searchList = appList;
@@ -78,6 +80,13 @@ class _AppListScreenState extends State<AppListScreen> {
   bool searching =
       EzConfig.get(autoSearchKey) ?? EzConfig.getDefault(autoSearchKey);
   final TextEditingController searchControl = TextEditingController();
+
+  AppSort listSort = AppSortConfig.fromValue(
+    EzConfig.get(listSortKey) ?? EzConfig.getDefault(listSortKey),
+  );
+  bool ascList = EzConfig.get(ascListKey) ?? EzConfig.getDefault(ascListKey);
+
+  final ScrollController scrollControl = ScrollController();
 
   bool atTop = true;
   bool atBottom = false;
@@ -92,7 +101,7 @@ class _AppListScreenState extends State<AppListScreen> {
   }
 
   List<AppInfo> getApps() =>
-      provider.apps.where((AppInfo app) => widget.listCheck(app.id)).toList();
+      listener.apps.where((AppInfo app) => widget.listCheck(app.id)).toList();
 
   List<AppInfo> searchApps(List<AppInfo> appList) => appList
       .where((AppInfo app) =>
@@ -145,7 +154,7 @@ class _AppListScreenState extends State<AppListScreen> {
                           listSortKey,
                           listSort.configValue,
                         );
-                        provider.sort(listSort, ascList);
+                        editor.sort(listSort, ascList);
 
                         refreshList();
                       },
@@ -161,7 +170,7 @@ class _AppListScreenState extends State<AppListScreen> {
                           listSortKey,
                           listSort.configValue,
                         );
-                        provider.sort(listSort, ascList);
+                        editor.sort(listSort, ascList);
 
                         refreshList();
                       },
@@ -178,7 +187,7 @@ class _AppListScreenState extends State<AppListScreen> {
                     ascList = !ascList;
 
                     await EzConfig.setBool(ascListKey, ascList);
-                    provider.sort(listSort, ascList);
+                    editor.sort(listSort, ascList);
 
                     refreshList();
                   },
@@ -277,9 +286,13 @@ class _AppListScreenState extends State<AppListScreen> {
                           padding: listPadding,
                           child: AppTile(
                             app: searchList[index],
+                            listener: listener,
+                            editor: editor,
                             onHomeScreen: false,
-                            editing: false,
+                            labelType: listLabel,
+                            showIcon: listIcon,
                             onSelected: widget.onSelected,
+                            editing: false,
                             refresh: refreshAll,
                           ),
                         ),
@@ -295,9 +308,13 @@ class _AppListScreenState extends State<AppListScreen> {
                           padding: listPadding,
                           child: AppTile(
                             app: appList[index],
+                            listener: listener,
+                            editor: editor,
                             onHomeScreen: false,
-                            editing: false,
+                            labelType: listLabel,
+                            showIcon: listIcon,
                             onSelected: widget.onSelected,
+                            editing: false,
                             refresh: refreshAll,
                           ),
                         ),

@@ -12,12 +12,16 @@ import 'package:go_router/go_router.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
+// TODO: Audit local list management
+
 class AppFolder extends StatefulWidget {
-  final AppInfoProvider provider;
+  final AppInfoProvider listener;
+  final AppInfoProvider editor;
   final int index;
   final String name;
   final List<String> ids;
   final ListAlignment alignment;
+  final LabelType folderLabel;
   final bool folderIcon;
   final LabelType appLabel;
   final bool appIcon;
@@ -26,14 +30,16 @@ class AppFolder extends StatefulWidget {
 
   const AppFolder({
     super.key,
-    required this.provider,
+    required this.listener,
+    required this.editor,
     required this.index,
     required this.name,
     required this.ids,
     required this.alignment,
+    required this.folderLabel,
     required this.folderIcon,
-    required this.appIcon,
     required this.appLabel,
+    required this.appIcon,
     required this.editing,
     required this.refresh,
   });
@@ -108,7 +114,7 @@ class _AppFolderState extends State<AppFolder> {
                     if (validateRename(name) != null) return null;
 
                     final bool success =
-                        await widget.provider.renameFolder(name, index: index);
+                        await widget.editor.renameFolder(name, index: index);
 
                     if (success) {
                       if (dialogContext.mounted) {
@@ -167,7 +173,7 @@ class _AppFolderState extends State<AppFolder> {
               extra: listData(
                 listCheck: (String id) => !folderSet.contains(id),
                 onSelected: (String id) =>
-                    widget.provider.addToFolder(id, index: index),
+                    widget.editor.addToFolder(id, index: index),
                 icon: EzTextBackground(EzRow(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -193,7 +199,7 @@ class _AppFolderState extends State<AppFolder> {
                 extra: listData(
                   listCheck: (String id) => folderSet.contains(id),
                   onSelected: (String id) =>
-                      widget.provider.removeFromFolder(id, index: index),
+                      widget.editor.removeFromFolder(id, index: index),
                   icon: EzTextBackground(EzRow(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -223,7 +229,7 @@ class _AppFolderState extends State<AppFolder> {
                   content: ReorderableListView(
                     onReorder: (int oldIndex, int newIndex) async {
                       final bool reordered =
-                          await widget.provider.reorderFolderItem(
+                          await widget.editor.reorderFolderItem(
                         oldIndex: oldIndex + 1, // name offset
                         newIndex: newIndex + 1,
                         folderIndex: widget.index,
@@ -232,7 +238,7 @@ class _AppFolderState extends State<AppFolder> {
                     },
                     children: folderList
                         .map((String id) {
-                          final AppInfo? app = widget.provider.appMap[id];
+                          final AppInfo? app = widget.listener.appMap[id];
                           if (app == null) return null;
 
                           return Padding(
@@ -256,7 +262,7 @@ class _AppFolderState extends State<AppFolder> {
           // Delete folder
           EzIconButton(
             icon: Icon(PlatformIcons(context).delete),
-            onPressed: () => widget.provider.deleteFolder(folderList.isEmpty
+            onPressed: () => widget.editor.deleteFolder(folderList.isEmpty
                 ? '${widget.name}$folderSplit$emptyTag'
                 : <String>[widget.name, ...folderList].join(folderSplit)),
           ),
@@ -278,14 +284,18 @@ class _AppFolderState extends State<AppFolder> {
             mainAxisAlignment: widget.alignment.mainAxis,
             children: folderList
                     .map((String id) {
-                      final AppInfo? app = widget.provider.appMap[id];
+                      final AppInfo? app = widget.listener.appMap[id];
                       if (app == null) return null;
 
                       return Padding(
                         padding: rowPadding,
                         child: AppTile(
                           app: app,
+                          listener: widget.listener,
+                          editor: widget.editor,
                           onHomeScreen: null,
+                          labelType: widget.folderLabel,
+                          showIcon: widget.folderIcon,
                           onSelected: (String id) => launchApp(id),
                           editing: editing,
                           refresh: refresh,
@@ -296,13 +306,13 @@ class _AppFolderState extends State<AppFolder> {
                     .toList() +
                 closeTail,
           )
-        : (widget.folderIcon
+        : (widget.appIcon
             ? EzTextIconButton(
                 icon: Icon(
                   PlatformIcons(context).folderOpen,
                   size: EzConfig.get(iconSizeKey) + EzConfig.get(paddingKey),
                 ),
-                label: widget.name,
+                label: widget.name, // TODO: use (app) labelType
                 onPressed: toggleOpen,
               )
             : EzTextButton(text: widget.name, onPressed: toggleOpen));

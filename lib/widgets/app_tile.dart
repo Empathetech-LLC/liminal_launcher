@@ -6,26 +6,35 @@
 import '../utils/export.dart';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class AppTile extends StatefulWidget {
   final AppInfo app;
+  final AppInfoProvider listener;
+  final AppInfoProvider editor;
 
   /// true for home list, null for home folder, false for false
   /// Quantum computing
   final bool? onHomeScreen;
 
+  final LabelType labelType;
+  final bool showIcon;
   final Future<void> Function(String id) onSelected;
+  final bool editable;
   final bool editing;
   final void Function() refresh;
 
   const AppTile({
     super.key,
     required this.app,
+    required this.listener,
+    required this.editor,
     required this.onHomeScreen,
+    required this.labelType,
+    required this.showIcon,
     required this.onSelected,
+    this.editable = true,
     required this.editing,
     required this.refresh,
   });
@@ -46,22 +55,12 @@ class _AppTileState extends State<AppTile> {
 
   // Define the build data //
 
-  late final AppInfoProvider provider = Provider.of<AppInfoProvider>(context);
-
-  late final bool showIcon = (widget.onHomeScreen == null)
-      ? EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey)
-      : EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
-  late final LabelType labelType = (widget.onHomeScreen == null)
-      ? LabelTypeConfig.fromValue(EzConfig.get(folderLabelTypeKey) ??
-          EzConfig.getDefault(folderLabelTypeKey))
-      : LabelTypeConfig.fromValue(EzConfig.get(listLabelTypeKey) ??
-          EzConfig.getDefault(listLabelTypeKey));
-
-  late bool editing = widget.editing;
+  late bool editing = widget.editable && widget.editing;
 
   // Define custom functions //
 
-  void holdTile() => setState(() => editing = !editing);
+  void holdTile() =>
+      widget.editable ? setState(() => editing = !editing) : doNothing;
 
   // Return the build //
 
@@ -101,8 +100,8 @@ class _AppTileState extends State<AppTile> {
                         final String name = renameController.text.trim();
                         if (validateRename(name) != null) return null;
 
-                        final bool success =
-                            await provider.renameApp(name, id: widget.app.id);
+                        final bool success = await widget.editor
+                            .renameApp(name, id: widget.app.id);
 
                         if (success) {
                           if (dialogContext.mounted) {
@@ -154,11 +153,11 @@ class _AppTileState extends State<AppTile> {
               rowSpacer,
 
               // Add to home
-              if (!provider.hiddenSet.contains(widget.app.id) &&
-                  !provider.homeSet.contains(widget.app.id)) ...<Widget>[
+              if (!widget.listener.hiddenSet.contains(widget.app.id) &&
+                  !widget.listener.homeSet.contains(widget.app.id)) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    await provider.addHomeApp(widget.app.id);
+                    await widget.editor.addHomeApp(widget.app.id);
                     setState(() => editing = false);
                     widget.refresh();
                   },
@@ -171,7 +170,7 @@ class _AppTileState extends State<AppTile> {
               if (widget.onHomeScreen == true) ...<Widget>[
                 EzIconButton(
                   onPressed: () async {
-                    await provider.removeHomeApp(widget.app.id);
+                    await widget.editor.removeHomeApp(widget.app.id);
                     setState(() => editing = false);
                     widget.refresh();
                   },
@@ -183,13 +182,13 @@ class _AppTileState extends State<AppTile> {
               // Show/hide
               EzIconButton(
                 onPressed: () async {
-                  provider.hiddenSet.contains(widget.app.id)
-                      ? await provider.showApp(widget.app.id)
-                      : await provider.hideApp(widget.app.id);
+                  widget.listener.hiddenSet.contains(widget.app.id)
+                      ? await widget.editor.showApp(widget.app.id)
+                      : await widget.editor.hideApp(widget.app.id);
                   setState(() => editing = false);
                   widget.refresh();
                 },
-                icon: Icon(provider.hiddenSet.contains(widget.app.id)
+                icon: Icon(widget.listener.hiddenSet.contains(widget.app.id)
                     ? PlatformIcons(context).eyeSolid
                     : PlatformIcons(context).eyeSlash),
               ),
@@ -214,7 +213,7 @@ class _AppTileState extends State<AppTile> {
                   onPressed: () async {
                     final bool deleted = await deleteApp(context, widget.app);
                     if (deleted) {
-                      await provider.removeDeleted(widget.app.id);
+                      await widget.editor.removeDeleted(widget.app.id);
                       setState(() => editing = false);
                       widget.refresh();
                     }
@@ -242,8 +241,8 @@ class _AppTileState extends State<AppTile> {
           )
         : TileButton(
             app: widget.app,
-            type: labelType,
-            showIcon: showIcon,
+            type: widget.labelType,
+            showIcon: widget.showIcon,
             onPressed: () => widget.onSelected(widget.app.id),
             onLongPress: holdTile,
           );
