@@ -216,7 +216,8 @@ class AppInfoProvider extends ChangeNotifier {
 
   Future<int?> addToFolder(String id, {required int index}) async {
     int toReturn = 0;
-    _homeList[index] = homeList[index] + folderSplit + id;
+    _homeList[index] = (homeList[index] + folderSplit + id)
+        .replaceAll(folderSplit + emptyTag, '');
 
     if (_homeSet.contains(id)) {
       final int appIndex = _homeList.indexOf(id);
