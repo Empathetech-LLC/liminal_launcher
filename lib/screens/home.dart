@@ -88,14 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   bool editing = false;
-  bool waiting = false;
   bool atBottom = false;
 
   // Define custom functions //
 
   void refresh() {
     homeTiles = homeA2T();
-    waiting = false;
     setState(() {});
   }
 
@@ -189,16 +187,14 @@ class _HomeScreenState extends State<HomeScreen> {
           editing = !editing;
           refresh();
         },
-        onVerticalDragEnd: (DragEndDetails details) async {
+        onVerticalDragEnd: (DragEndDetails details) {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < 0) {
               // Swiped up
-              setState(() => waiting = true);
-              await context.pushNamed(
+              context.goNamed(
                 appListPath,
                 extra: editing ? hiddenListData : appListData,
               );
-              refresh();
             }
           }
         },
@@ -277,44 +273,38 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             // Add folder
-            if (!waiting) ...<Widget>[
-              AddFolderFAB(context, () {
-                editor.addHomeFolder();
-                refresh();
-              }),
-              separator,
+            AddFolderFAB(context, () {
+              editor.addHomeFolder();
+              refresh();
+            }),
+            separator,
 
-              // Add app
-              AddAppFAB(
-                context,
-                () async {
-                  setState(() => waiting = true);
-                  await context.pushNamed(
-                    appListPath,
-                    extra: listData(
-                      listCheck: (String id) =>
-                          !listener.hiddenSet.contains(id) &&
-                          !listener.homeSet.contains(id),
-                      onSelected: (String id) => editor.addHomeApp(id),
-                      refresh: refresh,
-                      autoRefresh: true,
-                      icon: EzTextBackground(EzRow(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text('Home\t', style: textTheme.labelLarge),
-                          EzIcon(
-                            PlatformIcons(context).add,
-                            color: colorScheme.onSurface,
-                          ),
-                        ],
-                      )),
-                    ),
-                  );
-                  refresh();
-                },
+            // Add app
+            AddAppFAB(
+              context,
+              () => context.goNamed(
+                appListPath,
+                extra: listData(
+                  listCheck: (String id) =>
+                      !listener.hiddenSet.contains(id) &&
+                      !listener.homeSet.contains(id),
+                  onSelected: (String id) => editor.addHomeApp(id),
+                  refresh: refresh,
+                  autoRefresh: true,
+                  icon: EzTextBackground(EzRow(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text('Home\t', style: textTheme.labelLarge),
+                      EzIcon(
+                        PlatformIcons(context).add,
+                        color: colorScheme.onSurface,
+                      ),
+                    ],
+                  )),
+                ),
               ),
-              separator,
-            ],
+            ),
+            separator,
 
             // Settings
             SettingsFAB(context, () => context.goNamed(settingsHomePath))

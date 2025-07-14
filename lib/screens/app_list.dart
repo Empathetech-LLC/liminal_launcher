@@ -110,7 +110,7 @@ class _AppListScreenState extends State<AppListScreen> {
 
   Future<void> onSelected(String id) async {
     await widget.onSelected(id);
-    if (widget.autoRefresh) refreshList();
+    if (widget.autoRefresh) refreshAll();
   }
 
   List<AppInfo> getApps() =>
