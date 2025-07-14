@@ -227,6 +227,7 @@ class _AppFolderState extends State<AppFolder> {
                           if (app == null) return null;
 
                           return Padding(
+                            key: ValueKey<String>(id),
                             padding: colPadding,
                             child: TileButton(
                               app: app,
