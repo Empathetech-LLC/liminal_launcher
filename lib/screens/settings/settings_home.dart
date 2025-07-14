@@ -53,15 +53,16 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         ),
       );
 
-  // Return the build //
+  //* Return the build *//
 
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
       LiminalScreen(EzScrollView(children: <Widget>[
         Stack(
-          // Core
+          // Core //
           children: <Widget>[
+            // Restart reminder
             GestureDetector(
               onLongPress: showTips,
               child: const EzWarning(
@@ -127,6 +128,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         ),
         divider,
 
+        // Navigation //
+
         // GoTo layout settings
         EzElevatedIconButton(
           onPressed: () => context.goNamed(layoutSettingsPath),
@@ -167,6 +170,8 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
         ),
         divider,
 
+        // Batch //
+
         // Randomize
         EzConfigRandomizer(
           dialogContent: 'Only affects appearance settings\n${el10n.gUndoWarn}',
@@ -176,39 +181,67 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
             final Random random = Random();
 
             // Layout
-
-            final int homeAlignRand = random.nextInt(3);
-            late final String homeAlignValue;
-            switch (homeAlignRand) {
-              case 1:
-                homeAlignValue = ListAlignment.start.configValue;
+            final int homeHAlignRand = random.nextInt(3);
+            late final String homeHAlignValue;
+            switch (homeHAlignRand) {
+              case 0:
+                homeHAlignValue = ListAlignment.start.configValue;
                 break;
               case 2:
-                homeAlignValue = ListAlignment.end.configValue;
+                homeHAlignValue = ListAlignment.end.configValue;
                 break;
               default:
-                homeAlignValue = ListAlignment.center.configValue;
+                homeHAlignValue = ListAlignment.center.configValue;
                 break;
             }
-            await EzConfig.setString(homeAlignmentKey, homeAlignValue);
+            await EzConfig.setString(homeHAlignKey, homeHAlignValue);
 
-            final int listAlignRand = random.nextInt(3);
-            late final String listAlignValue;
-            switch (listAlignRand) {
-              case 1:
-                listAlignValue = ListAlignment.start.configValue;
+            final int homeVAlignRand = random.nextInt(3);
+            late final String homeVAlignValue;
+            switch (homeVAlignRand) {
+              case 0:
+                homeVAlignValue = ListAlignment.start.configValue;
                 break;
               case 2:
-                listAlignValue = ListAlignment.end.configValue;
+                homeVAlignValue = ListAlignment.end.configValue;
                 break;
               default:
-                listAlignValue = ListAlignment.center.configValue;
+                homeVAlignValue = ListAlignment.center.configValue;
                 break;
             }
-            await EzConfig.setString(listAlignmentKey, listAlignValue);
+            await EzConfig.setString(homeVAlignKey, homeVAlignValue);
+
+            final int listHAlignRand = random.nextInt(3);
+            late final String listHAlignValue;
+            switch (listHAlignRand) {
+              case 0:
+                listHAlignValue = ListAlignment.start.configValue;
+                break;
+              case 2:
+                listHAlignValue = ListAlignment.end.configValue;
+                break;
+              default:
+                listHAlignValue = ListAlignment.center.configValue;
+                break;
+            }
+            await EzConfig.setString(listHAlignKey, listHAlignValue);
+
+            final int listVAlignRand = random.nextInt(3);
+            late final String listVAlignValue;
+            switch (listVAlignRand) {
+              case 0:
+                listVAlignValue = ListAlignment.start.configValue;
+                break;
+              case 2:
+                listVAlignValue = ListAlignment.end.configValue;
+                break;
+              default:
+                listVAlignValue = ListAlignment.center.configValue;
+                break;
+            }
+            await EzConfig.setString(listVAlignKey, listVAlignValue);
 
             // Design
-
             await EzConfig.setBool(homeTimeKey, random.nextBool());
             await EzConfig.setBool(homeDateKey, random.nextBool());
 
