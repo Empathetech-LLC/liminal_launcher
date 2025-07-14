@@ -86,12 +86,16 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   bool editing = false;
-  bool showRefresh = false;
+  bool waiting = false;
   bool atBottom = false;
 
   // Define custom functions //
 
-  void refresh() => setState(() => homeTiles = homeA2T());
+  void refresh() {
+    homeTiles = homeA2T();
+    waiting = false;
+    setState(() {});
+  }
 
   List<Widget> homeA2T() {
     final List<Widget> tileList = <Widget>[];
@@ -181,18 +185,18 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           editing = !editing;
-          showRefresh = false;
-          setState(() => homeTiles = homeA2T());
+          refresh();
         },
         onVerticalDragEnd: (DragEndDetails details) async {
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < 0) {
               // Swiped up
-              context.goNamed(
+              setState(() => waiting = true);
+              await context.pushNamed(
                 appListPath,
                 extra: editing ? hiddenListData : appListData,
               );
-              if (editing) setState(() => showRefresh = true);
+              refresh();
             }
           }
         },
@@ -204,10 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
               toLaunch = listener.appMap[EzConfig.get(leftSwipeIDKey)];
             } else if (details.primaryVelocity! > 0) {
               editing
-                  ? setState(() {
-                      editing = false;
-                      showRefresh = false;
-                    })
+                  ? setState(() => editing = false)
                   : toLaunch = listener.appMap[EzConfig.get(rightSwipeIDKey)];
             }
 
@@ -229,7 +230,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Navigate on bottom overscroll
                         if (atBottom) {
                           context.goNamed(appListPath, extra: hiddenListData);
-                          setState(() => showRefresh = true);
                           return true;
                         } else {
                           setState(() => atBottom = true);
@@ -272,17 +272,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Refresh list
-            if (showRefresh) ...<Widget>[
-              RefreshFAB(context, () {
-                showRefresh = false;
-                refresh();
-              }),
-              separator,
-            ],
-
-            if (!showRefresh) ...<Widget>[
-              // Add folder
+            // Add folder
+            if (!waiting) ...<Widget>[
               AddFolderFAB(context, () {
                 editor.addHomeFolder();
                 refresh();
@@ -292,8 +283,9 @@ class _HomeScreenState extends State<HomeScreen> {
               // Add app
               AddAppFAB(
                 context,
-                () {
-                  context.goNamed(
+                () async {
+                  setState(() => waiting = true);
+                  await context.pushNamed(
                     appListPath,
                     extra: listData(
                       listCheck: (String id) =>
@@ -314,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )),
                     ),
                   );
-                  setState(() => showRefresh = true);
+                  refresh();
                 },
               ),
               separator,
