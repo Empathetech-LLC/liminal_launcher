@@ -37,8 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
 
-  final ListAlignment homeAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(homeAlignmentKey) ?? EzConfig.getDefault(homeAlignmentKey));
+  final ListAlignment hAlign = ListAlignmentConfig.fromValue(
+      EzConfig.get(homeHAlignKey) ?? EzConfig.getDefault(homeHAlignKey));
+  final ListAlignment vAlign = ListAlignmentConfig.fromValue(
+      EzConfig.get(homeVAlignKey) ?? EzConfig.getDefault(homeVAlignKey));
 
   final bool listIcon =
       EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
@@ -112,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
             listener: listener,
             editor: editor,
             index: index,
-            alignment: homeAlign,
+            hAlign: hAlign,
             folderLabel: folderLabel,
             folderIcon: listIcon,
             appIcon: listIcon,
@@ -150,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ? _Clock(
           homeTime: homeTime,
           homeDate: homeDate,
-          homeAlign: homeAlign,
+          hAlign: hAlign,
           textTheme: textTheme,
         )
       : const SizedBox.shrink();
@@ -216,7 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         child: LiminalScreen(Column(
-          crossAxisAlignment: homeAlign.crossAxis,
+          mainAxisAlignment: vAlign.mainAxis,
+          crossAxisAlignment: hAlign.crossAxis,
           children: <Widget>[
             header(),
             spacer,
@@ -260,7 +263,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )
                 : EzScrollView(
-                    crossAxisAlignment: homeAlign.crossAxis,
+                    mainAxisAlignment: vAlign.mainAxis,
+                    crossAxisAlignment: hAlign.crossAxis,
                     children: homeTiles,
                   ),
             spacer,
@@ -324,13 +328,13 @@ class _HomeScreenState extends State<HomeScreen> {
 class _Clock extends StatefulWidget {
   final bool homeTime;
   final bool homeDate;
-  final ListAlignment homeAlign;
+  final ListAlignment hAlign;
   final TextTheme textTheme;
 
   const _Clock({
     required this.homeTime,
     required this.homeDate,
-    required this.homeAlign,
+    required this.hAlign,
     required this.textTheme,
   });
 
@@ -359,7 +363,7 @@ class _ClockState extends State<_Clock> {
   Widget build(BuildContext context) {
     return EzTextBackground(Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: widget.homeAlign.crossAxis,
+      crossAxisAlignment: widget.hAlign.crossAxis,
       children: <Widget>[
         if (widget.homeTime)
           Text(
