@@ -71,8 +71,10 @@ class _AppListScreenState extends State<AppListScreen> {
   final bool listIcon =
       EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
 
-  final ListAlignment listAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(listAlignmentKey) ?? EzConfig.getDefault(listAlignmentKey));
+  final ListAlignment hAlign = ListAlignmentConfig.fromValue(
+      EzConfig.get(listHAlignKey) ?? EzConfig.getDefault(listHAlignKey));
+  final ListAlignment vAlign = ListAlignmentConfig.fromValue(
+      EzConfig.get(listVAlignKey) ?? EzConfig.getDefault(listVAlignKey));
 
   // Define the build data //
 
@@ -136,14 +138,17 @@ class _AppListScreenState extends State<AppListScreen> {
         },
         child: LiminalScreen(Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: listAlign.crossAxis,
+          mainAxisAlignment: vAlign.mainAxis,
+          crossAxisAlignment: hAlign.crossAxis,
           children: <Widget>[
             if (spacing > margin) EzSpacer(space: spacing - margin),
 
             // List controls
             EzScrollView(
               scrollDirection: Axis.horizontal,
-              mainAxisAlignment: listAlign.mainAxis,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: hAlign.mainAxis,
+              crossAxisAlignment: vAlign.crossAxis,
               children: <Widget>[
                 // Sort
                 MenuAnchor(
@@ -157,7 +162,7 @@ class _AppListScreenState extends State<AppListScreen> {
                     // By name
                     EzMenuButton(
                       label: 'Name',
-                      textAlign: listAlign.textAlign,
+                      textAlign: hAlign.textAlign,
                       onPressed: () async {
                         listSort = AppSort.name;
 
@@ -173,7 +178,7 @@ class _AppListScreenState extends State<AppListScreen> {
                     // By publisher
                     EzMenuButton(
                       label: 'Publisher',
-                      textAlign: listAlign.textAlign,
+                      textAlign: hAlign.textAlign,
                       onPressed: () async {
                         listSort = AppSort.publisher;
 
