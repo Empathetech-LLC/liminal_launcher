@@ -9,17 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:empathetech_flutter_ui/empathetech_flutter_ui.dart';
 
-class RefreshFAB extends FloatingActionButton {
-  /// [FloatingActionButton] that refreshes the home screen
-  RefreshFAB(BuildContext context, void Function()? onPressed, {super.key})
-      : super(
-          heroTag: 'refresh_fab',
-          onPressed: onPressed,
-          tooltip: 'Refresh app list',
-          child: EzIcon(PlatformIcons(context).refresh),
-        );
-}
-
 class AddFolderFAB extends FloatingActionButton {
   /// [FloatingActionButton] that adds another home folder
   AddFolderFAB(BuildContext context, void Function()? onPressed, {super.key})
