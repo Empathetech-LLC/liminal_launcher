@@ -36,8 +36,10 @@ const String authToEditKey = 'auth_to_edit';
 const String autoAddToHomeKey = 'auto_add_to_home';
 
 // Layout
-const String homeAlignmentKey = 'home_alignment';
-const String listAlignmentKey = 'list_alignment';
+const String homeHAlignKey = 'home_horizontal_alignment';
+const String homeVAlignKey = 'home_vertical_alignment';
+const String listHAlignKey = 'list_horizontal_alignment';
+const String listVAlignKey = 'list_vertical_alignment';
 
 // Design
 const String homeTimeKey = 'home_time';
@@ -69,8 +71,10 @@ final Map<String, Object> defaultConfig = <String, Object>{
   autoAddToHomeKey: false,
 
   // Layout
-  homeAlignmentKey: ListAlignment.center.configValue,
-  listAlignmentKey: ListAlignment.center.configValue,
+  homeHAlignKey: ListAlignment.center.configValue,
+  homeVAlignKey: ListAlignment.start.configValue,
+  listHAlignKey: ListAlignment.center.configValue,
+  listVAlignKey: ListAlignment.start.configValue,
 
   // Design
   homeTimeKey: true,
