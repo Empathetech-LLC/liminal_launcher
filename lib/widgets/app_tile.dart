@@ -289,11 +289,13 @@ class TileButton extends StatelessWidget {
           );
 
     if (type == LabelType.none) {
-      return EzIconButton(
-        icon: iconImage,
-        tooltip: app.name,
-        onPressed: onPressed,
-        onLongPress: onLongPress,
+      return Tooltip(
+        message: app.name,
+        child: GestureDetector(
+          onTap: onPressed,
+          onLongPress: onLongPress,
+          child: iconImage,
+        ),
       );
     }
 
