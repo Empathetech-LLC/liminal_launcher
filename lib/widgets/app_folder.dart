@@ -60,18 +60,18 @@ class _AppFolderState extends State<AppFolder> {
 
   // Define the build data //
 
+  late int index = widget.index;
+  late List<String> items = widget.listener.homeList[index].split(folderSplit);
+
+  late String name = items[0];
   late final String folderLabel;
 
-  late List<String> items =
-      widget.listener.homeList[widget.index].split(folderSplit);
-  late String name = items[0];
   late List<String> appList =
       (items[1] == emptyTag) ? <String>[] : items.sublist(1);
   late Set<String> appSet = appList.toSet();
 
   bool open = false;
   late bool editing = widget.editing;
-  late int index = widget.index;
 
   // Define custom functions //
 
@@ -82,6 +82,7 @@ class _AppFolderState extends State<AppFolder> {
     name = items[0];
     appList = (items[1] == emptyTag) ? <String>[] : items.sublist(1);
     appSet = appList.toSet();
+    setState(() {});
   }
 
   void refreshAll() {
@@ -150,7 +151,7 @@ class _AppFolderState extends State<AppFolder> {
                     if (validateRename(name) != null) return null;
 
                     final bool success =
-                        await widget.editor.renameFolder(name, index: index);
+                        await widget.editor.renameFolder(name, index);
 
                     if (success) {
                       if (dialogContext.mounted) {
@@ -253,7 +254,7 @@ class _AppFolderState extends State<AppFolder> {
                 extra: listData(
                   listCheck: (String id) => appSet.contains(id),
                   onSelected: (String id) =>
-                      widget.editor.removeFromFolder(id, index: index),
+                      widget.editor.removeFromFolder(id, index),
                   refresh: refreshAll,
                   autoRefresh: true,
                   icon: EzTextBackground(EzRow(
@@ -279,8 +280,12 @@ class _AppFolderState extends State<AppFolder> {
               appListPath,
               extra: listData(
                 listCheck: (String id) => !appSet.contains(id),
-                onSelected: (String id) =>
-                    widget.editor.addToFolder(id, index: index),
+                onSelected: (String id) async {
+                  final int? indexMod =
+                      await widget.editor.addToFolder(id, index);
+
+                  if (indexMod != null) index += indexMod;
+                },
                 refresh: refreshAll,
                 autoRefresh: true,
                 icon: EzTextBackground(EzRow(
