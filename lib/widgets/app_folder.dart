@@ -66,7 +66,7 @@ class _AppFolderState extends State<AppFolder> {
       widget.listener.homeList[widget.index].split(folderSplit);
   late String name = items[0];
   late List<String> appList =
-      (items.length <= 1) ? <String>[] : items.sublist(1);
+      (items[1] == emptyTag) ? <String>[] : items.sublist(1);
   late Set<String> appSet = appList.toSet();
 
   bool open = false;
@@ -80,7 +80,7 @@ class _AppFolderState extends State<AppFolder> {
   void refreshFolder() {
     items = widget.listener.homeList[index].split(folderSplit);
     name = items[0];
-    appList = (items.length <= 1) ? <String>[] : items.sublist(1);
+    appList = (items[1] == emptyTag) ? <String>[] : items.sublist(1);
     appSet = appList.toSet();
   }
 
@@ -200,62 +200,10 @@ class _AppFolderState extends State<AppFolder> {
           ),
           rowSpacer,
 
-          // Add apps
-          EzIconButton(
-            icon: Icon(PlatformIcons(context).add),
-            onPressed: () => context.goNamed(
-              appListPath,
-              extra: listData(
-                listCheck: (String id) => !appSet.contains(id),
-                onSelected: (String id) =>
-                    widget.editor.addToFolder(id, index: index),
-                refresh: refreshAll,
-                autoRefresh: true,
-                icon: EzTextBackground(EzRow(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text('$name\t', style: textTheme.labelLarge),
-                    EzIcon(
-                      PlatformIcons(context).add,
-                      color: colorScheme.onSurface,
-                    ),
-                  ],
-                )),
-              ),
-            ),
-          ),
-          rowSpacer,
-
           if (appSet.isNotEmpty) ...<Widget>[
-            // Remove apps
-            EzIconButton(
-              icon: Icon(PlatformIcons(context).remove),
-              onPressed: () => context.goNamed(
-                appListPath,
-                extra: listData(
-                  listCheck: (String id) => appSet.contains(id),
-                  onSelected: (String id) =>
-                      widget.editor.removeFromFolder(id, index: index),
-                  refresh: refreshAll,
-                  autoRefresh: true,
-                  icon: EzTextBackground(EzRow(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text('$name\t', style: textTheme.labelLarge),
-                      EzIcon(
-                        PlatformIcons(context).remove,
-                        color: colorScheme.onSurface,
-                      ),
-                    ],
-                  )),
-                ),
-              ),
-            ),
-            rowSpacer,
-
             // Re-order apps
             EzIconButton(
-              icon: Icon(PlatformIcons(context).remove),
+              icon: Icon(PlatformIcons(context).edit),
               onPressed: () => showPlatformDialog(
                 context: context,
                 builder: (_) => EzAlertDialog(
@@ -294,14 +242,71 @@ class _AppFolderState extends State<AppFolder> {
               ),
             ),
             rowSpacer,
+
+            // Remove apps
+            EzIconButton(
+              icon: Icon(PlatformIcons(context).remove),
+              onPressed: () => context.goNamed(
+                appListPath,
+                extra: listData(
+                  listCheck: (String id) => appSet.contains(id),
+                  onSelected: (String id) =>
+                      widget.editor.removeFromFolder(id, index: index),
+                  refresh: refreshAll,
+                  autoRefresh: true,
+                  icon: EzTextBackground(EzRow(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text('$name\t', style: textTheme.labelLarge),
+                      EzIcon(
+                        PlatformIcons(context).remove,
+                        color: colorScheme.onSurface,
+                      ),
+                    ],
+                  )),
+                ),
+              ),
+            ),
+            rowSpacer,
           ],
+
+          // Add apps
+          EzIconButton(
+            icon: Icon(PlatformIcons(context).add),
+            onPressed: () => context.goNamed(
+              appListPath,
+              extra: listData(
+                listCheck: (String id) => !appSet.contains(id),
+                onSelected: (String id) =>
+                    widget.editor.addToFolder(id, index: index),
+                refresh: refreshAll,
+                autoRefresh: true,
+                icon: EzTextBackground(EzRow(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('$name\t', style: textTheme.labelLarge),
+                    EzIcon(
+                      PlatformIcons(context).add,
+                      color: colorScheme.onSurface,
+                    ),
+                  ],
+                )),
+              ),
+            ),
+          ),
+          rowSpacer,
 
           // Delete folder
           EzIconButton(
             icon: Icon(PlatformIcons(context).delete),
-            onPressed: () => widget.editor.deleteFolder(appList.isEmpty
-                ? '$name$folderSplit$emptyTag'
-                : <String>[name, ...appList].join(folderSplit)),
+            onPressed: () async {
+              final bool success = await widget.editor.deleteFolder(
+                  appList.isEmpty
+                      ? '$name$folderSplit$emptyTag'
+                      : <String>[name, ...appList].join(folderSplit));
+
+              if (success) refreshAll();
+            },
           ),
           rowSpacer,
 
