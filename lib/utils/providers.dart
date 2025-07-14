@@ -358,16 +358,22 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteFolder(String fullName) async {
-    final List<String> ids = fullName.split(':').sublist(1);
-    for (final String id in ids) {
-      _homeSet.remove(id);
+  Future<bool> deleteFolder(String fullName) async {
+    try {
+      final List<String> ids = fullName.split(':').sublist(1);
+      for (final String id in ids) {
+        _homeSet.remove(id);
+      }
+
+      _homeList.remove(fullName);
+      await EzConfig.setStringList(homeIDsKey, _homeList);
+
+      notifyListeners();
+      return true;
+    } catch (e) {
+      ezLog('Error deleting folder...\n$e');
+      return false;
     }
-
-    _homeList.remove(fullName);
-    await EzConfig.setStringList(homeIDsKey, _homeList);
-
-    notifyListeners();
   }
 
   Future<void> reset() async {
