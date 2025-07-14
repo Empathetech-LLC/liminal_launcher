@@ -20,7 +20,10 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   // Gather the theme data //
 
   static const EzSpacer spacer = EzSpacer();
+  static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
+
+  late final TextStyle? titleStyle = Theme.of(context).textTheme.titleLarge;
 
   // Define custom Widgets //
 
@@ -45,23 +48,23 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return LiminalScaffold(
-      const LiminalScreen(EzLayoutSettings(
-        beforeLayout: <Widget>[EzDominantHandSwitch()],
+      LiminalScreen(EzLayoutSettings(
+        beforeLayout: const <Widget>[EzDominantHandSwitch()],
         prefixSpacer: spacer,
         postfixSpacer: divider,
         afterLayout: <Widget>[
           // Home align
-          _SegmentedAlignmentButton(
-            label: 'Home list alignment',
-            configKey: homeAlignmentKey,
+          EzText('Home list alignment', style: titleStyle),
+          const _AlignmentSelectors(
+            home: true,
             segments: alignmentSegments,
           ),
-          spacer,
+          separator,
 
           // Full list align
-          _SegmentedAlignmentButton(
-            label: 'Full list alignment',
-            configKey: listAlignmentKey,
+          EzText('Full list alignment', style: titleStyle),
+          const _AlignmentSelectors(
+            home: false,
             segments: alignmentSegments,
           ),
         ],
@@ -72,50 +75,66 @@ class _LayoutSettingsScreenState extends State<LayoutSettingsScreen> {
   }
 }
 
-class _SegmentedAlignmentButton extends StatefulWidget {
-  final String label;
-  final String configKey;
+class _AlignmentSelectors extends StatefulWidget {
+  final bool home;
   final List<ButtonSegment<ListAlignment>> segments;
 
-  const _SegmentedAlignmentButton({
-    required this.label,
-    required this.configKey,
+  const _AlignmentSelectors({
+    required this.home,
     required this.segments,
   });
 
   @override
-  State<_SegmentedAlignmentButton> createState() =>
-      _SegmentedAlignmentButtonState();
+  State<_AlignmentSelectors> createState() => _AlignmentSelectorsState();
 }
 
-class _SegmentedAlignmentButtonState extends State<_SegmentedAlignmentButton> {
-  late ListAlignment listAlign = ListAlignmentConfig.fromValue(
-    EzConfig.get(widget.configKey) ?? EzConfig.getDefault(widget.configKey),
+class _AlignmentSelectorsState extends State<_AlignmentSelectors> {
+  late final String hConfigKey = widget.home ? homeHAlignKey : listHAlignKey;
+  late final String vConfigKey = widget.home ? homeVAlignKey : listVAlignKey;
+
+  late ListAlignment hAlign = ListAlignmentConfig.fromValue(
+    EzConfig.get(hConfigKey) ?? EzConfig.getDefault(hConfigKey),
   );
-  late TextAlign textAlign = listAlign.textAlign;
+
+  late ListAlignment vAlign = ListAlignmentConfig.fromValue(
+    EzConfig.get(vConfigKey) ?? EzConfig.getDefault(vConfigKey),
+  );
 
   @override
-  Widget build(BuildContext context) {
-    return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-      SizedBox(
-        width: double.infinity,
-        child: EzText(widget.label, textAlign: textAlign),
-      ),
-      SegmentedButton<ListAlignment>(
-        segments: widget.segments,
-        selected: <ListAlignment>{listAlign},
-        showSelectedIcon: false,
-        onSelectionChanged: (Set<ListAlignment>? choice) async {
-          if (choice?.first == null) return;
-          final ListAlignment selected = choice!.first;
+  Widget build(BuildContext context) => Wrap(
+        alignment: WrapAlignment.center,
+        runAlignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: <Widget>[
+          // Horizontal
+          SegmentedButton<ListAlignment>(
+            segments: widget.segments,
+            selected: <ListAlignment>{hAlign},
+            showSelectedIcon: false,
+            onSelectionChanged: (Set<ListAlignment>? choice) async {
+              if (choice?.first == null) return;
+              final ListAlignment selected = choice!.first;
 
-          await EzConfig.setString(widget.configKey, selected.configValue);
-          setState(() {
-            listAlign = selected;
-            textAlign = selected.textAlign;
-          });
-        },
-      ),
-    ]);
-  }
+              await EzConfig.setString(hConfigKey, selected.configValue);
+              setState(() => hAlign = selected);
+            },
+          ),
+          const EzSpacer(),
+
+          // Vertical
+          SegmentedButton<ListAlignment>(
+            segments: widget.segments,
+            direction: Axis.vertical,
+            selected: <ListAlignment>{vAlign},
+            showSelectedIcon: false,
+            onSelectionChanged: (Set<ListAlignment>? choice) async {
+              if (choice?.first == null) return;
+              final ListAlignment selected = choice!.first;
+
+              await EzConfig.setString(vConfigKey, selected.configValue);
+              setState(() => vAlign = selected);
+            },
+          ),
+        ],
+      );
 }
