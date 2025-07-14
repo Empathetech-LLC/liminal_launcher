@@ -101,7 +101,7 @@ class _AppTileState extends State<AppTile> {
                         if (validateRename(name) != null) return null;
 
                         final bool success = await widget.editor
-                            .renameApp(name, id: widget.app.id);
+                            .renameApp(newName: name, appID: widget.app.id);
 
                         if (success) {
                           if (dialogContext.mounted) {

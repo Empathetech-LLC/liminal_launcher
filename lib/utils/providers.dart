@@ -190,23 +190,11 @@ class AppInfoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addHomeApp(String id) async {
-    if (_homeSet.contains(id)) return false;
+  Future<bool> addHomeApp(String appID) async {
+    if (_homeSet.contains(appID)) return false;
 
-    _homeList.add(id);
-    _homeSet.add(id);
-
-    await EzConfig.setStringList(homeIDsKey, _homeList);
-    notifyListeners();
-
-    return true;
-  }
-
-  Future<bool> removeHomeApp(String id) async {
-    if (!_homeSet.contains(id)) return false;
-
-    _homeList.remove(id);
-    _homeSet.remove(id);
+    _homeList.add(appID);
+    _homeSet.add(appID);
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
@@ -214,18 +202,30 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<int?> addToFolder(String id, {required int index}) async {
+  Future<bool> removeHomeApp(String appID) async {
+    if (!_homeSet.contains(appID)) return false;
+
+    _homeList.remove(appID);
+    _homeSet.remove(appID);
+
+    await EzConfig.setStringList(homeIDsKey, _homeList);
+    notifyListeners();
+
+    return true;
+  }
+
+  Future<int?> addToFolder(String appID, int folderIndex) async {
     int toReturn = 0;
-    _homeList[index] = (homeList[index] + folderSplit + id)
+    _homeList[folderIndex] = (homeList[folderIndex] + folderSplit + appID)
         .replaceAll(folderSplit + emptyTag, '');
 
-    if (_homeSet.contains(id)) {
-      final int appIndex = _homeList.indexOf(id);
+    if (_homeSet.contains(appID)) {
+      final int appIndex = _homeList.indexOf(appID);
       _homeList.removeAt(appIndex);
 
-      if (appIndex < index) toReturn = -1;
+      if (appIndex < folderIndex) toReturn = -1;
     } else {
-      _homeSet.add(id);
+      _homeSet.add(appID);
     }
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
@@ -234,15 +234,15 @@ class AppInfoProvider extends ChangeNotifier {
     return toReturn;
   }
 
-  Future<bool> removeFromFolder(String id, {required int index}) async {
-    _homeList[index] = _homeList[index].replaceFirst(
-      folderSplit + id,
+  Future<bool> removeFromFolder(String appID, int folderIndex) async {
+    _homeList[folderIndex] = _homeList[folderIndex].replaceFirst(
+      folderSplit + appID,
       '',
     );
-    _homeList.add(id);
+    _homeList.add(appID);
 
-    if (!_homeList[index].contains(folderSplit)) {
-      _homeList[index] = '${_homeList[index]}$folderSplit$emptyTag';
+    if (!_homeList[folderIndex].contains(folderSplit)) {
+      _homeList[folderIndex] = '${_homeList[folderIndex]}$folderSplit$emptyTag';
     }
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
@@ -253,25 +253,25 @@ class AppInfoProvider extends ChangeNotifier {
 
   // Patch //
 
-  Future<bool> hideApp(String id) async {
-    if (_hiddenSet.contains(id)) return false;
+  Future<bool> hideApp(String appID) async {
+    if (_hiddenSet.contains(appID)) return false;
 
-    _hiddenList.add(id);
-    _hiddenSet.add(id);
+    _hiddenList.add(appID);
+    _hiddenSet.add(appID);
 
     await EzConfig.setStringList(hiddenIDsKey, _hiddenList);
 
-    final bool notified = await removeHomeApp(id);
+    final bool notified = await removeHomeApp(appID);
     if (!notified) notifyListeners();
 
     return true;
   }
 
-  Future<bool> showApp(String id) async {
-    if (!_hiddenSet.contains(id)) return false;
+  Future<bool> showApp(String appID) async {
+    if (!_hiddenSet.contains(appID)) return false;
 
-    _hiddenList.remove(id);
-    _hiddenSet.remove(id);
+    _hiddenList.remove(appID);
+    _hiddenSet.remove(appID);
 
     await EzConfig.setStringList(hiddenIDsKey, _hiddenList);
     notifyListeners();
@@ -279,14 +279,17 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> renameApp(String newName, {required String id}) async {
-    final AppInfo? app = _appMap[id];
+  Future<bool> renameApp({
+    required String appID,
+    required String newName,
+  }) async {
+    final AppInfo? app = _appMap[appID];
     if (app == null || app.name == newName) return false;
 
     app.rename = newName;
 
-    _renamedSet.removeWhere((String entry) => entry.startsWith(id));
-    _renamedSet.add(id + idSplit + newName);
+    _renamedSet.removeWhere((String entry) => entry.startsWith(appID));
+    _renamedSet.add(appID + idSplit + newName);
 
     await EzConfig.setStringList(renamedIDsKey, _renamedSet.toList());
     notifyListeners();
@@ -294,15 +297,15 @@ class AppInfoProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> renameFolder(String newName, {required int index}) async {
-    final String fullName = _homeList[index];
+  Future<bool> renameFolder(String newName, int folderIndex) async {
+    final String fullName = _homeList[folderIndex];
     final List<String> parts = fullName.split(folderSplit);
     if (parts[0] == newName) return false;
 
     final String newFullName = (parts.length > 1)
         ? <String>[newName, ...parts].join(folderSplit)
         : newName;
-    _homeList[index] = newFullName;
+    _homeList[folderIndex] = newFullName;
 
     await EzConfig.setStringList(homeIDsKey, _homeList);
     notifyListeners();
@@ -349,12 +352,11 @@ class AppInfoProvider extends ChangeNotifier {
 
   // Delete //
 
-  Future<void> removeDeleted(String id) async {
-    await showApp(id);
-    await removeHomeApp(id);
-    // Remove rename? Make it an option? Leave it?
-    _apps.remove(_appMap[id]);
-    _appMap.remove(id);
+  Future<void> removeDeleted(String appID) async {
+    await showApp(appID);
+    await removeHomeApp(appID);
+    _apps.remove(_appMap[appID]);
+    _appMap.remove(appID);
 
     notifyListeners();
   }
