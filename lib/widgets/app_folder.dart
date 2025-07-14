@@ -16,7 +16,7 @@ class AppFolder extends StatefulWidget {
   final AppInfoProvider listener;
   final AppInfoProvider editor;
   final int index;
-  final ListAlignment alignment;
+  final ListAlignment hAlign;
   final LabelType folderLabel;
   final bool folderIcon;
   final LabelType appLabel;
@@ -29,7 +29,7 @@ class AppFolder extends StatefulWidget {
     required this.listener,
     required this.editor,
     required this.index,
-    required this.alignment,
+    required this.hAlign,
     required this.folderLabel,
     required this.folderIcon,
     required this.appLabel,
@@ -132,7 +132,8 @@ class _AppFolderState extends State<AppFolder> {
       return EzScrollView(
         scrollDirection: Axis.horizontal,
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: widget.alignment.mainAxis,
+        mainAxisAlignment: widget.hAlign.mainAxis,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           // Name
           GestureDetector(
@@ -324,7 +325,8 @@ class _AppFolderState extends State<AppFolder> {
         ? EzScrollView(
             scrollDirection: Axis.horizontal,
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: widget.alignment.mainAxis,
+            mainAxisAlignment: widget.hAlign.mainAxis,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: appList
                     .map((String id) {
                       final AppInfo? app = widget.listener.appMap[id];
