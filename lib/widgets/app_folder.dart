@@ -206,40 +206,41 @@ class _AppFolderState extends State<AppFolder> {
             // Re-order apps
             EzIconButton(
               icon: Icon(PlatformIcons(context).edit),
-              onPressed: () => showPlatformDialog(
+              onPressed: () => showModalBottomSheet(
                 context: context,
-                builder: (_) => EzAlertDialog(
-                  title: Text(
-                    'Reorder $name',
-                    textAlign: TextAlign.center,
-                  ),
-                  content: ReorderableListView(
-                    onReorder: (int oldIndex, int newIndex) async {
-                      final bool reordered =
-                          await widget.editor.reorderFolderItem(
-                        oldIndex: oldIndex + 1, // name offset
-                        newIndex: newIndex + 1,
-                        folderIndex: widget.index,
-                      );
-                      if (reordered) refreshFolder();
-                    },
-                    children: appList
-                        .map((String id) {
-                          final AppInfo? app = widget.listener.appMap[id];
-                          if (app == null) return null;
+                builder: (_) => StatefulBuilder(
+                  builder: (_, StateSetter modalState) => Expanded(
+                    child: ReorderableListView(
+                      onReorder: (int oldIndex, int newIndex) async {
+                        final bool reordered =
+                            await widget.editor.reorderFolderItem(
+                          oldIndex: oldIndex + 1, // name offset
+                          newIndex: newIndex + 1,
+                          folderIndex: widget.index,
+                        );
+                        if (reordered) {
+                          refreshFolder();
+                          modalState(() {}); // TODO: More efficienctly?
+                        }
+                      },
+                      children: appList
+                          .map((String id) {
+                            final AppInfo? app = widget.listener.appMap[id];
+                            if (app == null) return null;
 
-                          return Padding(
-                            key: ValueKey<String>(id),
-                            padding: colPadding,
-                            child: TileButton(
-                              app: app,
-                              type: widget.appLabel,
-                              showIcon: widget.appIcon,
-                            ),
-                          );
-                        })
-                        .whereType<Widget>()
-                        .toList(),
+                            return Padding(
+                              key: ValueKey<String>(id),
+                              padding: colPadding,
+                              child: TileButton(
+                                app: app,
+                                type: widget.appLabel,
+                                showIcon: widget.appIcon,
+                              ),
+                            );
+                          })
+                          .whereType<Widget>()
+                          .toList(),
+                    ),
                   ),
                 ),
               ),
