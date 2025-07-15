@@ -29,20 +29,15 @@ class AppInfoProvider extends ChangeNotifier {
   StreamSubscription<dynamic>? _appEventSubscription;
 
   // Renamed apps
-  final Set<String> _renamedSet = Set<String>.from(
-      EzConfig.get(renamedIDsKey) ?? EzConfig.getDefault(renamedIDsKey));
+  final Set<String> _renamedSet = Set<String>.from(EzConfig.get(renamedIDsKey));
 
   // Home apps
-  final Set<String> _homeSet = Set<String>.from(
-      EzConfig.get(homeIDsKey) ?? EzConfig.getDefault(homeIDsKey));
-  final List<String> _homeList =
-      EzConfig.get(homeIDsKey) ?? EzConfig.getDefault(homeIDsKey);
+  final Set<String> _homeSet = Set<String>.from(EzConfig.get(homeIDsKey));
+  final List<String> _homeList = EzConfig.get(homeIDsKey);
 
   // Hidden apps
-  final Set<String> _hiddenSet = Set<String>.from(
-      EzConfig.get(hiddenIDsKey) ?? EzConfig.getDefault(hiddenIDsKey));
-  final List<String> _hiddenList =
-      EzConfig.get(hiddenIDsKey) ?? EzConfig.getDefault(hiddenIDsKey);
+  final Set<String> _hiddenSet = Set<String>.from(EzConfig.get(hiddenIDsKey));
+  final List<String> _hiddenList = EzConfig.get(hiddenIDsKey);
 
   AppInfoProvider(List<AppInfo> apps)
       : _apps = apps,
@@ -80,10 +75,8 @@ class AppInfoProvider extends ChangeNotifier {
 
     // Sort based on the user's preferences
     sort(
-      AppSortConfig.fromValue(
-        EzConfig.get(listSortKey) ?? EzConfig.getDefault(listSortKey),
-      ),
-      EzConfig.get(ascListKey) ?? EzConfig.getDefault(ascListKey),
+      AppSortConfig.fromValue(EzConfig.get(listSortKey)),
+      EzConfig.get(ascListKey),
     );
 
     // Listen //
@@ -136,10 +129,8 @@ class AppInfoProvider extends ChangeNotifier {
     _appMap[installed.id] = installed;
 
     sort(
-      AppSortConfig.fromValue(
-        EzConfig.get(listSortKey) ?? EzConfig.getDefault(listSortKey),
-      ),
-      EzConfig.get(ascListKey) ?? EzConfig.getDefault(ascListKey),
+      AppSortConfig.fromValue(EzConfig.get(listSortKey)),
+      EzConfig.get(ascListKey),
     );
 
     if (EzConfig.get(autoAddToHomeKey) == true &&

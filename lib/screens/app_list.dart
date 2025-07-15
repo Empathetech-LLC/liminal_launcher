@@ -66,15 +66,14 @@ class _AppListScreenState extends State<AppListScreen> {
   late final EdgeInsets listPadding =
       EdgeInsets.symmetric(vertical: spacing / 2);
 
-  final LabelType listLabel = LabelTypeConfig.fromValue(
-      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
-  final bool listIcon =
-      EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
+  final LabelType listLabel =
+      LabelTypeConfig.fromValue(EzConfig.get(listLabelTypeKey));
+  final bool listIcon = EzConfig.get(listIconKey);
 
-  final ListAlignment hAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(listHAlignKey) ?? EzConfig.getDefault(listHAlignKey));
-  final ListAlignment vAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(listVAlignKey) ?? EzConfig.getDefault(listVAlignKey));
+  final ListAlignment hAlign =
+      ListAlignmentConfig.fromValue(EzConfig.get(listHAlignKey));
+  final ListAlignment vAlign =
+      ListAlignmentConfig.fromValue(EzConfig.get(listVAlignKey));
 
   // Define the build data //
 
@@ -85,14 +84,11 @@ class _AppListScreenState extends State<AppListScreen> {
   late List<AppInfo> appList = getApps();
   late List<AppInfo> searchList = appList;
 
-  bool searching =
-      EzConfig.get(autoSearchKey) ?? EzConfig.getDefault(autoSearchKey);
+  bool searching = EzConfig.get(autoSearchKey);
   final TextEditingController searchControl = TextEditingController();
 
-  AppSort listSort = AppSortConfig.fromValue(
-    EzConfig.get(listSortKey) ?? EzConfig.getDefault(listSortKey),
-  );
-  bool ascList = EzConfig.get(ascListKey) ?? EzConfig.getDefault(ascListKey);
+  AppSort listSort = AppSortConfig.fromValue(EzConfig.get(listSortKey));
+  bool ascList = EzConfig.get(ascListKey);
 
   final ScrollController scrollControl = ScrollController();
 

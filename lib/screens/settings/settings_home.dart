@@ -28,8 +28,7 @@ class _SettingsHomeScreenState extends State<SettingsHomeScreen> {
   static const EzSeparator separator = EzSeparator();
   static const EzDivider divider = EzDivider();
 
-  final bool isLefty =
-      EzConfig.get(isLeftyKey) ?? EzConfig.getDefault(isLeftyKey);
+  final bool isLefty = EzConfig.get(isLeftyKey);
 
   late final EFUILang el10n = ezL10n(context);
 
@@ -381,10 +380,9 @@ class _SwipeSelectorState extends State<_SwipeSelector> {
 
   // Define the build data //
 
-  final bool showIcon =
-      EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
-  final LabelType labelType = LabelTypeConfig.fromValue(
-      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
+  final bool showIcon = EzConfig.get(listIconKey);
+  final LabelType labelType =
+      LabelTypeConfig.fromValue(EzConfig.get(listLabelTypeKey));
 
   late final String leftLabel = 'Left package';
   late final String rightLabel = 'Right package';

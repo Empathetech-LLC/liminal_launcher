@@ -37,28 +37,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final TextTheme textTheme = Theme.of(context).textTheme;
 
-  final ListAlignment hAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(homeHAlignKey) ?? EzConfig.getDefault(homeHAlignKey));
-  final ListAlignment vAlign = ListAlignmentConfig.fromValue(
-      EzConfig.get(homeVAlignKey) ?? EzConfig.getDefault(homeVAlignKey));
+  final ListAlignment hAlign =
+      ListAlignmentConfig.fromValue(EzConfig.get(homeHAlignKey));
+  final ListAlignment vAlign =
+      ListAlignmentConfig.fromValue(EzConfig.get(homeVAlignKey));
 
-  final bool listIcon =
-      EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
-  final LabelType listLabel = LabelTypeConfig.fromValue(
-      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
+  final bool listIcon = EzConfig.get(listIconKey);
+  final LabelType listLabel =
+      LabelTypeConfig.fromValue(EzConfig.get(listLabelTypeKey));
 
-  final bool folderIcon =
-      EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey);
-  final LabelType folderLabel = LabelTypeConfig.fromValue(
-      EzConfig.get(folderLabelTypeKey) ??
-          EzConfig.getDefault(folderLabelTypeKey));
+  final bool folderIcon = EzConfig.get(folderIconKey);
+  final LabelType folderLabel =
+      LabelTypeConfig.fromValue(EzConfig.get(folderLabelTypeKey));
 
   // Define the build data //
 
-  final bool homeTime =
-      EzConfig.get(homeTimeKey) ?? EzConfig.getDefault(homeTimeKey);
-  final bool homeDate =
-      EzConfig.get(homeDateKey) ?? EzConfig.getDefault(homeDateKey);
+  final bool homeTime = EzConfig.get(homeTimeKey);
+  final bool homeDate = EzConfig.get(homeDateKey);
 
   late final AppInfoProvider listener = Provider.of<AppInfoProvider>(context);
   late final AppInfoProvider editor =
@@ -163,9 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
       GestureDetector(
         behavior: HitTestBehavior.opaque,
         onLongPress: () async {
-          final bool needAuth = !editing &&
-              (EzConfig.get(authToEditKey) ??
-                  EzConfig.getDefault(authToEditKey));
+          final bool needAuth = !editing && (EzConfig.get(authToEditKey));
           // Check every time so no reset is required; O(1)
 
           if (needAuth) {

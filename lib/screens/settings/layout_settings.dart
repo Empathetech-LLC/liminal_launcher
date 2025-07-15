@@ -92,13 +92,11 @@ class _AlignmentSelectorsState extends State<_AlignmentSelectors> {
   late final String hConfigKey = widget.home ? homeHAlignKey : listHAlignKey;
   late final String vConfigKey = widget.home ? homeVAlignKey : listVAlignKey;
 
-  late ListAlignment hAlign = ListAlignmentConfig.fromValue(
-    EzConfig.get(hConfigKey) ?? EzConfig.getDefault(hConfigKey),
-  );
+  late ListAlignment hAlign =
+      ListAlignmentConfig.fromValue(EzConfig.get(hConfigKey));
 
-  late ListAlignment vAlign = ListAlignmentConfig.fromValue(
-    EzConfig.get(vConfigKey) ?? EzConfig.getDefault(vConfigKey),
-  );
+  late ListAlignment vAlign =
+      ListAlignmentConfig.fromValue(EzConfig.get(vConfigKey));
 
   @override
   Widget build(BuildContext context) => Wrap(

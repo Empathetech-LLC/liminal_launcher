@@ -30,15 +30,13 @@ class _DesignSettingsScreenState extends State<DesignSettingsScreen> {
 
   // Define the build data //
 
-  bool listIcon = EzConfig.get(listIconKey) ?? EzConfig.getDefault(listIconKey);
-  LabelType listLabelType = LabelTypeConfig.fromValue(
-      EzConfig.get(listLabelTypeKey) ?? EzConfig.getDefault(listLabelTypeKey));
+  bool listIcon = EzConfig.get(listIconKey);
+  LabelType listLabelType =
+      LabelTypeConfig.fromValue(EzConfig.get(listLabelTypeKey));
 
-  bool folderIcon =
-      EzConfig.get(folderIconKey) ?? EzConfig.getDefault(folderIconKey);
-  LabelType folderLabelType = LabelTypeConfig.fromValue(
-      EzConfig.get(folderLabelTypeKey) ??
-          EzConfig.getDefault(folderLabelTypeKey));
+  bool folderIcon = EzConfig.get(folderIconKey);
+  LabelType folderLabelType =
+      LabelTypeConfig.fromValue(EzConfig.get(folderLabelTypeKey));
 
   final List<DropdownMenuEntry<LabelType>> labelEntries =
       <DropdownMenuEntry<LabelType>>[

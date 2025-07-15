@@ -32,7 +32,7 @@ class _ImageSettingsScreenState extends State<ImageSettingsScreen> {
   late final String themeProfile =
       isDark ? el10n.gDark.toLowerCase() : el10n.gLight.toLowerCase();
 
-  bool useOS = EzConfig.get(useOSKey) ?? EzConfig.getDefault(useOSKey);
+  bool useOS = EzConfig.get(useOSKey);
 
   // Return the build //
 
