@@ -220,7 +220,7 @@ class _AppFolderState extends State<AppFolder> {
                         );
                         if (reordered) {
                           refreshFolder();
-                          modalState(() {}); // TODO: More efficienctly?
+                          modalState(() {});
                         }
                       },
                       children: appList
@@ -328,34 +328,37 @@ class _AppFolderState extends State<AppFolder> {
     }
 
     return open
-        ? EzScrollView(
-            scrollDirection: Axis.horizontal,
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: widget.hAlign.mainAxis,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: appList
-                    .map((String id) {
-                      final AppInfo? app = widget.listener.appMap[id];
-                      if (app == null) return null;
+        ? TapRegion(
+            onTapOutside: (_) => toggleOpen,
+            child: EzScrollView(
+              scrollDirection: Axis.horizontal,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: widget.hAlign.mainAxis,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: appList
+                      .map((String id) {
+                        final AppInfo? app = widget.listener.appMap[id];
+                        if (app == null) return null;
 
-                      return Padding(
-                        padding: rowPadding,
-                        child: AppTile(
-                          app: app,
-                          listener: widget.listener,
-                          editor: widget.editor,
-                          onHomeScreen: null,
-                          labelType: widget.folderLabel,
-                          showIcon: widget.folderIcon,
-                          onSelected: (String id) => launchApp(id),
-                          editing: editing,
-                          refresh: refreshAll,
-                        ),
-                      );
-                    })
-                    .whereType<Widget>()
-                    .toList() +
-                closeTail,
+                        return Padding(
+                          padding: rowPadding,
+                          child: AppTile(
+                            app: app,
+                            listener: widget.listener,
+                            editor: widget.editor,
+                            onHomeScreen: null,
+                            labelType: widget.folderLabel,
+                            showIcon: widget.folderIcon,
+                            onSelected: (String id) => launchApp(id),
+                            editing: editing,
+                            refresh: refreshAll,
+                          ),
+                        );
+                      })
+                      .whereType<Widget>()
+                      .toList() +
+                  closeTail,
+            ),
           )
         : (widget.appIcon
             ? EzTextIconButton(
