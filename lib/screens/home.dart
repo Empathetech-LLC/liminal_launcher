@@ -42,6 +42,9 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
   bool editing = false;
   ValueNotifier<double> rippleProgress = ValueNotifier<double>(0.0);
 
+  Offset _tmpVertSwipeStart = Offset.zero;
+  late final double trayOffset = heightOf(context) * 0.925;
+
   // Define custom functions //
 
   Future<void> ripple(EzCP config, PositionedGestureDetails details) async {
@@ -876,10 +879,16 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
                 onLongPressStart: (LongPressStartDetails details) async => editing
                     ? await ripple(config, details)
                     : await canEdit(config, () => ripple(config, details)),
+                onVerticalDragStart: (DragStartDetails details) =>
+                    _tmpVertSwipeStart = details.globalPosition,
                 onVerticalDragEnd: (DragEndDetails details) async {
                   if (details.primaryVelocity != null) {
-                    if (editingMarked) return;
-                    if (details.primaryVelocity! < -ezSwipeV) await swipeUp(config, appInfo);
+                    if (editingMarked ||
+                        !(details.primaryVelocity! < -ezSwipeV) ||
+                        _tmpVertSwipeStart.dy > trayOffset) {
+                      return;
+                    }
+                    await swipeUp(config, appInfo);
                   }
                 },
                 onHorizontalDragEnd: (DragEndDetails details) async {
