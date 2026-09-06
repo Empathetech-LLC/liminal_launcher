@@ -393,6 +393,15 @@ List<Widget> _menuChildren(
   required _EventConfig initConfig,
 }) =>
     <Widget>[
+      if (!initConfig.isCalendar && initConfig.shareDest != null)
+        // Open (conditional)
+        EzMenuButton(
+          config,
+          label: config.ezL10n.gOpen,
+          icon: EzIcon(config, Icons.launch),
+          onPressed: () => launchApp(initConfig.shareDest!),
+        ),
+
       // Edit
       _EditEvent(
         config,
@@ -585,6 +594,7 @@ Future<void> _openEdits(
         // Size
         EzFlipFlop(
           config,
+          key: ValueKey<bool>(size == WWGGSize.tile),
           onLabel: l10n(config).gTile,
           offLabel: l10n(config).gButton,
           init: initConfig.size == WWGGSize.tile,
@@ -595,6 +605,7 @@ Future<void> _openEdits(
         // Type
         EzFlipFlop(
           config,
+          key: ValueKey<bool>(isCalendar),
           onLabel: l10n(config).evtCalendar,
           offLabel: l10n(config).evtTask,
           init: initConfig.isCalendar,
