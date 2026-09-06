@@ -673,15 +673,24 @@ Future<void> _openEdits(
               textAlign: TextAlign.center,
               style: config.labelStyle,
             ),
-            config.spacer,
 
             // Use icon switch
-            EzSwitchPair(
+            EzAnimVis(
               config,
-              key: ValueKey<bool?>(useAppIcon),
-              value: useAppIcon ?? true,
-              text: l10n(config).evtAppIcon,
-              onChanged: (bool? choice) => setModal(() => useAppIcon = choice),
+              mod: 0.667,
+              forceFade: true,
+              forceType: EzTransitionType.zoom,
+              visible: (size == WWGGSize.tile),
+              kid: Padding(
+                padding: EdgeInsets.only(top: config.spacing),
+                child: EzSwitchPair(
+                  config,
+                  key: ValueKey<bool?>(useAppIcon),
+                  value: useAppIcon ?? true,
+                  text: l10n(config).evtAppIcon,
+                  onChanged: (bool? choice) => setModal(() => useAppIcon = choice),
+                ),
+              ),
             ),
           ]),
         ),
