@@ -594,7 +594,7 @@ Future<void> _openEdits(
         // Size
         EzFlipFlop(
           config,
-          key: ValueKey<bool>(size == WWGGSize.tile),
+          key: ValueKey<String>('isTile:${size == WWGGSize.tile}'),
           onLabel: l10n(config).gTile,
           offLabel: l10n(config).gButton,
           init: initConfig.size == WWGGSize.tile,
@@ -605,7 +605,7 @@ Future<void> _openEdits(
         // Type
         EzFlipFlop(
           config,
-          key: ValueKey<bool>(isCalendar),
+          key: ValueKey<String>('isCalendar:$isCalendar'),
           onLabel: l10n(config).evtCalendar,
           offLabel: l10n(config).evtTask,
           init: initConfig.isCalendar,
