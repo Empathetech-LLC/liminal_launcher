@@ -637,11 +637,11 @@ Future<void> _openEdits(
               include: false,
               onSelected: (AppInfo choice) async {
                 if (pContext.mounted) Navigator.of(pContext).pop();
-                setModal(() {
-                  shareDest = choice;
-                  useAppIcon = (useAppIcon ?? true);
-                  isCalendar = false;
-                });
+
+                shareDest = choice;
+                useAppIcon = (useAppIcon ?? true);
+                isCalendar = false;
+                setModal(() {});
               },
               title: EzTextButton(
                 config,
@@ -651,11 +651,11 @@ Future<void> _openEdits(
               ),
             ),
           ),
-          onLongPress: () => setModal(() {
+          onLongPress: () {
             shareDest = nullApp;
-            useAppIcon = null;
             isCalendar = true;
-          }),
+            setModal(() {});
+          },
         ),
 
         // Conditional clear (reminder)
