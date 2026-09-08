@@ -107,7 +107,6 @@ class _EventWidgetState extends State<EventWidget> {
             hintText: widget._isCalendar
                 ? l10n(widget.config).evtNewEvent
                 : l10n(widget.config).evtNewTask,
-            keyboardType: TextInputType.webSearch,
             onChanged: onChanged,
             onFieldSubmitted: (String entry) async {
               final bool success = widget._isCalendar
