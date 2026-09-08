@@ -101,23 +101,25 @@ class _EventWidgetState extends State<EventWidget> {
         right: widget.config.marginVal,
         child: Material(
           type: MaterialType.transparency,
-          child: IgnorePointer(
-            child: Container(
-              padding: EdgeInsets.all(widget.config.marginVal),
-              decoration: BoxDecoration(
-                color: widget.config.colors.surfaceContainer,
-                border: Border.all(
-                  color: widget.config.colors.secondaryContainer,
-                  width: widget.config.borderWidth,
-                ),
-                borderRadius: widget.config.textRadius,
-              ),
-              child: Text(
-                eventCon.text,
-                style: widget.config.bodyStyle,
-                textAlign: TextAlign.center,
-              ),
-            ),
+          child: EzTextField(
+            controller: eventCon,
+            constraints: BoxConstraints.loose(Size.infinite),
+            hintText: widget._isCalendar
+                ? l10n(widget.config).evtNewEvent
+                : l10n(widget.config).evtNewTask,
+            keyboardType: TextInputType.webSearch,
+            onChanged: onChanged,
+            onFieldSubmitted: (String entry) async {
+              final bool success = widget._isCalendar
+                  ? await createCalendarEvent(entry)
+                  : await createTask(entry, widget._shareDest);
+
+              eventCon.clear();
+              removeOverlay();
+
+              if (!success && context.mounted) await selfDestruct();
+            },
+            validator: null,
           ),
         ),
       ),

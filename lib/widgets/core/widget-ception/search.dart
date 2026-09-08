@@ -142,23 +142,14 @@ class _SearchWidgetState extends State<SearchWidget> {
         right: widget.config.marginVal,
         child: Material(
           type: MaterialType.transparency,
-          child: IgnorePointer(
-            child: Container(
-              padding: EdgeInsets.all(widget.config.marginVal),
-              decoration: BoxDecoration(
-                color: widget.config.colors.surfaceContainer,
-                border: Border.all(
-                  color: widget.config.colors.secondaryContainer,
-                  width: widget.config.borderWidth,
-                ),
-                borderRadius: widget.config.textRadius,
-              ),
-              child: Text(
-                queryCon.text,
-                style: widget.config.bodyStyle,
-                textAlign: TextAlign.center,
-              ),
-            ),
+          child: EzTextField(
+            controller: queryCon,
+            constraints: BoxConstraints.loose(Size.infinite),
+            hintText: widget._engine.name,
+            keyboardType: TextInputType.webSearch,
+            onChanged: onChanged,
+            onFieldSubmitted: search,
+            validator: null,
           ),
         ),
       ),
