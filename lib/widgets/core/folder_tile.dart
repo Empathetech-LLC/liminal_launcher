@@ -673,7 +673,7 @@ Future<void> editFolder(
                   // Text style
                   EzDropdownMenu<TxtStile>(
                     config,
-                    label: l10n(config).clkTimeStyle,
+                    label: 'Label style', // TODO: l10n
                     labelStyle: labelStyle.style(config),
                     enableSearch: false,
                     initialSelection: labelStyle,
