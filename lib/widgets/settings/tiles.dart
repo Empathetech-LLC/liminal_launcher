@@ -67,6 +67,11 @@ class AppTileSetting extends StatelessWidget {
                   iconSize: null,
                   buttonType: BTConfig.build(labelType, icons: showIcon, elevated: elevated),
                   labelType: labelType,
+                  labelStyle: TxtStile.body,
+                  textColor: config.colors.onSurface,
+                  iconColor: config.colors.primary,
+                  backgroundColor: config.colors.surface,
+                  outlineColor: config.colors.primaryContainer,
                   onPressed: doNothing,
                   onLongPress: doNothing,
                 );

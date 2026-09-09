@@ -629,8 +629,13 @@ Future<void> _openEdits(
           image: shareDest.icon,
           icon: null,
           iconSize: null,
-          labelType: listLabels(config),
           buttonType: listBT(config),
+          labelType: listLabels(config),
+          labelStyle: TxtStile.body,
+          textColor: config.colors.onSurface,
+          iconColor: config.colors.primary,
+          backgroundColor: config.colors.surface,
+          outlineColor: config.colors.primaryContainer,
           onPressed: () => pContext.pushNamed(
             appListPath,
             extra: ListConfig(
