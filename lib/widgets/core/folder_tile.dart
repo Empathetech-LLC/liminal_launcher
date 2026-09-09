@@ -584,297 +584,319 @@ Future<void> editFolder(
 
               // Settings
               Expanded(
-                  child: EzScrollView(config, children: <Widget>[
-                // Name && icon
-                EzScrollView(
-                  config,
-                  reverseHands: true,
-                  startCentered: true,
-                  thumbVisibility: false,
-                  scrollDirection: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    // Text field
-                    EzTextField(
-                      controller: renameCon,
-                      constraints: BoxConstraints.tightFor(
-                        height: appIconSize(config),
-                        width: widthOf(mCon) / 3,
-                      ),
-                      errorConstraints: BoxConstraints.tightFor(width: widthOf(mCon) / 3),
-                      hintText: l10n(config).hsFolder,
-                      autofillHints: const <String>[AutofillHints.name],
-                      validator: (String? check) => validateName(config, check),
-                    ),
-                    config.rowSpacer,
-
-                    // Plus/minus
-                    EzIconButton(
-                      config,
-                      enabled: showIcon && (iconSize > minIconSize),
-                      icon: const Icon(Icons.remove),
-                      tooltip: config.ezL10n.gDecrease,
-                      onPressed: () {
-                        iconSize -= 1;
-                        setModal(() => iconSize = max(iconSize, minIconSize));
-                      },
-                    ),
-                    config.rowMargin,
-                    EzIconButton(
-                      config,
-                      enabled: showIcon,
-                      icon: Icon(icon, size: iconSize),
-                      tooltip: l10n(config).gPreview,
-                      onPressed: () async {
-                        final IconData? choice = await chooseIcon(config, pContext);
-                        if (choice != null) setModal(() => icon = choice);
-                      },
-                      onLongPress: () => setModal(() => iconSize = config.iconSize),
-                    ),
-                    config.rowMargin,
-                    EzIconButton(
-                      config,
-                      enabled: showIcon && (iconSize < maxIconSize),
-                      icon: const Icon(Icons.add),
-                      tooltip: config.ezL10n.gIncrease,
-                      onPressed: () {
-                        iconSize += 1;
-                        setModal(() => iconSize = min(iconSize, maxIconSize));
-                      },
-                    ),
-                  ],
-                ),
-                EzSpacer(config.spacing * 1.5),
-
-                // Label type
-                EzDropdownMenu<LabelType?>(
-                  config,
-                  label: l10n(config).dbsLabelType,
-                  widthEntry: l10n(config).dbsInitials,
-                  dropdownMenuEntries: <DropdownMenuEntry<LabelType?>>[
-                    DropdownMenuEntry<LabelType?>(value: null, label: l10n(config).gDefault),
-                    ...LabelType.values.map((LabelType lt) =>
-                        DropdownMenuEntry<LabelType?>(value: lt, label: lt.name(config))),
-                  ],
-                  enableSearch: false,
-                  initialSelection: labelType,
-                  onSelected: (LabelType? choice) {
-                    if (choice == null) return;
-
-                    if (choice == LabelType.none) showIcon = true;
-                    setModal(() => labelType = choice);
-                  },
-                ),
-                config.spacer,
-
-                // TODO: add text style
-
-                // Show icon
-                EzSwitchPair(
-                  config,
-                  key: ValueKey<String>('icon-$showIcon'),
-                  text: l10n(config).dbsShowIcon,
-                  value: showIcon,
-                  onChanged: (bool? choice) {
-                    if (choice == null) return;
-
-                    if (choice == false && labelType == LabelType.none) {
-                      labelType = LabelType.full;
-                    }
-                    setModal(() => showIcon = choice);
-                  },
-                ),
-                config.spacer,
-
-                // Elevated
-                EzSwitchPair(
-                  config,
-                  key: ValueKey<String>('elevated-$elevated'),
-                  text: l10n(config).dbsElevatedButton,
-                  value: elevated,
-                  onChanged: (bool? choice) {
-                    if (choice == null) return;
-                    setModal(() => elevated = choice);
-                  },
-                ),
-                config.spacer,
-
-                // Color wrap
-                EzWrap(children: <Widget>[
-                  // Text
-                  Padding(
-                    padding: wrapPadding,
-                    child: EzElevatedIconButton(
-                      config,
-                      onPressed: () async {
-                        Color curr = textColor;
-
-                        await ezColorPicker(
-                          config,
-                          context: pContext,
-                          startColor: curr,
-                          onColorChange: (Color choice) => curr = choice,
-                          onConfirm: () => setModal(() => textColor = curr),
-                          onDeny: doNothing,
-                        );
-                      },
-                      onLongPress: () => setModal(() => textColor = config.colors.onSurface),
-                      icon: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: config.colors.primaryContainer,
-                            width: config.borderWidth,
-                          ),
+                  child: EzScrollView(
+                config,
+                showScrollHint: true,
+                children: <Widget>[
+                  // Name && icon
+                  EzScrollView(
+                    config,
+                    reverseHands: true,
+                    startCentered: true,
+                    thumbVisibility: false,
+                    scrollDirection: Axis.horizontal,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      // Text field
+                      EzTextField(
+                        controller: renameCon,
+                        constraints: BoxConstraints.tightFor(
+                          height: appIconSize(config),
+                          width: widthOf(mCon) / 3,
                         ),
-                        child: textColor == Colors.transparent
-                            ? CircleAvatar(
-                                backgroundColor: config.colors.surface,
-                                foregroundColor: config.colors.onSurface,
-                                radius: iconRadius + config.padding,
-                                child: EzIcon(config, Icons.visibility_off),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: textColor,
-                                radius: iconRadius + config.padding,
-                              ),
+                        errorConstraints: BoxConstraints.tightFor(width: widthOf(mCon) / 3),
+                        hintText: l10n(config).hsFolder,
+                        autofillHints: const <String>[AutofillHints.name],
+                        validator: (String? check) => validateName(config, check),
                       ),
-                      label: config.ezL10n.csOnSurface,
-                      textAlign: TextAlign.center,
-                    ),
+                      config.rowSpacer,
+
+                      // Plus/minus
+                      EzIconButton(
+                        config,
+                        enabled: showIcon && (iconSize > minIconSize),
+                        icon: const Icon(Icons.remove),
+                        tooltip: config.ezL10n.gDecrease,
+                        onPressed: () {
+                          iconSize -= 1;
+                          setModal(() => iconSize = max(iconSize, minIconSize));
+                        },
+                      ),
+                      config.rowMargin,
+                      EzIconButton(
+                        config,
+                        enabled: showIcon,
+                        icon: Icon(icon, size: iconSize),
+                        tooltip: l10n(config).gPreview,
+                        onPressed: () async {
+                          final IconData? choice = await chooseIcon(config, pContext);
+                          if (choice != null) setModal(() => icon = choice);
+                        },
+                        onLongPress: () => setModal(() => iconSize = config.iconSize),
+                      ),
+                      config.rowMargin,
+                      EzIconButton(
+                        config,
+                        enabled: showIcon && (iconSize < maxIconSize),
+                        icon: const Icon(Icons.add),
+                        tooltip: config.ezL10n.gIncrease,
+                        onPressed: () {
+                          iconSize += 1;
+                          setModal(() => iconSize = min(iconSize, maxIconSize));
+                        },
+                      ),
+                    ],
                   ),
+                  EzSpacer(config.spacing * 1.5),
 
-                  // Icon
-                  Padding(
-                    padding: wrapPadding,
-                    child: EzElevatedIconButton(
-                      config,
-                      onPressed: () async {
-                        Color curr = iconColor;
+                  // Label type
+                  EzDropdownMenu<LabelType?>(
+                    config,
+                    label: l10n(config).dbsLabelType,
+                    widthEntry: l10n(config).dbsInitials,
+                    dropdownMenuEntries: <DropdownMenuEntry<LabelType?>>[
+                      DropdownMenuEntry<LabelType?>(value: null, label: l10n(config).gDefault),
+                      ...LabelType.values.map((LabelType lt) =>
+                          DropdownMenuEntry<LabelType?>(value: lt, label: lt.name(config))),
+                    ],
+                    enableSearch: false,
+                    initialSelection: labelType,
+                    onSelected: (LabelType? choice) {
+                      if (choice == null) return;
 
-                        await ezColorPicker(
-                          config,
-                          context: pContext,
-                          startColor: curr,
-                          onColorChange: (Color choice) => curr = choice,
-                          onConfirm: () => setModal(() => iconColor = curr),
-                          onDeny: doNothing,
-                        );
-                      },
-                      onLongPress: () => setModal(() => iconColor = config.colors.primary),
-                      icon: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: config.colors.primaryContainer,
-                            width: config.borderWidth,
+                      if (choice == LabelType.none) showIcon = true;
+                      setModal(() => labelType = choice);
+                    },
+                  ),
+                  config.spacer,
+
+                  // Text style
+                  EzDropdownMenu<TxtStile>(
+                    config,
+                    label: l10n(config).clkTimeStyle,
+                    labelStyle: labelStyle.style(config),
+                    enableSearch: false,
+                    initialSelection: labelStyle,
+                    widthEntry: TxtStile.display.value,
+                    dropdownMenuEntries: TxtStile.values
+                        .map((TxtStile ts) =>
+                            DropdownMenuEntry<TxtStile>(value: ts, label: ts.name(config)))
+                        .toList(),
+                    menuStyle: labelStyle.style(config),
+                    onSelected: (TxtStile? choice) {
+                      if (choice == null) return;
+                      setModal(() => labelStyle = choice);
+                    },
+                  ),
+                  config.spacer,
+
+                  // Show icon
+                  EzSwitchPair(
+                    config,
+                    key: ValueKey<String>('icon-$showIcon'),
+                    text: l10n(config).dbsShowIcon,
+                    value: showIcon,
+                    onChanged: (bool? choice) {
+                      if (choice == null) return;
+
+                      if (choice == false && labelType == LabelType.none) {
+                        labelType = LabelType.full;
+                      }
+                      setModal(() => showIcon = choice);
+                    },
+                  ),
+                  config.spacer,
+
+                  // Elevated
+                  EzSwitchPair(
+                    config,
+                    key: ValueKey<String>('elevated-$elevated'),
+                    text: l10n(config).dbsElevatedButton,
+                    value: elevated,
+                    onChanged: (bool? choice) {
+                      if (choice == null) return;
+                      setModal(() => elevated = choice);
+                    },
+                  ),
+                  config.spacer,
+
+                  // Color wrap
+                  EzWrap(children: <Widget>[
+                    // Text
+                    Padding(
+                      padding: wrapPadding,
+                      child: EzElevatedIconButton(
+                        config,
+                        onPressed: () async {
+                          Color curr = textColor;
+
+                          await ezColorPicker(
+                            config,
+                            context: pContext,
+                            startColor: curr,
+                            onColorChange: (Color choice) => curr = choice,
+                            onConfirm: () => setModal(() => textColor = curr),
+                            onDeny: doNothing,
+                          );
+                        },
+                        onLongPress: () => setModal(() => textColor = config.colors.onSurface),
+                        icon: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: config.colors.primaryContainer,
+                              width: config.borderWidth,
+                            ),
                           ),
+                          child: textColor == Colors.transparent
+                              ? CircleAvatar(
+                                  backgroundColor: config.colors.surface,
+                                  foregroundColor: config.colors.onSurface,
+                                  radius: iconRadius + config.padding,
+                                  child: EzIcon(config, Icons.visibility_off),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor: textColor,
+                                  radius: iconRadius + config.padding,
+                                ),
                         ),
-                        child: iconColor == Colors.transparent
-                            ? CircleAvatar(
-                                backgroundColor: config.colors.surface,
-                                foregroundColor: config.colors.onSurface,
-                                radius: iconRadius + config.padding,
-                                child: EzIcon(config, Icons.visibility_off),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: iconColor,
-                                radius: iconRadius + config.padding,
-                              ),
+                        label: config.ezL10n.csOnSurface,
+                        textAlign: TextAlign.center,
                       ),
-                      label: config.ezL10n.csPrimary,
-                      textAlign: TextAlign.center,
                     ),
-                  ),
 
-                  // Background
-                  Padding(
-                    padding: wrapPadding,
-                    child: EzElevatedIconButton(
-                      config,
-                      onPressed: () async {
-                        Color curr = backgroundColor;
+                    // Icon
+                    Padding(
+                      padding: wrapPadding,
+                      child: EzElevatedIconButton(
+                        config,
+                        onPressed: () async {
+                          Color curr = iconColor;
 
-                        await ezColorPicker(
-                          config,
-                          context: pContext,
-                          startColor: curr,
-                          onColorChange: (Color choice) => curr = choice,
-                          onConfirm: () => setModal(() => backgroundColor = curr),
-                          onDeny: doNothing,
-                        );
-                      },
-                      onLongPress: () => setModal(() => backgroundColor = config.colors.surface),
-                      icon: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: config.colors.primaryContainer,
-                            width: config.borderWidth,
+                          await ezColorPicker(
+                            config,
+                            context: pContext,
+                            startColor: curr,
+                            onColorChange: (Color choice) => curr = choice,
+                            onConfirm: () => setModal(() => iconColor = curr),
+                            onDeny: doNothing,
+                          );
+                        },
+                        onLongPress: () => setModal(() => iconColor = config.colors.primary),
+                        icon: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: config.colors.primaryContainer,
+                              width: config.borderWidth,
+                            ),
                           ),
+                          child: iconColor == Colors.transparent
+                              ? CircleAvatar(
+                                  backgroundColor: config.colors.surface,
+                                  foregroundColor: config.colors.onSurface,
+                                  radius: iconRadius + config.padding,
+                                  child: EzIcon(config, Icons.visibility_off),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor: iconColor,
+                                  radius: iconRadius + config.padding,
+                                ),
                         ),
-                        child: backgroundColor == Colors.transparent
-                            ? CircleAvatar(
-                                backgroundColor: config.colors.surface,
-                                foregroundColor: config.colors.onSurface,
-                                radius: iconRadius + config.padding,
-                                child: EzIcon(config, Icons.visibility_off),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: backgroundColor,
-                                radius: iconRadius + config.padding,
-                              ),
+                        label: config.ezL10n.csPrimary,
+                        textAlign: TextAlign.center,
                       ),
-                      label: config.ezL10n.csSurface,
-                      textAlign: TextAlign.center,
                     ),
-                  ),
 
-                  // Outline
-                  Padding(
-                    padding: wrapPadding,
-                    child: EzElevatedIconButton(
-                      config,
-                      onPressed: () async {
-                        Color curr = outlineColor;
+                    // Background
+                    Padding(
+                      padding: wrapPadding,
+                      child: EzElevatedIconButton(
+                        config,
+                        onPressed: () async {
+                          Color curr = backgroundColor;
 
-                        await ezColorPicker(
-                          config,
-                          context: pContext,
-                          startColor: curr,
-                          onColorChange: (Color choice) => curr = choice,
-                          onConfirm: () => setModal(() => outlineColor = curr),
-                          onDeny: doNothing,
-                        );
-                      },
-                      onLongPress: () =>
-                          setModal(() => outlineColor = config.colors.primaryContainer),
-                      icon: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: config.colors.primaryContainer,
-                            width: config.borderWidth,
+                          await ezColorPicker(
+                            config,
+                            context: pContext,
+                            startColor: curr,
+                            onColorChange: (Color choice) => curr = choice,
+                            onConfirm: () => setModal(() => backgroundColor = curr),
+                            onDeny: doNothing,
+                          );
+                        },
+                        onLongPress: () => setModal(() => backgroundColor = config.colors.surface),
+                        icon: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: config.colors.primaryContainer,
+                              width: config.borderWidth,
+                            ),
                           ),
+                          child: backgroundColor == Colors.transparent
+                              ? CircleAvatar(
+                                  backgroundColor: config.colors.surface,
+                                  foregroundColor: config.colors.onSurface,
+                                  radius: iconRadius + config.padding,
+                                  child: EzIcon(config, Icons.visibility_off),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor: backgroundColor,
+                                  radius: iconRadius + config.padding,
+                                ),
                         ),
-                        child: outlineColor == Colors.transparent
-                            ? CircleAvatar(
-                                backgroundColor: config.colors.surface,
-                                foregroundColor: config.colors.onSurface,
-                                radius: iconRadius + config.padding,
-                                child: EzIcon(config, Icons.visibility_off),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: outlineColor,
-                                radius: iconRadius + config.padding,
-                              ),
+                        label: config.ezL10n.csSurface,
+                        textAlign: TextAlign.center,
                       ),
-                      label: config.ezL10n.csPrimaryContainer,
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ]),
-              ])),
+
+                    // Outline
+                    Padding(
+                      padding: wrapPadding,
+                      child: EzElevatedIconButton(
+                        config,
+                        onPressed: () async {
+                          Color curr = outlineColor;
+
+                          await ezColorPicker(
+                            config,
+                            context: pContext,
+                            startColor: curr,
+                            onColorChange: (Color choice) => curr = choice,
+                            onConfirm: () => setModal(() => outlineColor = curr),
+                            onDeny: doNothing,
+                          );
+                        },
+                        onLongPress: () =>
+                            setModal(() => outlineColor = config.colors.primaryContainer),
+                        icon: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: config.colors.primaryContainer,
+                              width: config.borderWidth,
+                            ),
+                          ),
+                          child: outlineColor == Colors.transparent
+                              ? CircleAvatar(
+                                  backgroundColor: config.colors.surface,
+                                  foregroundColor: config.colors.onSurface,
+                                  radius: iconRadius + config.padding,
+                                  child: EzIcon(config, Icons.visibility_off),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor: outlineColor,
+                                  radius: iconRadius + config.padding,
+                                ),
+                        ),
+                        label: config.ezL10n.csPrimaryContainer,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ]),
+                ],
+              )),
               EzDivider(height: config.spacing * 2),
 
               EzRow(config, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
