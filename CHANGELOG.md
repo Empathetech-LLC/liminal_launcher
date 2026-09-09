@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2026-09-09
+### Fixed
+- Unwanted app list navigation when opening app tray
+  - Bottom 7.5% of the screen does not navigate
+
+### Added
+- Interaction/proper text fields for search and event widget overlays
+
 ## [1.0.1] - 2026-08-30
 ### Fixed
 - Day 0 patch
