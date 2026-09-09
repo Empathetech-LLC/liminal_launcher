@@ -164,6 +164,7 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
                         iconSize: null,
                         buttonType: null,
                         labelType: null,
+                        labelStyle: null,
                         textColor: null,
                         iconColor: null,
                         backgroundColor: null,
