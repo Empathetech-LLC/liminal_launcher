@@ -923,7 +923,7 @@ Future<void> editApp(
             // Text style
             EzDropdownMenu<TxtStile>(
               config,
-              label: 'Label style', // TODO: l10n
+              label: l10n(config).gLabelStyle,
               labelStyle: labelStyle.style(config),
               enableSearch: false,
               initialSelection: labelStyle,

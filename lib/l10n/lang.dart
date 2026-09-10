@@ -491,6 +491,12 @@ abstract class Lang {
   /// **'Key'**
   String get gKey;
 
+  /// No description provided for @gLabelStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Label style'**
+  String get gLabelStyle;
+
   /// No description provided for @gPreview.
   ///
   /// In en, this message translates to:
