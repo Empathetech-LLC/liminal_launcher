@@ -213,6 +213,9 @@ class LangDe extends Lang {
   String get gKey => 'Schlüssel';
 
   @override
+  String get gLabelStyle => 'Beschriftungsstil';
+
+  @override
   String get gPreview => 'Vorschau';
 
   @override

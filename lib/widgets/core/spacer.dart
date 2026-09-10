@@ -19,7 +19,7 @@ class LimSpacer extends StatefulWidget {
   final TileState state;
   final ValueNotifier<double>? rippleProgress;
 
-  final void Function() resizeCallback;
+  final void Function() stateCheck;
 
   late final double _height;
   late final double _width;
@@ -31,7 +31,7 @@ class LimSpacer extends StatefulWidget {
     required this.pos,
     required this.state,
     required this.rippleProgress,
-    required this.resizeCallback,
+    required this.stateCheck,
   }) {
     final List<String> data =
         appInfo.homeItem(config, lane: pos.lane, index: pos.index).split(spacerSplit);
@@ -149,7 +149,7 @@ class _LimSpacerState extends State<LimSpacer> {
                       widget.config,
                       appInfo: widget.appInfo,
                       state: state,
-                      stateCheck: doNothing,
+                      stateCheck: widget.stateCheck,
                       numLanes: numLanes,
                       pos: widget.pos,
                     ),
@@ -162,7 +162,7 @@ class _LimSpacerState extends State<LimSpacer> {
                       widget.config,
                       appInfo: widget.appInfo,
                       state: state,
-                      stateCheck: widget.resizeCallback,
+                      stateCheck: widget.stateCheck,
                       numLanes: numLanes,
                       pos: widget.pos,
                     ),

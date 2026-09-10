@@ -213,6 +213,9 @@ class LangEs extends Lang {
   String get gKey => 'Clave';
 
   @override
+  String get gLabelStyle => 'Estilo de etiqueta';
+
+  @override
   String get gPreview => 'Vista previa';
 
   @override

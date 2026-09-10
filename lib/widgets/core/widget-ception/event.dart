@@ -101,23 +101,24 @@ class _EventWidgetState extends State<EventWidget> {
         right: widget.config.marginVal,
         child: Material(
           type: MaterialType.transparency,
-          child: IgnorePointer(
-            child: Container(
-              padding: EdgeInsets.all(widget.config.marginVal),
-              decoration: BoxDecoration(
-                color: widget.config.colors.surfaceContainer,
-                border: Border.all(
-                  color: widget.config.colors.secondaryContainer,
-                  width: widget.config.borderWidth,
-                ),
-                borderRadius: widget.config.textRadius,
-              ),
-              child: Text(
-                eventCon.text,
-                style: widget.config.bodyStyle,
-                textAlign: TextAlign.center,
-              ),
-            ),
+          child: EzTextField(
+            controller: eventCon,
+            constraints: BoxConstraints.loose(Size.infinite),
+            hintText: widget._isCalendar
+                ? l10n(widget.config).evtNewEvent
+                : l10n(widget.config).evtNewTask,
+            onChanged: onChanged,
+            onFieldSubmitted: (String entry) async {
+              final bool success = widget._isCalendar
+                  ? await createCalendarEvent(entry)
+                  : await createTask(entry, widget._shareDest);
+
+              eventCon.clear();
+              removeOverlay();
+
+              if (!success && context.mounted) await selfDestruct();
+            },
+            validator: null,
           ),
         ),
       ),
@@ -393,6 +394,15 @@ List<Widget> _menuChildren(
   required _EventConfig initConfig,
 }) =>
     <Widget>[
+      if (!initConfig.isCalendar && initConfig.shareDest != null)
+        // Open (conditional)
+        EzMenuButton(
+          config,
+          label: config.ezL10n.gOpen,
+          icon: EzIcon(config, Icons.launch),
+          onPressed: () => launchApp(initConfig.shareDest!),
+        ),
+
       // Edit
       _EditEvent(
         config,
@@ -585,6 +595,7 @@ Future<void> _openEdits(
         // Size
         EzFlipFlop(
           config,
+          key: ValueKey<String>('isTile:${size == WWGGSize.tile}'),
           onLabel: l10n(config).gTile,
           offLabel: l10n(config).gButton,
           init: initConfig.size == WWGGSize.tile,
@@ -595,6 +606,7 @@ Future<void> _openEdits(
         // Type
         EzFlipFlop(
           config,
+          key: ValueKey<String>('isCalendar:$isCalendar'),
           onLabel: l10n(config).evtCalendar,
           offLabel: l10n(config).evtTask,
           init: initConfig.isCalendar,
@@ -617,8 +629,13 @@ Future<void> _openEdits(
           image: shareDest.icon,
           icon: null,
           iconSize: null,
-          labelType: listLabels(config),
           buttonType: listBT(config),
+          labelType: listLabels(config),
+          labelStyle: TxtStile.body,
+          textColor: config.colors.onSurface,
+          iconColor: config.colors.primary,
+          backgroundColor: config.colors.surface,
+          outlineColor: config.colors.primaryContainer,
           onPressed: () => pContext.pushNamed(
             appListPath,
             extra: ListConfig(
@@ -626,11 +643,11 @@ Future<void> _openEdits(
               include: false,
               onSelected: (AppInfo choice) async {
                 if (pContext.mounted) Navigator.of(pContext).pop();
-                setModal(() {
-                  shareDest = choice;
-                  useAppIcon = (useAppIcon ?? true);
-                  isCalendar = false;
-                });
+
+                shareDest = choice;
+                useAppIcon = (useAppIcon ?? true);
+                isCalendar = false;
+                setModal(() {});
               },
               title: EzTextButton(
                 config,
@@ -640,11 +657,11 @@ Future<void> _openEdits(
               ),
             ),
           ),
-          onLongPress: () => setModal(() {
+          onLongPress: () {
             shareDest = nullApp;
-            useAppIcon = null;
             isCalendar = true;
-          }),
+            setModal(() {});
+          },
         ),
 
         // Conditional clear (reminder)
@@ -662,15 +679,24 @@ Future<void> _openEdits(
               textAlign: TextAlign.center,
               style: config.labelStyle,
             ),
-            config.spacer,
 
             // Use icon switch
-            EzSwitchPair(
+            EzAnimVis(
               config,
-              key: ValueKey<bool?>(useAppIcon),
-              value: useAppIcon ?? true,
-              text: l10n(config).evtAppIcon,
-              onChanged: (bool? choice) => setModal(() => useAppIcon = choice),
+              mod: 0.667,
+              forceFade: true,
+              forceType: EzTransitionType.zoom,
+              visible: (size == WWGGSize.tile),
+              kid: Padding(
+                padding: EdgeInsets.only(top: config.spacing),
+                child: EzSwitchPair(
+                  config,
+                  key: ValueKey<bool?>(useAppIcon),
+                  value: useAppIcon ?? true,
+                  text: l10n(config).evtAppIcon,
+                  onChanged: (bool? choice) => setModal(() => useAppIcon = choice),
+                ),
+              ),
             ),
           ]),
         ),

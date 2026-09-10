@@ -97,6 +97,7 @@
   "gEdits": "Modifications",
   "gEditDefaults": "Modifier les paramètres par défaut",
   "gKey": "Clé",
+  "gLabelStyle": "Style d'étiquette",
   "gPreview": "Aperçu",
   "gResize": "Redimensionner",
   "gReset": "Réinitialiser",

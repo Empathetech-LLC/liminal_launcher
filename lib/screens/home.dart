@@ -42,6 +42,9 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
   bool editing = false;
   ValueNotifier<double> rippleProgress = ValueNotifier<double>(0.0);
 
+  Offset _tmpVertSwipeStart = Offset.zero;
+  late final double trayOffset = heightOf(context) * 0.925;
+
   // Define custom functions //
 
   Future<void> ripple(EzCP config, PositionedGestureDetails details) async {
@@ -122,6 +125,11 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
                             iconSize: null,
                             buttonType: null,
                             labelType: null,
+                            labelStyle: null,
+                            textColor: null,
+                            iconColor: null,
+                            backgroundColor: null,
+                            outlineColor: null,
                           ),
                           lane: lane,
                           index: appInfo.homeLane(config, lane).length - 1,
@@ -155,12 +163,17 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
                       pContext: context,
                       initConfig: FolderConfig(
                         tp: nullTPS,
+                        appList: <String>[],
                         name: l10n(config).hsFolder,
                         icon: Icons.folder_outlined,
                         iconSize: null,
                         buttonType: null,
                         labelType: null,
-                        appList: <String>[],
+                        labelStyle: null,
+                        textColor: null,
+                        iconColor: null,
+                        backgroundColor: null,
+                        outlineColor: null,
                       ),
                       lane: lane,
                       index: appInfo.homeLane(config, lane).length - 1,
@@ -394,13 +407,13 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
   }
 
   /// Checks out of bounds, safe to always call directly
-  void navPageDown(EzCP config, AppInfoProvider appInfo, int numLanes) {
-    if (page <= 0) return;
+  Future<bool> navPageDown(EzCP config, AppInfoProvider appInfo, int numLanes) async {
+    if (page <= 0) return false;
 
     delta = standardFlow(config) ? -1 : 1;
     setState(() => page -= 1);
 
-    showPagePos(
+    unawaited(showPagePos(
       config,
       LAConfig.buildLookup(
             appInfo.homeItem(config, lane: page, index: 0),
@@ -410,17 +423,19 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
           ListAlignment.end,
       numLanes: numLanes,
       lane: page,
-    );
+    ));
+
+    return true;
   }
 
   /// Checks out of bounds, safe to always call directly
-  void navPageUp(EzCP config, AppInfoProvider appInfo, int numLanes) {
-    if (page >= (numLanes - 1)) return;
+  Future<bool> navPageUp(EzCP config, AppInfoProvider appInfo, int numLanes) async {
+    if (page >= (numLanes - 1)) return false;
 
     delta = standardFlow(config) ? 1 : -1;
     setState(() => page += 1);
 
-    showPagePos(
+    unawaited(showPagePos(
       config,
       LAConfig.buildLookup(
             appInfo.homeItem(config, lane: page, index: 0),
@@ -430,7 +445,9 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
           ListAlignment.end,
       numLanes: numLanes,
       lane: page,
-    );
+    ));
+
+    return true;
   }
 
   Future<void> swipeUp(EzCP config, AppInfoProvider appInfo) async => (editing)
@@ -678,7 +695,7 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
                 pos: pos,
                 state: editing ? TileState.groupEdit : TileState.standard,
                 rippleProgress: rippleProgress,
-                resizeCallback: () => setState(() => editing = false),
+                stateCheck: () => setState(() => editing = false),
               ),
             ),
           );
@@ -872,27 +889,37 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
                 onLongPressStart: (LongPressStartDetails details) async => editing
                     ? await ripple(config, details)
                     : await canEdit(config, () => ripple(config, details)),
+                onVerticalDragStart: (DragStartDetails details) =>
+                    _tmpVertSwipeStart = details.globalPosition,
                 onVerticalDragEnd: (DragEndDetails details) async {
                   if (details.primaryVelocity != null) {
-                    if (editingMarked) return;
-                    if (details.primaryVelocity! < -ezSwipeV) await swipeUp(config, appInfo);
+                    if (editingMarked ||
+                        !(details.primaryVelocity! < -ezSwipeV) ||
+                        _tmpVertSwipeStart.dy > trayOffset) {
+                      return;
+                    }
+                    await swipeUp(config, appInfo);
                   }
                 },
-                onHorizontalDragEnd: (DragEndDetails details) {
+                onHorizontalDragEnd: (DragEndDetails details) async {
                   if (details.primaryVelocity != null && details.primaryVelocity! != 0) {
                     if (pages(config)) {
                       if (details.primaryVelocity! < -ezSwipeV) {
                         // Swipe right to left -> nav to right
-                        standardFlow(config)
+                        final bool moved = await (standardFlow(config)
                             ? navPageUp(config, appInfo, numLanes)
-                            : navPageDown(config, appInfo, numLanes);
-                        return;
-                      } else {
+                            : navPageDown(config, appInfo, numLanes));
+
+                        if (moved) return;
+                      }
+
+                      if (details.primaryVelocity! > ezSwipeV) {
                         // Swipe left to right -> nav to left
-                        standardFlow(config)
+                        final bool moved = await (standardFlow(config)
                             ? navPageDown(config, appInfo, numLanes)
-                            : navPageUp(config, appInfo, numLanes);
-                        return;
+                            : navPageUp(config, appInfo, numLanes));
+
+                        if (moved) return;
                       }
                     }
                     if (editing || editingMarked) return;
@@ -901,7 +928,7 @@ class _HomeScreenState extends State<HomeScreen> with AfterLayoutMixin<HomeScree
                         ? appInfo.appMap[leftSwipeID]
                         : appInfo.appMap[rightSwipeID]);
 
-                    if (toLaunch != null) launchApp(toLaunch);
+                    if (toLaunch != null) await launchApp(toLaunch);
                   }
                 },
                 // App list

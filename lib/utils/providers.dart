@@ -698,17 +698,17 @@ class AppInfoProvider extends ChangeNotifier {
                 ? <Widget>[
                     EzAction(
                       config,
+                      text: config.ezL10n.gNo,
+                      onPressed: () => Navigator.of(dCon).pop(false),
+                    ),
+                    EzAction(
+                      config,
                       text: config.ezL10n.gYes,
                       onPressed: () {
                         _lightHidden.add(id);
                         unawaited(EzCM.setStringList(lightHiddenIDsKey, _lightHidden.toList()));
                         Navigator.of(dCon).pop(true);
                       },
-                    ),
-                    EzAction(
-                      config,
-                      text: config.ezL10n.gNo,
-                      onPressed: () => Navigator.of(dCon).pop(false),
                     ),
                   ]
                 : null,
@@ -745,17 +745,17 @@ class AppInfoProvider extends ChangeNotifier {
             actions: <Widget>[
               EzAction(
                 config,
+                text: config.ezL10n.gNo,
+                onPressed: () => Navigator.of(dCon).pop(false),
+              ),
+              EzAction(
+                config,
                 text: config.ezL10n.gYes,
                 onPressed: () {
                   _darkHidden.add(id);
                   unawaited(EzCM.setStringList(darkHiddenIDsKey, _darkHidden.toList()));
                   Navigator.of(dCon).pop(true);
                 },
-              ),
-              EzAction(
-                config,
-                text: config.ezL10n.gNo,
-                onPressed: () => Navigator.of(dCon).pop(false),
               ),
             ],
             needsClose: false,

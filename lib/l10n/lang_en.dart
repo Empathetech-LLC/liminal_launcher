@@ -212,6 +212,9 @@ class LangEn extends Lang {
   String get gKey => 'Key';
 
   @override
+  String get gLabelStyle => 'Label style';
+
+  @override
   String get gPreview => 'Preview';
 
   @override
@@ -1045,6 +1048,9 @@ class LangEnUs extends LangEn {
 
   @override
   String get gKey => 'Key';
+
+  @override
+  String get gLabelStyle => 'Label style';
 
   @override
   String get gPreview => 'Preview';

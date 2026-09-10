@@ -178,6 +178,16 @@ Future<bool> liminalAuth(EzCP config, String reason) async {
       : Future<bool>.value(true);
 }
 
+/// Safely grab tile config data
+/// Especially useful for data that wasn't present at time of creation
+String safeData(List<String> data, int pos) {
+  try {
+    return data[pos];
+  } catch (_) {
+    return esSystem;
+  }
+}
+
 /// [EzCP.isLTR] && [horizontalAlign] != [ListAlignment.end]
 bool standardFlow(EzCP config) => config.isLTR && horizontalAlign(config) != ListAlignment.end;
 

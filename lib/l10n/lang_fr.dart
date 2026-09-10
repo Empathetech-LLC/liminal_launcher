@@ -213,6 +213,9 @@ class LangFr extends Lang {
   String get gKey => 'Clé';
 
   @override
+  String get gLabelStyle => 'Style d\'étiquette';
+
+  @override
   String get gPreview => 'Aperçu';
 
   @override
