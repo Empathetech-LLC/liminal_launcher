@@ -102,6 +102,11 @@ class AppTile extends StatefulWidget {
       _iconSize = null;
       _buttonType = null;
       _labelType = null;
+      _labelStyle = null;
+      _textColor = null;
+      _iconColor = null;
+      _backgroundColor = null;
+      _outlineColor = null;
     }
   }
 
