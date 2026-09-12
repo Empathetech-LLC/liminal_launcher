@@ -36,14 +36,15 @@ class LiminalScaffold extends StatelessWidget {
           ),
           backgroundColor: Colors.transparent,
           fabs: <Widget>[
-            EzUpdaterFAB(
-              config,
-              appVersion: '1.0.2',
-              versionSource:
-                  'https://raw.githubusercontent.com/YWT-LLC/liminal_launcher/refs/heads/main/APP_VERSION',
-              gPlay: 'https://play.google.com/store/apps/details?id=llc.ywt.liminal_launcher',
-              github: 'https://github.com/YWT-LLC/liminal_launcher/releases',
-            ),
+            if (!isHome)
+              EzUpdaterFAB(
+                config,
+                appVersion: '1.0.2',
+                versionSource:
+                    'https://raw.githubusercontent.com/YWT-LLC/liminal_launcher/refs/heads/main/APP_VERSION',
+                gPlay: 'https://play.google.com/store/apps/details?id=llc.ywt.liminal_launcher',
+                github: 'https://github.com/YWT-LLC/liminal_launcher/releases',
+              ),
             if (fabs != null) ...fabs!,
             ...config.backFABs(isHome),
           ],
